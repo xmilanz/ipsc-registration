@@ -7,17 +7,17 @@
 
 $result = mysql_query("ALTER TABLE $table_nastaveni ADD `parNote1` varchar(100) DEFAULT NULL;");
 if (!$result) {
-  echo "parNote1: chyba aktualizace verze databáze ";
+    die();
 }
 $result = mysql_query("ALTER TABLE $table_nastaveni ADD `parNote2` varchar(100) DEFAULT NULL;");
 if (!$result) {
-  echo "parNote2: chyba aktualizace verze databáze ";
+    die();
 }
 
 /* aktualizace verze databáze */
 $result = mysql_query("update $table_nastaveni set parValueI=2.3 where parName='dbver';");
 if (!$result) {
-  echo "chyba uložení verze databáze";
+    die();
 }
 
 

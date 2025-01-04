@@ -56,8 +56,8 @@
 	</s:ElementType>
 </s:Schema>
 <rs:data>
-;;;	<z:row MatchId='1' MatchName='Eggenberg CUP 2021 - 1. kolo' MatchDt='2021-05-29T09:00:00' ClubId='1' Chrono='False'
+;;;	<z:row MatchId='1' MatchName='Eggenberg CUP 2022 - 3. kolo' MatchDt='2022-09-10T09:00:00' ClubId='1' Chrono='False'
 		 MatchLevel='1' CountryId='CZE' FirearmId='1' SquadCount='8' MD='Antonín Liška' RM='Ondřej Bárta'
-		 SD='Ladislav Novák, Milan Žídek'/>
+		 SD='Milan Žídek, Ladislav Novák'/>
 </rs:data>
 </xml>

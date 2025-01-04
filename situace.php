@@ -49,7 +49,7 @@ include "./header.php";
 				</a>
 			</div>
 		</div>
-		<div class="p-3"><a href="./stages/stages.pdf"><img src="./images/pdf.png" width="32px">Stáhnout vše</a></div>
+		<!--div class="p-3"><a href="./stages/stages.pdf"><img src="./images/pdf.png" width="32px">Stáhnout vše</a></div-->
 	</div>
 </div>
 </div>

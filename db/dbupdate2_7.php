@@ -5,15 +5,15 @@
 */
 
 
-$result = mysql_query("ALTER TABLE $table ADD `ZaplatiNaMiste` varchar(3) AFTER Zaplaceno;");
+$result = mysql_query("ALTER TABLE $table ADD `ZaplatiNaMiste` varchar(3) DEFAULT NULL AFTER Zaplaceno;");
 if (!$result) {
-  echo "ZaplatiNaMiste: chyba aktualizace verze databáze ";
+    die();
 }
 
 /* aktualizace verze databáze */
 $result = mysql_query("update $table_nastaveni set parValueI=2.7 where parName='dbver';");
 if (!$result) {
-  echo "chyba uložení verze databáze";
+    die();
 }
 
 

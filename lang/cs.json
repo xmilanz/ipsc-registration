@@ -12,7 +12,7 @@
         "previous": "Předchozí"
     },
     "searchBuilder": {
-        "add": "Přidat podmínku",
+        "add": "Přidat podmínku filtru",
         "clearAll": "Smazat vše",
         "condition": "Podmínka",
         "conditions": {
@@ -46,9 +46,9 @@
                 "not": "není",
                 "notEmpty": "není prázdné",
                 "startsWith": "začíná na",
-                "notContains": "Podmínka",
-                "notStarts": "Nezačíná",
-                "notEnds": "Nekončí"
+                "notContains": "neobsahuje",
+                "notStarts": "nezačíná",
+                "notEnds": "nekončí"
             },
             "array": {
                 "equals": "rovno",
@@ -71,7 +71,8 @@
             "0": "Rozšířený filtr",
             "_": "Rozšířený filtr (%d)"
         },
-        "deleteTitle": "Smazat filtrovací pravidlo"
+        "delete": "Smazat",
+        "deleteTitle": "Smazat podmínku filtru"
     },
     "autoFill": {
         "cancel": "Zrušit",
@@ -101,8 +102,8 @@
         "createState": "Vytvořit pohled",
         "removeAllStates": "Vymazat všechny pohledy",
         "removeState": "Odstranit",
-        "renameState": "Odstranit",
-        "savedStates": "Uložit pohledy",
+        "renameState": "Přejmenovat",
+        "savedStates": "Uložené pohledy",
         "stateRestore": "Pohled %d",
         "updateState": "Aktualizovat"
     },
@@ -187,7 +188,7 @@
         "remove": {
             "button": "Vymazat",
             "title": "Smazání",
-            "submit": "Vymazat",
+            "submit": "OK",
             "confirm": {
                 "_": "Opravdu chcete smazat tyto %d řádky?",
                 "1": "Opravdu chcete smazat tento 1 řádek?"
@@ -227,7 +228,7 @@
         "removeJoiner": "a",
         "removeSubmit": "Odstranit",
         "removeTitle": "Odstranit pohled",
-        "renameButton": "Vymazat",
+        "renameButton": "Přejmenovat",
         "renameLabel": "Nové jméno pro %s:",
         "renameTitle": "Přejmenování pohledu"
     }

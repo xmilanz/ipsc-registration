@@ -97,11 +97,14 @@ a.nav-link.active, .nav-link:hover {
 	transition: 0.5s;
 }
 
+.navbar-dark .navbar-nav .nav-link.disabled {color: rgba(255,255,255,.25) !important;}
+
+/*
 .dropdown:hover .dropdown-menu {
 	background-color: #2A5A8E !important;
     color: #2A5A8E;
     display: block;
-    margin-top: 0; /* remove the gap so it doesn't close */
+    margin-top: 0;
  }
 
 .dropdown-item {
@@ -114,7 +117,7 @@ a.nav-link.active, .nav-link:hover {
     background-color: #ffffff !important;
 	color: #2A5A8E;
 }
-
+*/
 /*----------------------------------------------
 	Content
 -----------------------------------------------*/
@@ -226,14 +229,10 @@ label.alias_validation {padding-bottom: 1rem;}
 
 }
 /*----------------------------------------------
-	DatTable
+	DatTable a Bootstrap
 -----------------------------------------------*/
 
-a.dt-button.dropdown-item.buttons-columnVisibility {background-color: #2375d2;}
-a.dt-button.dropdown-item.button-page-length, a.dt-button.dropdown-item.buttons-pdf.buttons-html5 {color: #2A5A8E;}
 .dtsb-titleRow {display: none;}
-div.dtsb-searchBuilder div.dtsb-group {width: 440px;}
-/* #zavodnici_filter {display: none;}*/
-/*div.dtsb-searchBuilder div.dtsb-group {float:right;}*/
+div.dtsb-searchBuilder div.dtsb-group {width: 600px;}
 .btn-secondary, .btn-light{background-color: #4a9fff; color: #ffffff;}
 .dt-print-view {background: #ffffff;}

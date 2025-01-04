@@ -2,8 +2,19 @@
 require_once ("./db/dbconn.php");
 require_once ("./functions.php");
 
+$query = "SELECT * from match_config where Zavod_id='$table'";
+$result = mysql_query($query) or die('Query failed: ' . mysql_error());
+$match_data = mysql_fetch_array($result);
+
+
+// 10.8.2022 - protoze se pri registraci RO, POM a VIP rovnou oznaci jako Zaplaceno=on, zrusena podminka " and (RO!='on' or POM!='on' or VIP!='on') "
+//$query="SELECT * FROM $table WHERE DATE_FORMAT(FROM_UNIXTIME(DatReg), \"%Y-%m-%d\") = DATE_ADD(CURDATE(),INTERVAL -$match_data[Zavod_pocet_dni_na_platbu] DAY) AND Squad >= '0' AND (RO!='on' OR VIP!='on' OR POM!='on' OR ZaplatiNaMiste!='on') and Zaplaceno IS NULL AND Urgence IS NULL";
+
+
 // ziskame seznam zavodniku, kteri nezaplatili do "zavod_pocet_dni_na_platbu" (10) dnu od registrace
-$query="SELECT * FROM $table WHERE DATE_FORMAT(FROM_UNIXTIME(DatReg), \"%Y-%m-%d\") = DATE_ADD(CURDATE(),INTERVAL -$zavod_pocet_dni_na_platbu DAY) AND Squad >= '0' AND (RO!='on' OR VIP!='on') and Zaplaceno IS NULL AND Urgence IS NULL";
+$query="SELECT * FROM $table WHERE DATE_FORMAT(FROM_UNIXTIME(DatReg), \"%Y-%m-%d\") = DATE_ADD(CURDATE(),INTERVAL -$match_data[Zavod_pocet_dni_na_platbu] DAY) AND Squad >= '0' AND ZaplatiNaMiste IS NULL AND Zaplaceno IS NULL AND Urgence IS NULL";
+
+
 
 // echo "$query";
 
@@ -29,13 +40,14 @@ else {
 		  $STRELEC.="SQUAD: $squad"."\r\n";
 
 		  $DatReg=date('d.m.Y', $res2["DatReg"]);
-		  $DatPay=date('d.m.Y', strtotime("+$zavod_pocet_dni_na_platbu day", $res2["DatReg"]));
-		  $qr_link="https://api.paylibo.com/paylibo/generator/czech/image?accountNumber=$qr_banka_ucet_cislo&bankCode=$qr_banka_ucet_kod&amount=$banka_ucet_CASTKA&currency=CZK&vs=".$varsymbol."&message=$qr_zprava&size=100";
+		  $DatPay=date('Y-m-d', strtotime("+$match_data[Zavod_pocet_dni_na_platbu] day", $res2["DatReg"]));
 
-		  $from_text=$email_od_text;
-		  $from=$email_od;
+		  $qr_link="https://api.paylibo.com/paylibo/generator/czech/image?accountNumber=$match_data[Banka_ucet_cislo]&bankCode=$match_data[Banka_ucet_kod]&amount=$match_data[Banka_ucet_CASTKA]&currency=$match_data[Banka_ucet_MENA]&vs=".$varsymbol."&message=$match_data[Zavod]&size=100";
+
+		  $from_text="";
+		  $from=$match_data[Zavod_email_from];
 		  $to=$res2[Mail];
-		  $subject = "Chybějící platba ".$zavod;
+		  $subject = "Chybějící platba ".$match_data[Zavod];
 
 		  $message=$email_urgence_platba_text;
 		  $message=str_replace("##ALIAS##",$STRELEC,$message);

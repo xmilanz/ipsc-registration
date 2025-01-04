@@ -1,19 +1,16 @@
 <?php
-include "./db/dbconn.php";
 include "./header.php";
-$query = "SELECT Prijmeni,Jmeno,Pidiv,Pifak,Kategorie,Squad,VarSym,Potvrzeno,DatReg,RO,Zaplaceno,serie,FROM_UNIXTIME(DatReg) AS Registrace FROM ".$table." where Squad>=-5 ORDER BY Prijmeni";
+
+$query = "SELECT Prijmeni,Jmeno,Alias,Pidiv,Pifak,Kategorie,Squad,DatReg,RO,POM,VIP,Zaplaceno,serie,FROM_UNIXTIME(DatReg) AS Registrace FROM ".$table." where Squad>=-5 ORDER BY Prijmeni";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 ?>
 
 <!-- dataTable https://datatables.net/download/ -->
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-colvis-2.2.2/b-html5-2.2.2/b-print-2.2.2/cr-1.5.5/fh-3.2.2/r-2.2.9/rg-1.1.4/rr-1.2.8/sc-2.0.5/sb-1.3.2/sp-2.0.0/datatables.min.css"/>
- 
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-colvis-2.2.2/b-html5-2.2.2/b-print-2.2.2/cr-1.5.5/fh-3.2.2/r-2.2.9/rg-1.1.4/rr-1.2.8/sc-2.0.5/sb-1.3.2/sp-2.0.0/datatables.min.js"></script>
-
-<script type="text/javascript" src="js/datatable_conf.js"></script>
-
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-colvis-2.2.2/b-html5-2.2.2/b-print-2.2.2/cr-1.5.5/fh-3.2.2/r-2.2.9/rg-1.1.4/rr-1.2.8/sc-2.0.5/sb-1.3.2/sp-2.0.0/datatables.min.css"/>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-colvis-2.2.2/b-html5-2.2.2/b-print-2.2.2/cr-1.5.5/fh-3.2.2/r-2.2.9/rg-1.1.4/rr-1.2.8/sc-2.0.5/sb-1.3.2/sp-2.0.0/datatables.min.js"></script>
+	<script type="text/javascript" src="js/datatable_conf.js"></script>
 <!-- dataTable  -->
 <body>
 <H1 class='p-3'>Závodníci</H1>
@@ -23,6 +20,7 @@ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
             <tr>
                 <th>Příjmení</th>
                 <th>Jméno</th>
+                <th>Alias</th>
                 <th>Divize</th>
                 <th>Faktor</th>
                 <th>Kategorie</th>
@@ -31,60 +29,96 @@ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
         </thead>
 		<tbody>
 		<?php
-		list($usec, $sec) = explode(" ", microtime());
 		$dnes=date_format(new DateTime(),"Y-m-d H:i");
-		$limit_platby=date('Y-m-d H:i', strtotime("-$zavod_pocet_dni_na_platbu", strtotime($dnes)));
-		$citacRO=0;
-		$citac=0;
+
 		while ($line = mysql_fetch_array($result)) {
 		  echo "\t<tr>\n";
-			if (strpos($line["RO"],'on')===false) {
-			$citac++;
-		  } else {
-			$citacRO++;
-		  }
-		  $serieIcon="";
-		  $roIcon="";
-		  $DatPay=date('Y-m-d', strtotime("+$zavod_pocet_dni_na_platbu day", $line["DatReg"]));
 		  echo "<TD>";
-		  if ($DatPay < $dnes AND $line[Zaplaceno]!=="on" and intval($line[Squad])>=0){echo "<font color=red>";};
-		  if ($line[RO]=="on") {$roIcon="<img src='./images/ro_icon.png' valign='bottom'>";};
-		  if ($line[Zaplaceno]=="on"){
-			echo "<font color=green>"; 
+		  $DatPay=date('Y-m-d', strtotime("+$match_data[Zavod_pocet_dni_na_platbu] day", $line["DatReg"]));
+			if ($DatPay < $dnes AND $line[Zaplaceno]!=="on" and intval($line[Squad])>=0){echo "<span class=text-danger>";};
+
+		// definice ikon 
+		  $serieIcon="";
+
+		  $roIcon="";
+			if ($line[RO]=="on") {$roIcon="<i class='far fa-clock' style='font-size:13px'></i>";};
+		  $pomIcon="";
+			if ($line[POM]=="on") {$pomIcon="<i class='far fa-handshake' style='font-size:13px'></i>";};
+		  $vipIcon="";
+			if ($line[VIP]=="on") {$vipIcon="<i class='far fa-crown' style='font-size:13px'></i>";};
+
+		  if (($line[Zaplaceno]=="on") and ($match_data[Payment_before]=="on")) {
+			echo "<span class=text-success>"; 
 			if ($line[serie]=="1") {
-			  $serieIcon="<img src='./images/serieIcon.png' valign='bottom'/>";
+			  $serieIcon="<i class='fas fa-crown' style='font-size:14px''></i>";
 			}
 		  };
+
 		  $squad=$nazvy_squadu[$line["Squad"]];
-		  if ($squad=="0") {
-			$squad="RO";
-		  }
 		  $squad=substr($squad, 0, 15);    
-		echo $line["Prijmeni"]."</font>&nbsp;$roIcon&nbsp;$serieIcon</TD><TD>".$line["Jmeno"]."</TD><TD>".$line["Pidiv"]."</TD><TD>".$line["Pifak"]."</TD><TD>".$line["Kategorie"]."</TD><TD>".$squad."</TD></tr>\n";
+		echo $line["Prijmeni"]."&nbsp;$roIcon&nbsp;$pomIcon&nbsp;$vipIcon&nbsp;$serieIcon</font></TD><TD>".$line["Jmeno"]."</TD><TD>".$line["Alias"]."</TD><TD>".$line["Pidiv"]."</TD><TD>".$line["Pifak"]."</TD><TD>".$line["Kategorie"]."</TD><TD>".$squad."</TD></tr>\n";
 		}
 ?>
 	</table>
+<pre>
+- rozhodčí <i class='far fa-clock' style='font-size:14px'></i>
+- pomocník <i class='far fa-handshake' style='font-size:14px'></i>
+</pre>
 </div>
 
 <?php
-// pocty zavodniku, kteri zaplatili
-$queryPLACENO="SELECT sum(case when Zaplaceno='on' then 1 else 0 end) as paid,count(Cislo) as shooters FROM $table WHERE Squad>0 AND (RO!='on' or VIP!='on')";
+// --------------------------- //
+// tabulka s pocty zavodniku  //
+// -------------------------- //
+
+// 10.8.2022 - protoze se pri registraci RO, POM a VIP rovnou oznaci jako Zaplaceno=on, zrusena podminka " and (RO!='on' or POM!='on' or VIP!='on') "
+
+// celkovy pocet závodníků (zaplaceno, VIP, rozhodčí a pomocníci)
+if ($match_data[Payment_before]=="") {
+   $queryCOMP="SELECT count(Alias) as comp FROM $table WHERE Squad>=0";
+	}
+else {
+	echo"<H3 class='pl-3 pt-3'>Závodníci s potvrzenou účastí</H3>
+		 <small class='pl-3'>- zaplaceno, rozhodčí a pomocníci</small>";
+	$queryCOMP="SELECT count(Alias) as comp FROM $table WHERE Squad>=0 and Zaplaceno='on'";
+}
+$resCOMP=mysql_query($queryCOMP);
+$zCOMP=mysql_fetch_array($resCOMP);
+
+// pocet neplatících závodníků (VIP, rozhodčí a pomocníci)
+$queryNEPLATI="SELECT count(Alias) as neplatici FROM $table where VIP='on' or RO='on' or POM='on'";
+$resNEPLATI=mysql_query($queryNEPLATI);
+$zNEPLATI=mysql_fetch_array($resNEPLATI);
+
+// pocet zavodniku, kteri zaplatili
+$queryPLACENO="SELECT count(Alias) as paid FROM $table WHERE Zaplaceno='on' and Squad>=0";
 $resPLACENO=mysql_query($queryPLACENO);
 $zPLACENO=mysql_fetch_array($resPLACENO);
 
+// pocet zavodniku, kteri dosud nezaplatili
+$queryNEPLACENO="SELECT count(Alias) as unpaid FROM $table WHERE Zaplaceno IS NULL and Urgence IS NULL and Squad>=0";
+$resNEPLACENO=mysql_query($queryNEPLACENO);
+$zNEPLACENO=mysql_fetch_array($resNEPLACENO);
+
 // pocty zavodniku, kteri nezaplatili ani po urgenci
-$queryPLATIT="SELECT sum(case when Zaplaceno IS NULL and Urgence!='' then 1 else 0 end) as unpaid,count(Cislo) as shooters FROM $table WHERE Squad>=0 AND (RO!='on' or VIP!='on')";
+$queryPLATIT="SELECT sum(case when Zaplaceno IS NULL  and Urgence!='' then 1 else 0 end) as unpaid from $table WHERE Squad>=0";
 $resPLATIT=mysql_query($queryPLATIT);
 $zPLATIT=mysql_fetch_array($resPLATIT);
 
-$query = "SELECT Pidiv,Count(Prijmeni) as Count FROM ".$table." where Squad>=0 and Zaplaceno='on' and (RO!='on' or VIP!='on') GROUP BY Pidiv HAVING count(Prijmeni)>=0 ORDER BY Pidiv";
+if ($match_data[Payment_before]=="") {
+	$query = "SELECT Pidiv,Count(Alias) as Count FROM $table where Squad>=0 GROUP BY Pidiv HAVING count(Alias)>=0 ORDER BY Pidiv";
+	}
+else {
+	$query = "SELECT Pidiv,Count(Alias) as Count FROM $table where Squad>=0 and Zaplaceno='on' GROUP BY Pidiv HAVING count(Alias)>=0 ORDER BY Pidiv";
+}
+
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 ?>	
 <div class="row pl-3 pt-3">
 	<div class="col-md-4">
 		<table class="table table-bordered border-primary bg-white">
 		<?php
-		echo"<tr><th>Počet závodníků: $citac ($citacRO RO)</th></tr>";
+		echo"<tr><th>Počet závodníků: $zCOMP[comp] ($zNEPLATI[neplatici] rozhodčích a pomocníků)</th></tr>";
 		echo "<tr><td><dl>";
 		while ($line = mysql_fetch_assoc($result)) {
 			  if ($line[Pidiv]=="OPN") {
@@ -111,22 +145,38 @@ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 				$Divize=str_replace("PDO","Production Optics","$line[Pidiv]");
 				echo "<dt>$Divize</dt>";
 			  }
-			$queryCat="SELECT Kategorie,Count(Prijmeni) as Count FROM ".$table." where Squad>=0 and Pidiv='".$line[Pidiv]."' and Zaplaceno='on' and (RO!='on' or VIP!='on') GROUP BY Kategorie HAVING count(Prijmeni)>=0 ORDER BY Pidiv";
+
+			if ($match_data[Payment_before]=="") {
+				$queryCat="SELECT Kategorie,Count(Prijmeni) as Count FROM ".$table." where Squad>=0 and Pidiv='".$line[Pidiv]."' GROUP BY Kategorie HAVING count(Prijmeni)>=0 ORDER BY Pidiv";
+				}
+			else {
+				$queryCat="SELECT Kategorie,Count(Prijmeni) as Count FROM ".$table." where Squad>=0 and Pidiv='".$line[Pidiv]."' and Zaplaceno='on' GROUP BY Kategorie HAVING count(Prijmeni)>=0 ORDER BY Pidiv";
+				}
 			$Cats=mysql_query($queryCat);
 			while ($Cat=mysql_fetch_array($Cats)) {
 			  echo "</dt><dd>&nbsp;&nbsp;<small>-&nbsp;".$Cat[Kategorie].": ".$Cat[Count]."</small></dd>";
 			}
 		}
 		   echo "</dl></td></tr>";
-		   echo"<tr><td>- zaplaceno: $zPLACENO[paid]<br>- nezaplaceno po urgenci: $zPLATIT[unpaid]</td></tr>";
+		   echo"<tr class='$paymentBeforeClass'><td>
+			- zaplaceno: $zPLACENO[paid]<br>
+			- nezaplaceno: $zNEPLACENO[unpaid]<br>
+			- nezaplaceno po urgenci: $zPLATIT[unpaid]
+			</td></tr>";
 ?>
 		</table>
 	</div>
 
-
 <?php 
-$query = "SELECT Pidiv,Count(Prijmeni) FROM ".$table." where Squad>=0 GROUP BY Pidiv ORDER BY Pidiv";
-$result = mysql_query($query) or die('Query failed: ' . mysql_error());
+
+if ($match_data[Payment_before]=="") {
+	$query = "SELECT Pidiv,Count(Prijmeni) FROM ".$table." where Squad>=0 GROUP BY Pidiv ORDER BY Pidiv";
+	}
+else {
+	$query = "SELECT Pidiv,Count(Prijmeni) FROM ".$table." where Squad>=0 and Zaplaceno='on' GROUP BY Pidiv ORDER BY Pidiv";
+}
+	$result = mysql_query($query) or die('Query failed: ' . mysql_error());
+
 /* DIVIZE */
 ?>
 	<div class='col-md-3'>

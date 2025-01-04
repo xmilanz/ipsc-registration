@@ -7,7 +7,7 @@
 
 $result = mysql_query("update $table_nastaveni set parValueI=2 where parName='dbver';");
 if (!$result) {
-  echo "chyba aktualizace verze databáze";
+    die();
 }
 
 

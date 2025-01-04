@@ -4,13 +4,13 @@
   podpůrné funkce
 */
 
-if ((include './phpmailer/PHPMailerAutoload.php')===false) {
+if ((include 'phpmailer/PHPMailerAutoload.php')===false) {
   if ((include '../phpmailer/PHPMailerAutoload.php')===false) {
   }
 }
 
 function email($from_text,$from,$to, $subject = '', $message = '', $headers = '') {
-  global $email_od_auth,$email_od_heslo,$email_od_smtp;
+  global $smtp_username,$smtp_password,$smtp_server;
   $message = nl2br($message);
   //Create a new PHPMailer instance
   $mail = new PHPMailer;
@@ -26,15 +26,15 @@ function email($from_text,$from,$to, $subject = '', $message = '', $headers = ''
   //Ask for HTML-friendly debug output
   $mail->Debugoutput = 'html';
   //Set the hostname of the mail server
-  $mail->Host = $email_od_smtp;
+  $mail->Host = $smtp_server;
   //Set the SMTP port number - likely to be 25, 465 or 587
   $mail->Port = 25;
   //Whether to use SMTP authentication
   $mail->SMTPAuth = true;
   //Username to use for SMTP authentication
-  $mail->Username = $email_od_auth;
+  $mail->Username = $smtp_username;
   //Password to use for SMTP authentication
-  $mail->Password = $email_od_heslo;
+  $mail->Password = $smtp_password;
   //Set who the message is to be sent from
   $mail->setFrom($from, $from_text);
   //Set an alternative reply-to address

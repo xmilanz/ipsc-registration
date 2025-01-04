@@ -1,182 +1,122 @@
-<HTML>
-<HEAD>
-    <meta http-equiv="Content-Language" content="cs">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="shortcut icon" href="https://www.kps-eggenberg.cz/images/favicon.ico" />
-    <title>KPS Eggenberg - administrace registrace závodu <?php echo "$zavod"; ?></title>
-    <link rel="stylesheet" type="text/css" href="../styles/style_admin.css">
-</HEAD>
-<BODY>
+<?
+require_once ("../config/data.php");
 
-<?php
-    require_once ("./auth.php");
-    require_once ("./db/dbconn.php");
+$ID=$_GET['ID'];
+$query="SELECT * FROM ".$table." WHERE Cislo=$ID";
+$res=mysql_query($query);
+$line=mysql_fetch_array($res);
 
-$sql="SELECT * FROM ".$table." WHERE Cislo=".$_GET[id];
-$result = mysql_query($sql);
-
-if (!$result) {
-   echo 'MySQL Error: ' . mysql_error();
-   exit;
-}
-
-if ($result) {
-  $row = mysql_fetch_array($result);
-
-echo "<h3 class='nadpis'>..: Závodník ".$row['Prijmeni']."  ".$row['Jmeno']." [".$_GET['id']."] :..</h3>";
-
-echo "<FORM  class='edit_shooter' ACTION=\"./change.php\" METHOD=\"post\">";
-
-echo "<span class=\"edit_shooter\">Alias </span>";
-echo "<INPUT TYPE=TEXT NAME=alias VALUE=\"";
-    echo $row['Alias'];
-echo "\"><BR>\n";
-
-echo "<span class=\"edit_shooter\">Příjmení </span>";
-echo "<INPUT TYPE=TEXT NAME=prijmeni VALUE=\"";
-    echo $row['Prijmeni'];
-echo "\"><BR>\n";
-
-echo "<span class=\"edit_shooter\">Jméno </span>";
-echo "<INPUT TYPE=TEXT NAME=jmeno VALUE=\"";
-    echo $row['Jmeno'];
-echo "\"><BR>\n";
-
-echo "<span class=\"edit_shooter\">E-mail </span>";
-echo "<INPUT TYPE=TEXT NAME=email VALUE=\"";
-    echo $row['Mail'];
-echo "\"><BR>\n";
-
-echo "<INPUT TYPE=HIDDEN NAME=Ulice VALUE=\"";
-    echo $row['Ulice'];
-echo "\">\n";
-
-echo "<INPUT TYPE=HIDDEN NAME=Mesto VALUE=\"";
-    echo $row['Mesto'];
-echo "\">\n";
-
-echo "<INPUT TYPE=HIDDEN NAME=Psc VALUE=\"";
-    echo $row['Psc'];
-echo "\">\n";
-
-echo "<INPUT TYPE=HIDDEN NAME=varsym VALUE=\"";
-    echo $row['VarSym'];
-echo "\">\n";
-
-echo "<span style=\"display:none;\"class=\"edit_shooter\">Region </span>";
-echo "<INPUT TYPE=HIDDEN NAME=region VALUE=\"";
-    echo $row['Region'];
-echo "\"><BR>\n";
-
-echo "<span class=\"edit_shooter\">Pistol Divize </span>";
-    echo "<select name=pidiv>";
-        echo "<option value=".$row[Pidiv].">".$row[Pidiv]."</option>";
-        echo "<option value=\"PRD\">Production - PRD</option>";
-        echo "<option value=\"STD\">Standard  - STD</option>";
-        echo "<option value=\"OPN\">Open - OPN</option>";
-        echo "<option value=\"REV\">Revolver - REV</option>";
-        echo "<option value=\"CLA\">Classic - CLA</option>";
-        echo "<option value=\"PCC\">PCC - PCC</option>"; 
-        echo "<option value=\"PDO\">Production Optics - PDO</option>";
-    echo "</select>";
-echo "<BR>\n";
-
-echo "<span class=\"edit_shooter\">Kategorie </span>";
-    echo "<select name=kategorie>";
-          echo "<option value=".$row[Kategorie].">".$row[Kategorie]."</option>";
-          echo "<option value=REGULAR>Regular (běžná)</option>";
-          echo "<option value=JUNIOR>Junior (do 21 let)</option>";
-          echo "<option value=LADY>Lady (ženy)</option>";
-          echo "<option value=SENIOR>Senior (nad 50 let)</option>";
-          echo "<option value=SSENIOR>Super Senior (nad 60 let)</option>";
-    echo "</select>";
-echo "<BR>\n";
-
-echo "<span class=\"edit_shooter\">Pistole Faktor </span>";
-    echo "<select name=pifak>";
-      echo "<option value=".$row[Pifak].">".$row[Pifak]."</option>";
-      echo "<option value=MIN>Minor</option>";
-      echo "<option value=MAJ>Major</option>";
-    echo "</select>";
-echo "<BR>\n";
-
-echo "<span class=\"edit_shooter\">Squad </span>";
-    echo "<select name=squad>";
-    echo "<option value=".$row[Squad].">".$row[Squad]."</option>";
-        echo "<option value=-2>Čekatelé</option>";
-        echo "<option value=0>Prematch RO</option>";
-        echo "<option value=1>1</option>";
-        echo "<option value=2>2</option>";
-        echo "<option value=3>3</option>";
-        echo "<option value=4>4</option>";
-        echo "<option value=5>5</option>";
-        echo "<option value=6>6</option>";
-        echo "<option value=7>7</option>";
-        echo "<option value=8>8</option>";
-        echo "<option value=-9>Vyřazení závodníka</option>";
-    echo "</select>";
-echo "<BR>\n";
-
-echo "<span class=\"edit_shooter\">Rozhodčí</span> <INPUT TYPE=checkbox NAME=RO ";
- if ( $row['RO']=="on"){ echo "CHECKED";};
-echo "><BR>\n";
-echo "<span class=\"edit_shooter\">VIP</span> <INPUT TYPE=checkbox NAME=VIP ";
- if ( $row['VIP']=="on"){ echo "CHECKED";};
-echo "><BR>\n";
-
-
-echo "<BR>\n";
-
-echo "<span class=\"edit_shooter\">Poznámka </span>";
-echo "<INPUT TYPE=TEXT NAME=poznamka SIZE=20 VALUE=\"";
-    echo $row['Poznamka'];
-echo "\"><BR>\n";
-
-echo "<INPUT TYPE=HIDDEN NAME=zaplaceno ";
- if ( $row['Zaplaceno']=="on"){ echo "CHECKED";};
-echo ">\n";
-
-echo "<INPUT TYPE=HIDDEN NAME=ZaplatiNaMiste ";
- if ( $row['ZaplatiNaMiste']=="on"){ echo "CHECKED";};
-echo ">\n";
-
-echo "<INPUT TYPE=HIDDEN NAME=serie ";
- if ( $row['serie']=="1"){ echo "CHECKED";};
-echo ">\n";
-
-echo "<INPUT TYPE=HIDDEN NAME=Castka SIZE=20 VALUE=\"";
- echo ($row['Castka']);
-echo "\">\n";
-
-
-echo "<INPUT TYPE=HIDDEN NAME=Mena SIZE=20 VALUE=\"";
- echo $row['Mena'];
-echo "\">\n";
-
-echo "<INPUT TYPE=HIDDEN NAME=DatumDodani SIZE=20 VALUE=\"";
- echo $row['DatumDodani'];
-echo "\">\n";
-
-echo "<INPUT TYPE=HIDDEN NAME=DatumZaplaceni SIZE=20 VALUE=\"";
- echo $row['DatumZaplaceni'];
-echo "\">\n";
-
-echo "<TEXTAREA style=\"display:none;\" NAME=InvoiceAddress rows=5 cols=50 maxlength=200>";
-echo str_replace("<br />","",$row['InvoiceAddress']);
-echo "</textarea>\n";
-
-echo "<br>";
-echo "<INPUT type=\"hidden\" name=cislo Value=\"";
-echo $_GET["id"];
-echo "\">\n";
-
-echo "<center>";
-    echo "<INPUT rel=\"modal:open\" style=\"background-color: green; width:auto; position: relative; left: 0px;color:white; font-size: 13px;  border: 0px; padding:5px; font-weight:bold; cursor:pointer; \" type=\"submit\" value=\"Uložit\" >";
-    echo "&nbsp;&nbsp;<a href=\"index.php\" onclick=\"window.location.reload(true);\"><button style=\" padding:3px; cursor:pointer;\">Zavřít</button></a></center>";
-echo "</center>";
-
-echo "</FORM>";
-echo "</BODY>\n</HTML>";
-   exit;
+if ($match_data[Payment_before]=="") {
+   $paymentBeforeClass.=" d-none";
 }
 ?>
+      <div class="modal-header text-center">
+		<h4 class="modal-title white-text w-100 font-weight-bold py-2">Úprava závodníka</h4><br>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="window.location.href = 'index.php';">
+          <span aria-hidden="true" class="white-text">&times;</span>
+        </button>
+	  </div>
+      <div class="modal-body">
+		<form class="row needs-validation mb-0" method="post" action="./save.php?edit_shooter" >
+	  <!-- ID závodníka -->
+		<INPUT type="hidden" id="shooterID" name="shooterID" value="<?php echo "$ID";?>" required>
+	  <!-- ID závodníka -->
+		<div class="col-md-10 font-weight-bolder">Osobní informace</div>
+			<div class="col-md-6">
+				<label for="Alias" class="form-label pt-2">Alias</label>
+				<input class="form-control" type="text" name="Alias" id="Alias" onkeypress="return avoidspace(event)" placeholder="ALIAS" onfocus="this.placeholder = ''" onblur="this.placeholder = 'ALIAS'" value="<?php echo "$line[Alias]";?>" required>
+				<div class="invalid-feedback">Nevyplnili jste alias</div>
+			</div>
+			<div class="col-md-6"></div>
+			<div class="col-md-6">
+				<label for="Jmeno" class="form-label pt-2">Jméno</label>
+				<input class="form-control" type="text" name="Jmeno" id="Jmeno" onkeypress="return avoidspace(event)" placeholder="Jan" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Jan'" value="<?php echo "$line[Jmeno]";?>" required>
+				<div class="invalid-feedback">Nevyplnili jste jméno</div>
+			  </div>
+			<div class="col-md-6">
+				<label for="Prijmeni" class="form-label pt-2">Příjmení</label>
+				<input class="form-control" type="text" name="Prijmeni" id="Prijmeni" onkeypress="return avoidspace(event)" placeholder="Novák" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Novák'" value="<?php echo "$line[Prijmeni]";?>" required>
+				<div class="invalid-feedback">Nevyplnili jste příjemní</div>
+			  </div>
+			<div class="col-md-6">
+				<label for="Mail" class="form-label pt-2">Email</label>
+				<div class="input-group">
+					<div class="input-group-prepend">
+					<div class="input-group-text">@</div>
+					</div>
+						<input class="form-control" type="email" id="Mail" name="Mail" onfocus="this.placeholder = ''" onblur="this.placeholder = 'novak@mujemail.cz'" placeholder="novak@mujemail.cz" value="<?php echo "$line[Mail]";?>" required>
+				</div>
+			</div>
+		<div class="col-md-10 pt-4 font-weight-bolder">Závod</div>
+			<div class="col-md-6">
+				<label for="Pidiv" class="form-label pt-2">Divize</label>
+				  <select class="form-control" name=Pidiv required>
+					<option value="<?php echo "$line[Pidiv]";?>"><?php echo "$line[Pidiv]";?></option>
+					<?php
+					foreach( $zavod_divize as $divize => $popis ){
+					echo "<option value='$divize'>$popis</option>"; 
+					}
+					?>
+				  </select>
+			</div>
+			<div class="col-md-6">
+				<label for="Kategorie" class="form-label pt-2">Kategorie</label>
+				  <select class="form-control" name=Kategorie required>
+					<option value="<?php echo "$line[Kategorie]";?>"><?php echo "$line[Kategorie]";?></option>
+					<?php
+						foreach( $zavod_kategorie as $kategorie => $popis ){
+						echo "<option value='$kategorie'>$popis</option>"; 
+					}
+					?>
+				  </select>
+			</div>
+			<div class="col-md-6">
+				<label for="Pifak" class="form-label pt-2">Faktor</label>
+					<select class="form-control" name=Pifak required>
+						<option value="<?php echo "$line[Pifak]";?>"><?php echo "$line[Pifak]";?></option>
+						<option value="MIN">Minor - MIN</option>
+						<option value="MAJ">Major - MAJ</option>
+					</select>
+			</div>
+			<div class="col-md-6">
+				<label for="Squad" class="form-label pt-2">Squad</label>
+				  <select class="form-control" name=Squad required>
+					<option value="<?php echo "$line[Squad]";?>"><?php echo "$line[Squad]";?></option>
+					<?php
+						foreach( $nazvy_squadu as $squad => $popis ){
+						echo "<option value='$squad'>$popis</option>"; 
+					}
+					?>
+				  </select>
+			</div>
+
+	<div class="col-md-10 pt-4 font-weight-bolder">Ostatní</div>
+			<div class="col-md-12">
+			 <div class="form-check form-check-inline">
+			   <input class="form-check-input" type="checkbox" id="RO" name="RO" <?php if ( $line['RO']=="on"){ echo "CHECKED";}; ?> >
+			   <label class="form-check-label" for="RO">Rozhodčí</label>
+			 </div>
+			 <div class="form-check form-check-inline">
+			   <input class="form-check-input" type="checkbox" id="POM" name="POM" <?php if ( $line['POM']=="on"){ echo "CHECKED";}; ?> >
+			   <label class="form-check-label" for="POM">Pomocník</label>
+			 </div>
+			 <div class="form-check form-check-inline">
+			   <input class="form-check-input" type="checkbox" id="VIP" name="VIP" <?php if ( $line['VIP']=="on"){ echo "CHECKED";}; ?> >
+			   <label class="form-check-label" for="VIP">VIP</label>
+			 </div>
+			 <div class="<?php echo "$paymentBeforeClass"; ?> form-check form-check pt-2">
+			   <input class="form-check-input" type="checkbox" id="ZaplatiNaMiste" name="ZaplatiNaMiste" <?php if ( $line['ZaplatiNaMiste']=="on"){ echo "CHECKED";}; ?> >
+			   <label class="form-check-label" for="ZaplatiNaMiste">Zaplatí na místě</label>
+			 </div>
+			 </div>
+			<div class="col-md-12">
+				<label for="Poznamka" class="form-label pt-3">Poznámka</label>
+				<input class="form-control" type="text" name="Poznamka" id="Poznamka" onkeypress="return avoidspace(event)" placeholder="Poznámka" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Poznámka'" value="<?php echo "$line[Poznamka]";?>">
+			 </div>
+
+      <!--Footer-->
+	<div class="modal-footer border-top-0 mt-3 col-12">
+		<button type="submit" class="btn btn-success">Uložit závodníka</button>
+		<button type="button" class="btn btn-default" onclick="window.location.href = 'index.php';">Zrušit</button>
+	</div>
+	 </form>

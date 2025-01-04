@@ -1,9 +1,12 @@
 <?php
 //error_reporting(64);
-ini_set('display_errors',1);
-error_reporting(E_WARNING);
+//ini_set('display_errors',1);
+//error_reporting(E_WARNING);
 
-require_once './config/data.php';
+// zde jedine pouzivat full_path ????
+include_once 'config/data.php';
+include_once '../config/data.php';
+// zde jedine pouzivat full_path ????
 
 //echo $db_host."-".$db_login."-".$db_pass."-".$db_dtb."<br/>";
 $mysql = mysql_connect($db_host, $db_login, $db_pass) or die('Could not connect: ' . mysql_error());
@@ -17,10 +20,10 @@ if ($_GET["recreate"]) {
   mysql_query($query);
   $query="drop table $table_nastaveni;";
   mysql_query($query);
-
 }
 
-require_once './functions.php';
+require_once 'functions.php';
+
 
 $result = mysql_query("SHOW TABLES LIKE '".$table."'");
 if (mysql_num_rows($result)==0) {
@@ -36,9 +39,15 @@ if (mysql_num_rows($result)==0) {
   require_once ("dbcreate.php");
 }
 
+$result = mysql_query("SHOW TABLES LIKE 'match_config'");
+if (mysql_num_rows($result)==0) {
+  $dbcreateParam="match_config";
+//  $dbcreateTable=match_config";
+  require_once ("dbcreate.php");
+}
+
 // aktualizace klicu - query presunuta do registrovat.php
 //$result = mysql_query("update $table set klic= FLOOR(10 + (RAND(Cislo) * 9000)) where klic is null or klic=0;");
-
 
 $dbver=0;
 $result = mysql_query("select parName,parValueI from ".$table_nastaveni." where parName='dbver' LIMIT 1;");
@@ -73,5 +82,8 @@ if ($dbver<2.7) {
 }
 if ($dbver<2.8) {
   require_once 'dbupdate2_8.php';
+}
+if ($dbver<2.9) {
+  require_once 'dbupdate2_9.php';
 }
 ?>

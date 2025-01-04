@@ -27,7 +27,8 @@ if ($xml) {
   $csvData="";
 
 // vybereme zavodniky, kteri zaplatitli nebo jsou v prematchi nebo rozhodci nebo nemusí platit
-    $query="select * from $table where Squad>=0 AND (Zaplaceno='on' OR RO='on' OR VIP='on') ORDER BY Cislo;";
+//    $query="select * from $table where Squad>=0 AND (Zaplaceno='on' OR RO='on' OR VIP='on') ORDER BY Cislo;";
+    $query="select * from $table where Squad>=0 ORDER BY Cislo;";
 
   $strelci=mysql_query($query);
   while ($z=mysql_fetch_array($strelci)) {
@@ -64,6 +65,11 @@ if ($xml) {
       case "REV":
         $DivId=5;
       break;
+// 6 ranny revolver zustava podle ID revolver, RE6 jen pro odliseni v administraci a seznamech
+      case "RE6":
+        $DivId=5;
+      break;
+// 6 ranny revolver zustava podle ID revolver, RE6 jen pro odliseni v administraci a seznamech
       case "CLA":
         $DivId=18;
       break;
@@ -1026,7 +1032,7 @@ if ($xml) {
 	</s:ElementType>
 </s:Schema>
 <rs:data>
-;;;	<z:row MatchId=\'1\' MatchName=\'Eggenberg CUP 2021 - X. kolo\' MatchDt=\'1970-015-01T09:00:00\' ClubId=\'1\' Chrono=\'False\'
+;;;	<z:row MatchId=\'1\' MatchName=\'Eggenberg CUP 2022 - 3. kolo\' MatchDt=\'2022-09-10T09:00:00\' ClubId=\'1\' Chrono=\'False\'
 		 MatchLevel=\'1\' CountryId=\'CZE\' FirearmId=\'1\' SquadCount=\'8\' MD=\'Antonín Liška\' RM=\'Ondřej Bárta\'
 		 SD=\'Milan Žídek, Ladislav Novák\'/>
 </rs:data>
