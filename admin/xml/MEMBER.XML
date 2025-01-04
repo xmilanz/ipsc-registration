@@ -1,0 +1,124 @@
+<xml xmlns:s='uuid:BDC6E3F0-6DA3-11d1-A2A3-00AA00C14882'
+	xmlns:dt='uuid:C2F41010-65B3-11d1-A29F-00AA00C14882'
+	xmlns:rs='urn:schemas-microsoft-com:rowset'
+	xmlns:z='#RowsetSchema'>
+<s:Schema id='RowsetSchema'>
+	<s:ElementType name='row' content='eltOnly' rs:updatable='true'>
+		<s:AttributeType name='MemberId' rs:number='1' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMember'
+			 rs:basecolumn='MemberId' rs:keycolumn='true' rs:autoincrement='true'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='Lastname' rs:number='2' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='Lastname'>
+			<s:datatype dt:type='string' dt:maxLength='25'/>
+		</s:AttributeType>
+		<s:AttributeType name='Firstname' rs:number='3' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='Firstname'>
+			<s:datatype dt:type='string' dt:maxLength='15'/>
+		</s:AttributeType>
+		<s:AttributeType name='Init' rs:number='4' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMember'
+			 rs:basecolumn='Comment'>
+			<s:datatype dt:type='string' dt:maxLength='1'/>
+		</s:AttributeType>
+		<s:AttributeType name='IcsAlias' rs:number='5' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='ICS'>
+			<s:datatype dt:type='string' dt:maxLength='16'/>
+		</s:AttributeType>
+		<s:AttributeType name='RefNo' rs:number='6' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMember'
+			 rs:basecolumn='RefNo'>
+			<s:datatype dt:type='string' dt:maxLength='10'/>
+		</s:AttributeType>
+		<s:AttributeType name='InActive' rs:number='7' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMember'
+			 rs:basecolumn='InActive'>
+			<s:datatype dt:type='boolean' dt:maxLength='2' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='Female' rs:number='8' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMember'
+			 rs:basecolumn='Female'>
+			<s:datatype dt:type='boolean' dt:maxLength='2' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='PrintLabel' rs:number='9' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMember'
+			 rs:basecolumn='PrintLabel'>
+			<s:datatype dt:type='boolean' dt:maxLength='2' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='RegionId' rs:number='10' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='TypeRegionId'>
+			<s:datatype dt:type='string' dt:maxLength='3'/>
+		</s:AttributeType>
+		<s:AttributeType name='DOB' rs:number='11' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMember'
+			 rs:basecolumn='DOB'>
+			<s:datatype dt:type='dateTime' rs:dbtype='variantdate' dt:maxLength='16' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='Address1' rs:number='12' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='Address1'>
+			<s:datatype dt:type='string' dt:maxLength='40'/>
+		</s:AttributeType>
+		<s:AttributeType name='Address2' rs:number='13' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='Address2'>
+			<s:datatype dt:type='string' dt:maxLength='40'/>
+		</s:AttributeType>
+		<s:AttributeType name='City' rs:number='14' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMember'
+			 rs:basecolumn='City'>
+			<s:datatype dt:type='string' dt:maxLength='20'/>
+		</s:AttributeType>
+		<s:AttributeType name='Province' rs:number='15' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='Province'>
+			<s:datatype dt:type='string' dt:maxLength='24'/>
+		</s:AttributeType>
+		<s:AttributeType name='CountryId' rs:number='16' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='TypeCountryId'>
+			<s:datatype dt:type='string' dt:maxLength='3'/>
+		</s:AttributeType>
+		<s:AttributeType name='PostCode' rs:number='17' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='PostCode'>
+			<s:datatype dt:type='string' dt:maxLength='10'/>
+		</s:AttributeType>
+		<s:AttributeType name='PhoneHome' rs:number='18' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='PhoneHome'>
+			<s:datatype dt:type='string' dt:maxLength='20'/>
+		</s:AttributeType>
+		<s:AttributeType name='PhoneAlt' rs:number='19' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='PhoneAlternate'>
+			<s:datatype dt:type='string' dt:maxLength='20'/>
+		</s:AttributeType>
+		<s:AttributeType name='PhoneFax' rs:number='20' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='PhoneFax'>
+			<s:datatype dt:type='string' dt:maxLength='20'/>
+		</s:AttributeType>
+		<s:AttributeType name='Email' rs:number='21' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMember'
+			 rs:basecolumn='Email'>
+			<s:datatype dt:type='string' dt:maxLength='36'/>
+		</s:AttributeType>
+		<s:AttributeType name='ClassId' rs:number='22' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='TypeScoreClassId'>
+			<s:datatype dt:type='string' dt:maxLength='1'/>
+		</s:AttributeType>
+		<s:AttributeType name='DfltDivId' rs:number='23' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='DfltDivisionId'>
+			<s:datatype dt:type='ui1' dt:maxLength='1' rs:precision='3' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='DfltCatId' rs:number='24' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='DfltNonTeamCategoryId'>
+			<s:datatype dt:type='ui1' dt:maxLength='1' rs:precision='3' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='DfltTagId' rs:number='25' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='DfltTagId'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='QualId' rs:number='26' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMember' rs:basecolumn='TypeQualificationId'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='Register' rs:number='27' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMember'
+			 rs:basecolumn='Register'>
+			<s:datatype dt:type='boolean' dt:maxLength='2' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='Note' rs:number='28' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMember'
+			 rs:basecolumn='Note'>
+			<s:datatype dt:type='string' dt:maxLength='536870910' rs:long='true'/>
+		</s:AttributeType>
+		<s:extends type='rs:rowbase'/>
+	</s:ElementType>
+</s:Schema>
+<rs:data>
+</rs:data>
+</xml>

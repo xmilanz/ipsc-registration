@@ -1,0 +1,76 @@
+<xml xmlns:s='uuid:BDC6E3F0-6DA3-11d1-A2A3-00AA00C14882'
+	xmlns:dt='uuid:C2F41010-65B3-11d1-A29F-00AA00C14882'
+	xmlns:rs='urn:schemas-microsoft-com:rowset'
+	xmlns:z='#RowsetSchema'>
+<s:Schema id='RowsetSchema'>
+	<s:ElementType name='row' content='eltOnly' rs:updatable='true'>
+		<s:AttributeType name='MatchId' rs:number='1' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMatchCompetitor' rs:basecolumn='MatchId' rs:keycolumn='true'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='MemberId' rs:number='2' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMatchCompetitor' rs:basecolumn='MemberId' rs:keycolumn='true'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='CompId' rs:number='3' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMatchCompetitor'
+			 rs:basecolumn='CompetitorId'>
+			<s:datatype dt:type='i2' dt:maxLength='2' rs:precision='5' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='DivId' rs:number='4' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMatchCompetitor'
+			 rs:basecolumn='TypeDivisionId'>
+			<s:datatype dt:type='ui1' dt:maxLength='1' rs:precision='3' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='CatId' rs:number='5' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMatchCompetitor'
+			 rs:basecolumn='TypeNonTeamCategoryId'>
+			<s:datatype dt:type='ui1' dt:maxLength='1' rs:precision='3' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='TeamId' rs:number='6' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMatchCompetitor'
+			 rs:basecolumn='TeamId'>
+			<s:datatype dt:type='i2' dt:maxLength='2' rs:precision='5' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='SquadId' rs:number='7' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMatchCompetitor' rs:basecolumn='SquadId'>
+			<s:datatype dt:type='ui1' dt:maxLength='1' rs:precision='3' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='TagId' rs:number='8' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMatchCompetitor'
+			 rs:basecolumn='TagId'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='MajorPF' rs:number='9' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMatchCompetitor'
+			 rs:basecolumn='MajorPowerFactor'>
+			<s:datatype dt:type='boolean' dt:maxLength='2' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='Classified' rs:number='10' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMatchCompetitor'
+			 rs:basecolumn='ClassifiedScoring'>
+			<s:datatype dt:type='boolean' dt:maxLength='2' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='IsDisq' rs:number='11' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMatchCompetitor'
+			 rs:basecolumn='IsDisqualified'>
+			<s:datatype dt:type='boolean' dt:maxLength='2' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='DisqRuleId' rs:number='12' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMatchCompetitor' rs:basecolumn='TypeDisqualifyRuleId'>
+			<s:datatype dt:type='i2' dt:maxLength='2' rs:precision='5' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='StageDisq' rs:number='13' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMatchCompetitor'
+			 rs:basecolumn='StageDisqualification'>
+			<s:datatype dt:type='boolean' dt:maxLength='2' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='DisqDt' rs:number='14' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMatchCompetitor' rs:basecolumn='DisqualifyDateTime'>
+			<s:datatype dt:type='dateTime' rs:dbtype='variantdate' dt:maxLength='16' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='DisqMemo' rs:number='15' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='tblMatchCompetitor' rs:basecolumn='DisqualifyMemo'>
+			<s:datatype dt:type='string' dt:maxLength='536870910' rs:long='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='RefNo' rs:number='16' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='tblMatchCompetitor'
+			 rs:basecolumn='RefNo'>
+			<s:datatype dt:type='string' dt:maxLength='10'/>
+		</s:AttributeType>
+		<s:extends type='rs:rowbase'/>
+	</s:ElementType>
+</s:Schema>
+<rs:data>
+</rs:data>
+</xml>
