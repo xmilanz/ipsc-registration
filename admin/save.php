@@ -896,6 +896,154 @@ else {
  // KONEC MAZANI DIVIZE
 
 
+
+
+
+
+
+// SPRÁVA KATEGORIE
+
+// NOVA KATEGORIE
+if (isset($_GET[new_category])) {
+	 $name = $_POST['Name'];
+	 $value = $_POST['Value'];
+	 $query = "INSERT INTO $table_categories (Name,Value)
+	 VALUES ('$name','$value')";
+	 $result = mysql_query($query);
+
+if ($result) {
+	header("refresh:0;url=index.php");
+	exit;
+ }
+
+else {
+ echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+ }
+}
+ // KONEC NOVA KATEGORIE
+
+// MAZANI KATEGORIE
+if (isset($_GET[delete_category])) {
+	$query = "DELETE FROM $table_categories WHERE Name='" . $_GET["category"] . "'";
+	$result = mysql_query($query);
+
+
+if ($result) {
+	header("refresh:0;url=index.php");
+	exit;
+ }
+
+else {
+ echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+ }
+}
+ // KONEC MAZANI KATEGORIE
+
+
+// SPRÁVA SQUADŮ
+
+// NOVY SQUAD
+if (isset($_GET[new_squad])) {
+	 $number = $_POST['Number'];
+	 $name = $_POST['Name'];
+	 $query = "INSERT INTO $table_squads (Number,Name)
+	 VALUES ('$number','$name')";
+	 $result = mysql_query($query);
+
+if ($result) {
+	header("refresh:0;url=index.php");
+	exit;
+ }
+
+else {
+ echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+ }
+}
+ // KONEC NOVY SQUAD
+
+// MAZANI SQUADU
+if (isset($_GET[delete_squad])) {
+	$query = "DELETE FROM $table_squads WHERE Number='" . $_GET["squadNumber"] . "'";
+	$result = mysql_query($query);
+
+
+if ($result) {
+	header("refresh:0;url=index.php");
+	exit;
+ }
+
+else {
+ echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+ }
+}
+ // KONEC MAZANI SQUADU
+
+
+
 ?>
 
 <script  type='text/javascript'>

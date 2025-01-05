@@ -8,7 +8,6 @@
  }
 ?>
 
-
 <div class="modal fade" id="match_configuration" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel"  aria-hidden="true">
   <div class="modal-dialog modal-notify modal-warning" role="document">
     <!--Content-->
@@ -66,7 +65,7 @@
 			  </div>
 			  <div class="col-md-12 ml-4 mt-2 ">
 					<label class="form-check-label" for="Zavod_registrace_pozastaveno">
-						<input type="checkbox" class="form-check-input" id="Zavod_registrace_pozastaveno" name="Zavod_registrace_pozastaveno" <?php if ( $match_configuration['Zavod_registrace_pozastaveno']=="on"){ echo "CHECKED";}; ?>><span class="font-weight-bold text-danger">Pozastavit registraci</span>
+						<input type="checkbox" class="form-check-input" id="Zavod_registrace_pozastaveno" name="Zavod_registrace_pozastaveno" <?php if ( $match_configuration['Zavod_registrace_pozastaveno']=="on"){ echo "CHECKED";}; ?>><span class="font-weight-bold text-danger">Registrace je pozastavena</span>
 					</label>
 			  </div>
 

@@ -99,9 +99,11 @@ if ($match_data[Payment_before]=="") {
 				  <select class="form-control" name=Kategorie required>
 					<option value="<?php echo "$line[Kategorie]";?>"><?php echo "$line[Kategorie]";?></option>
 					<?php
-						foreach( $zavod_kategorie as $kategorie => $popis ){
-						echo "<option value='$kategorie'>$popis</option>"; 
-					}
+					$query = mysql_query("SELECT * from $table_categories");
+						while($category = mysql_fetch_array($query))
+						{
+							echo "<option value=".$category['Name'].">". $category['Value']."</option>";
+						}
 					?>
 				  </select>
 			</div>

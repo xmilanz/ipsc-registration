@@ -49,7 +49,7 @@ $match_data = mysql_fetch_array($result);
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-colvis-2.2.2/b-html5-2.2.2/b-print-2.2.2/cr-1.5.5/date-1.1.2/fc-4.0.2/fh-3.2.2/r-2.2.9/sc-2.0.5/sb-1.3.2/sp-2.0.0/sr-1.1.0/datatables.min.css"/>
 <!-- dataTable https://datatables.net/download/ -->
 
-	<script type="text/javascript" src="./js/admin_form_validation.js"></script>
+	<script type="text/javascript" src="./js/admin_reg_form.js"></script>
 
 </HEAD>
 <BODY>
@@ -79,7 +79,9 @@ $match_data = mysql_fetch_array($result);
   </ul>
 
 	<?php include ("include/match_config.php"); ?>
+	<?php include ("./include/squads.php");  ?>
 	<?php include ("./include/divisions.php");  ?>
+	<?php include ("./include/categories.php");  ?>
 
 	<?php
 	if ($match_data[Payment_before]=="on") {

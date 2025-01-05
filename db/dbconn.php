@@ -3,12 +3,9 @@
 //ini_set('display_errors',1);
 //error_reporting(E_WARNING);
 
-// zde jedine pouzivat full_path ????
 include_once 'config/data.php';
 include_once '../config/data.php';
-// zde jedine pouzivat full_path ????
 
-//echo $db_host."-".$db_login."-".$db_pass."-".$db_dtb."<br/>";
 $mysql = mysql_connect($db_host, $db_login, $db_pass) or die('Could not connect: ' . mysql_error());
 mysql_select_db($db_dtb) or die('Could not select database');
 

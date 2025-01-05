@@ -53,11 +53,19 @@ elseif ($dnes > $zavod_konec_registrace_time) {
 
 echo"$reg_text";
 
+ $query = "SELECT * FROM $table_squads";
+ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
+
+// Uložení výsledků do asociativního pole
+$nazvy_squadu = [];
+while ($row = mysql_fetch_assoc($result)) {
+    $nazvy_squadu[$row['Number']] = $row['Name'];
+}
+
+// Iterace přes hodnoty od -2 do 211
 for ($i = -2; $i <= 211; $i++) {
-    if (!$nazvy_squadu[$i]) {
-      continue;
-    }
-    $nazev_squadu=$nazvy_squadu[$i];
+    if (isset($nazvy_squadu[$i])) {
+        $nazev_squadu = $nazvy_squadu[$i];
 
     ######################
 //    if ($i==100 AND $match_data[Squad_prem_max]>0) {echo "<H4>Prematch - $prematch_datum_human ($match_data[Zavod_cas_prematch])</h4>";};
@@ -197,7 +205,7 @@ for ($i = -2; $i <= 211; $i++) {
 					<div class="input-group-prepend">
 					<div class="input-group-text">@</div>
 					</div>
-						<input class="form-control" type="email" id="email<?php echo"$i";?>" name="email" onfocus="this.placeholder = ''" onblur="replaceChars()" placeholder="novak@mujemail.cz" required>
+						<input class="form-control" type="email" id="email<?php echo"$i";?>" name="email" onfocus="this.placeholder = ''" onkeypress="return avoidspace(event)" placeholder="novak@mujemail.cz" onblur="replaceChars()" required>
 				</div>
 				<div class="invalid-feedback">Nevyplnili jste email</div>
 			</div>
@@ -207,9 +215,11 @@ for ($i = -2; $i <= 211; $i++) {
 				<select name="kategorie" id="kategorie<?php echo"$i";?>" class="custom-select" required>
 					<option value="Regular" selected>Regular</option>
 					<?php
-					  foreach( $zavod_kategorie as $kategorie => $popis ){
-					  echo "<option value='$kategorie'>$popis</option>"; 
-					  }
+					$query = mysql_query("SELECT * from $table_categories");
+						while($category = mysql_fetch_array($query))
+						{
+							echo "<option value=".$category['Name'].">". $category['Name']."</option>";
+						}
 					?>
 				</select>
 				<div class="invalid-feedback">Nevybrali jste kategorii</div>
@@ -273,9 +283,9 @@ for ($i = -2; $i <= 211; $i++) {
 			<!-- toast - pravidla -->
 			<div class="position-absolute d-flex">
 			  <div class="toast hide">
-					<div class="toast-header">
-					  <strong class="mr-auto text-primary font-weight-bolder">Pravidla registrace a úhrady startovaného</strong>
-					  <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">×</button>
+					<div class="toast-header border-bottom bg-primary">
+					  <strong class="mr-auto text-white font-weight-bolder">Pravidla registrace a úhrady startovaného</strong>
+					  <button type="button" class="ml-2 mb-1 text-white close" data-dismiss="toast">×</button>
 				  </div>
 					<div class="toast-body ml-1">
 						<p>V souladu s pravidlem 6.6.2 je účast v prematchi omezena na organizátory, rozhodčí, pomocníky a sponzory.</p>
@@ -285,9 +295,8 @@ for ($i = -2; $i <= 211; $i++) {
 						<p>Změny v registraci (např. náhrada závodníka při přenosu startovného) lze provést nejpozději v den prematche.</p>
 						<p>Přesuny závodníků mezi squady na základě jejich žádosti lze provést <b>nejpozději do 30 minut před oficiálním zahájením hlavního závodu.</b></p>
 						<p class="text-danger font-weight-bold">Protože jsou podklady pro zaplacení startovaného posílány emailem, zbavuje se závodník při zadání neplatné emailové adresy možnosti zúčastnit se závodu. Rovněž nebude moci být informován o případných změnách.</p>
-						<p>Startovné se hradí tak, aby platba proběhla do 10 dnů od registrace.<br>- u závodníků zaregistrovaných méně jak 10 dní před závodem je třeba startovné zaplatit <strong>nejpozději jeden den před prematchem</strong></p>
-						<p>Pokud se startované platí předem, není možná registrace na místě.<br>
-						<p>V případě neuhrazení startovného v řádném termínu je registrace zrušena.<br>- neplatí pro organizátory, pomocníky a rozhodčí</p>
+						<p class="<?php echo "$paymentBeforeClass"; ?> ">Startovné se hradí tak, aby platba proběhla do <?php echo $match_data['Zavod_pocet_dni_na_platbu']; ?> dnů od registrace.<br>- u závodníků zaregistrovaných méně jak <?php echo $match_data['Zavod_pocet_dni_na_platbu']; ?> dní před závodem je třeba startovné zaplatit <strong>nejpozději jeden den před prematchem</strong></p>
+						<p class="<?php echo "$paymentBeforeClass"; ?> ">V případě neuhrazení startovného v řádném termínu je registrace zrušena.<br>- neplatí pro organizátory, pomocníky a rozhodčí</p>
 					</div>
 			  </div>
 			</div>
@@ -304,6 +313,7 @@ for ($i = -2; $i <= 211; $i++) {
 
 <?php
 };
+};
 ?>
 <pre>
 - rozhodčí <i class='far fa-clock' style='font-size:14px'></i>
@@ -313,7 +323,7 @@ for ($i = -2; $i <= 211; $i++) {
 <span class="<?php echo "$paymentBeforeClass"; ?> text-danger">- zbývá méně jak 5 dní do zaplacení</span>
 </pre>
 
-<script type="text/javascript" src="./js/pravidla.js"></script>
-<script type="text/javascript" src="./js/form_validation.js"></script>
+<script type="text/javascript" src="./js/reg_form.js"></script>
+
 
 <?php include "./footer.php"; ?>

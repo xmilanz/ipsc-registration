@@ -70,7 +70,6 @@
 				<div class="invalid-feedback">Nevybrali jste region</div>
 			</div>
 
-
 			<div class="col-md-10 pt-4 font-weight-bolder">Závod</div>
 			<div class="col-md-6">
 				<label for="Pidiv" class="form-label pt-2">Divize</label>
@@ -86,13 +85,15 @@
 				  </select>
 			</div>
 			<div class="col-md-6">
-				<label for="Pidiv" class="form-label pt-2">Kategorie</label>
+				<label for="Kategorie" class="form-label pt-2">Kategorie</label>
 				  <select class="form-control" name=Kategorie required>
 					<option value="" selected>--- vyberte ---</option>
 					<?php
-						foreach( $zavod_kategorie as $kategorie => $popis ){
-						echo "<option value='$kategorie'>$popis</option>"; 
-					}
+					$query = mysql_query("SELECT * from $table_categories");
+						while($category = mysql_fetch_array($query))
+						{
+							echo "<option value=".$category['Name'].">". $category['Value']."</option>";
+						}
 					?>
 				  </select>
 			</div>
@@ -105,13 +106,15 @@
 					</select>
 			</div>
 			<div class="col-md-6">
-				<label for="Pidiv" class="form-label pt-2">Squad</label>
+				<label for="Squad" class="form-label pt-2">Squad</label>
 				  <select class="form-control" name=Squad required>
 					<option value="" selected>--- vyberte ---</option>
 					<?php
-						foreach( $nazvy_squadu as $squad => $popis ){
-						echo "<option value='$squad'>$popis</option>"; 
-					}
+					$query = mysql_query("SELECT * from $table_squads ORDER BY Number");
+						while($squad = mysql_fetch_array($query))
+						{
+							echo "<option value=".$squad['Number'].">". $squad['Name']."</option>";
+						}
 					?>
 				  </select>
 			</div>

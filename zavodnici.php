@@ -31,11 +31,7 @@ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
   	while ($line = mysql_fetch_array($result)) {
   	  echo "\t<tr>\n";
   	  echo "<TD>";
-
-  	  $squad=$nazvy_squadu[$line["Squad"]];
-  	  $squad=substr($squad, 0, 15);    
-
-  	echo $line["Prijmeni"]."</TD><TD>".$line["Jmeno"]."</TD><TD>".$line["Alias"]."</TD><TD>".$line["Pidiv"]."</TD><TD>".$line["Pifak"]."</TD><TD>".$line["Kategorie"]."</TD><TD>".$squad."</TD></tr>\n";
+		echo $line["Prijmeni"]."</TD><TD>".$line["Jmeno"]."</TD><TD>".$line["Alias"]."</TD><TD>".$line["Pidiv"]."</TD><TD>".$line["Pifak"]."</TD><TD>".$line["Kategorie"]."</TD><TD>".$line["Squad"]."</TD></tr>\n";
   	}
   	?>
   </table>

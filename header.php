@@ -11,6 +11,11 @@ $match_data = mysql_fetch_array($result);
 if ($match_data[Payment_before]=="") {
    $paymentBeforeClass=" d-none";
 }
+
+if ($match_data[Payment_before]=="on") {
+   $paymentMatchClass=" d-none";
+}
+
 ?>
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"">
@@ -45,9 +50,21 @@ if ($match_data[Payment_before]=="") {
 </head>
 <body>
 <div class="container">
-<div id="header">
+
+<!--div id="header">
 	<div id="header-logo"><a href="<?php echo $match_data[Klub_web];?>"><img src="./images/logo.png" alt="<?php echo $match_data[Zavod_poradatel];?>"></a></div>
+</div-->
+
+<div class="header">
+	<div class="header-logo">
+		<img src="./images/logo-blank-dvc.png" alt="Logo">
+		<div class="text-over-image">
+			<a class="logo-text" href="<?php echo "$match_data[Klub_web]"; ?>" target="_blank">
+				<p class="mt-2"><?php echo "$match_data[Zavod_poradatel]<br>";?></a></p>
+		</div>
+	</div>
 </div>
+
 <nav class="navbar navbar-expand-md sticky-top navbar-dark">
     <a href="index.php"><span class="fas fa-home navbar-toggler" style="font-size:20px"></span></a>
 	<a href="#" class="navbar-brand order-md-last order-0"><?php echo $match_data[Zavod];?></a>
@@ -69,7 +86,7 @@ if ($match_data[Payment_before]=="") {
       <a class="nav-link" href="./situace.php">Situace</a>
     </li>
     <li class="nav-item">
-      <a class='nav-link' href='./kontrola_aliasu_<?php echo date("Y") ?>.php'>Aliasy</a>
+      <a class='nav-link' href='./kontrola_aliasu.php'>Aliasy</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="<?php echo $match_data[Zavod_vysledky];?>">Výsledky</a>

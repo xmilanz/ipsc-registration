@@ -2,39 +2,20 @@
 include "./db/dbconn.php";
 include "./header.php";
 
+$current_year = date_format(new DateTime(),"Y");
+
 $result = mysql_query("
-CREATE VIEW ec_uniq_alias AS
+CREATE VIEW ec_uniq_alias_$current_year AS
 SELECT Prijmeni,Jmeno,Alias,Zavod
  FROM (
   SELECT Prijmeni,Jmeno,Alias,Zavod
-   FROM ec2021_1 where squad >=0
+   FROM ec$current_year_1 where squad >=0
   union all
   SELECT Prijmeni,Jmeno,Alias,Zavod
-   FROM ec2021_2 where squad >=0
+   FROM ec$current_year_2 where squad >=0
   union all
    SELECT Prijmeni,Jmeno,Alias,Zavod
-  FROM ec2021_3 where squad >=0
-  union all
-  SELECT Prijmeni,Jmeno,Alias,Zavod
-   FROM ec2022_1 where squad >=0
-  union all
-  SELECT Prijmeni,Jmeno,Alias,Zavod
-   FROM ec2022_2 where squad >=0
-  union all
-   SELECT Prijmeni,Jmeno,Alias,Zavod
-  FROM ec2022_3 where squad >=0
-  union all
-  SELECT Prijmeni,Jmeno,Alias,Zavod
-   FROM ec2023_1 where squad >=0
-  union all
-  SELECT Prijmeni,Jmeno,Alias,Zavod
-   FROM ec2024_1 where squad >=0
-  union all
-  SELECT Prijmeni,Jmeno,Alias,Zavod
-   FROM ec2024_2 where squad >=0
-  union all
-   SELECT Prijmeni,Jmeno,Alias,Zavod
-  FROM ec2024_3 where squad >=0
+  FROM ec$current_year_3 where squad >=0
   )
 temp
 group by Prijmeni,Jmeno,Alias
@@ -43,15 +24,16 @@ ORDER BY Prijmeni,Jmeno,Alias
 ;");
 
 $query = "
-SELECT ec_uniq_alias.Prijmeni,ec_uniq_alias.Jmeno,ec_uniq_alias.Alias,ec_uniq_alias.Zavod FROM ec_uniq_alias
+SELECT ec_uniq_alias_$current_year.Prijmeni,ec_uniq_alias_$current_year.Jmeno,ec_uniq_alias_$current_year.Alias,ec_uniq_alias_$current_year.Zavod FROM ec_uniq_alias_$current_year
   INNER JOIN 
-	(SELECT * FROM ec_uniq_alias
+	(SELECT * FROM ec_uniq_alias_$current_year
 		group by Prijmeni,Jmeno
 		having count(Prijmeni)>1 
 	) AS dupl 
 	ON 
-		ec_uniq_alias.Prijmeni = dupl.Prijmeni AND ec_uniq_alias.Jmeno = dupl.Jmeno
+		ec_uniq_alias_$current_year.Prijmeni = dupl.Prijmeni AND ec_uniq_alias_$current_year.Jmeno = dupl.Jmeno
 	";
+
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 
 if (!$result) {
@@ -60,9 +42,11 @@ if (!$result) {
 
 ?>
 
-<H2>Kontrola alisů zadaných při registraci od roku 2021</H2>
-<p>Tabulka obsahuje aliasy použité při registraci do <strong>jednotlivých kol</strong> Eggenberg CUPu od roku 2021.<br>
-<h6><span class='text-danger'> Nejdůležitější je sice použít stejný alias v rámci jedné série, ale stejně je v zájmu každého závodníka používat stále stejný alias ;).</span> <br><br>Po kontrole prosím pošlete <u><a style="color:#2a5a8e;" href="mailto:milan&#064;g17.cz?subject=Oprava registracnich udaju Eggenberg CUP">statistikovi email</a></u> s informací, <span class='text-danger'>který alias je správný (= zaregistrovaný)</span>.</h6/>
+<H2>Kontrola aliasů Eggenberg CUPu <?php echo "$current_year"; ?></H2>
+<p>Tabulka obsahuje aliasy použité při registraci do <strong>jednotlivých kol</strong> Eggenberg CUPu tohoto ročníku</p>
+<p>Pokud je vše v pořádku, můžete také prověřit, zda jste v minulých ročnících nepoužili jiný alias: <u><a href='./kontrola_aliasu_all.php'>Aliasy od počátku věků</a></u>.</p>
+
+<h6><span class='text-danger'>Pro vyhodnocení turnaje je nutné, aby závodník používal stejný alias.</span> Po kontrole prosím pošlete <u><a style="color:#2a5a8e;" href="mailto:milan&#064;g17.cz?subject=Oprava registracnich udaju Eggeneberg CUP <?php echo "$current_year"; ?>">statistikovi email</a></u> s informací, <span class='text-danger'>který alias je správný (= zaregistrovaný na ipsc-tech.org)</span>.</h6/>
 <br>
 <div class="row">
 	<div class="col-md-8">

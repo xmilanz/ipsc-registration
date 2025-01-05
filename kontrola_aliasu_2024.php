@@ -42,33 +42,6 @@ if (!$result) {
   echo "<pre>:.. Nejsou žádní závodníci ke zpracování ..:</pre>";
 }
 
-
-echo "
-CREATE VIEW ec_uniq_alias_$current_year AS
-SELECT Prijmeni,Jmeno,Alias,Zavod
- FROM (
-  SELECT Prijmeni,Jmeno,Alias,Zavod
-   FROM ec2023_1 where squad >=0
-  union all
-  SELECT Prijmeni,Jmeno,Alias,Zavod
-   FROM ec2023_2 where squad >=0
-  union all
-   SELECT Prijmeni,Jmeno,Alias,Zavod
-  FROM ec2023_3 where squad >=0
-  )
-temp
-group by Prijmeni,Jmeno,Alias
- having count(*)>0
-ORDER BY Prijmeni,Jmeno,Alias
-;"
-
-
-
-
-
-
-
-
 ?>
 
 <H2>Kontrola aliasů Eggenberg CUPU <?php echo "$current_year"; ?></H2>

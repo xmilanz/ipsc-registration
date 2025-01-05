@@ -22,7 +22,7 @@
 					<tr>
 						<td width="25px"><?php echo $row["Name"]; ?></td>
 						<td><?php echo $row["Value"]; ?></td>
-						<td width="50px"><a class="btn btn-danger" href="./save.php?delete_division&pidiv=<?php echo $row["Name"]; ?>">Smazat</a></td>
+						<td width="50px"><a class="btn btn-sm btn-danger" href="./save.php?delete_division&pidiv=<?php echo $row["Name"]; ?>">Smazat</a></td>
 					</tr>
 					<?php
 					$i++;

@@ -176,7 +176,8 @@ $result = mysql_query("update $table set klic= FLOOR(10 + (RAND(Cislo) * 9000)) 
   $query="select * from $table where Prijmeni='$prijmeni' and Jmeno='$jmeno' and VarSym='$varsymbol' and  Mail='$_POST[email]';";
   $strelec=mysql_query($query);
   $z=mysql_fetch_array($strelec);
-  $squad=$nazvy_squadu[$z[Squad]];
+//  $squad=$nazvy_squadu[$z[Squad]];
+  $squad=$z[Squad];
 
    if ($z[Staff]=="RO") {
      $Rozhodci="ANO";
@@ -253,7 +254,7 @@ echo "
       </div>
       <div class='modal-footer mb-3'>
 		<a href='./registrace.php' rel='modal:close'><button type='button' class='btn btn-primary'>Nová registrace</button></a>&nbsp;&nbsp;
-		<a href='./kontrola_aliasu_2023.php' rel='modal:close'><button type='button' class='$paymentBeforeClass btn btn-success'>Kontrola aliasů série</button></a>&nbsp;&nbsp;
+		<a href='./kontrola_aliasu.php' rel='modal:close'><button type='button' class='$paymentBeforeClass btn btn-success'>Kontrola aliasů série</button></a>&nbsp;&nbsp;
 		<!--a href='./zavodnici.php' rel='modal:close'><button type='button' class='btn btn-default'>Zavřít</button></a-->
       </div>
     </div>

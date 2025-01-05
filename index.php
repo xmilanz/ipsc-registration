@@ -50,6 +50,7 @@ if ($match_data[Zavod_registrace_pozastaveno]=="on") {
 	<div class="jumbotron"><H3>Základní informace</H3></div>
 		<dl class="row  text-left">
 			<dt class="col-4 text-right pr-0">Název závodu:</dt><dd class="col-8 pl-2 font-weight-bold text-uppercase"><?php echo "$match_data[Zavod]";?></dd>
+			<dt class="col-4 text-right pr-0 <?php if ($match_data[Zavod_registrace_pozastaveno]=="") echo "d-none";?>">Stav:</dt><dd class="col-8 pl-2 text-danger  <?php if ($match_data[Zavod_registrace_pozastaveno]=="") echo "d-none";?>">Pozastavená registrace</dd>
 			<dt class="col-4 text-right pr-0">Datum:</dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_datum]";?></dd>
 			<dt class="col-4 text-right pr-0">Obtížnost:</dt><dd class="col-8 pl-2">IPSC Level I.</dd>
 			<dt class="col-4 text-right pr-0">Počet situací:</dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_stages]";?></dd>
@@ -120,6 +121,27 @@ if ($match_data[Zavod_registrace_pozastaveno]=="on") {
 </div>
 
 
+<?
+ $query = "SELECT * FROM $table_divisions";
+ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
+
+// Uložení výsledků do asociativního pole
+$zavod_divize = [];
+while ($row = mysql_fetch_assoc($result)) {
+    $zavod_divize[$row['Name']] = $row['Value'];
+}
+
+ $query = "SELECT * FROM $table_categories";
+ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
+
+// Uložení výsledků do asociativního pole
+$zavod_kategorie = [];
+while ($row = mysql_fetch_assoc($result)) {
+    $zavod_kategorie[$row['Id']] = $row['Name'];
+}
+
+
+?>
 
 <div class="row my-3">
 	<div class="col">
@@ -154,7 +176,6 @@ if ($match_data[Zavod_registrace_pozastaveno]=="on") {
 			<li>Pořadatelé si vyhrazují právo dodatečně měnit zařazení závodníků do squadů za účelem zajištění hladkého průběhu závodu.</li>
 			<li>Změny v registraci (např. náhrada závodníka při přenosu startovného) lze provést nejpozději v den prematche.</li>
 			<li>Přesuny závodníků mezi squady na základě jejich žádosti lze provést <b>nejpozději do 30 minut před oficiálním zahájením hlavního závodu</b>.</li>
-			<li>Pokud se startované platí předem, není možná registrace na místě.<br>
 			<li class="text-danger">Protože jsou podklady pro zaplacení startovaného posílány emailem, zbavujete se při zadání neplatné emailové adresy možnosti zúčastnit se závodu. Rovněž nebudete moci být informováni o případných změnách.</li>
 		</ul>
 	</div>
@@ -166,12 +187,13 @@ if ($match_data[Zavod_registrace_pozastaveno]=="on") {
 	<div class="article">
 	<div class="jumbotron"><H3>Úhrada startovného</H3></div>
 		<ul class="pb-3 text-left">
-			<li>Startovné uhraďte tak, aby platba proběhla do 10 dnů od registrace.<br>
-			- <span class="text-danger">u závodníků zaregistrovaných méně jak 10 dní před závodem je třeba startovné zaplatit <b>nejpozději jeden den před prematchem</b></span>
+			<li>Startovné uhraďte tak, aby platba proběhla do <?php echo $match_data['Zavod_pocet_dni_na_platbu']; ?> dnů od registrace.<br>
+			- <span class="text-danger">u závodníků zaregistrovaných méně jak <?php echo $match_data['Zavod_pocet_dni_na_platbu']; ?> dní před závodem je třeba startovné zaplatit <b>nejpozději jeden den před prematchem</b></span>
 			<li>V případě neuhrazení startovného v řádném termínu bude Vaše registrace zrušena.<br>
 			<i>- neplatí pro organizátory, pomocníky a rozhodčí</i>
 			<li><b>Startovné je nevratné, ale lze přenést na jiného závodníka.
-			<li>Při platbě za více závodníků uveďte pouze jedno číslo a o platbě informujte pořadatele <a href='mailto:<?php echo $match_data[Zavod_email_from] ?>'>e-mailem</A>.</b></i>
+			<li>Platíte-li za více závodníků, uveďte pouze jedno číslo a o platbě informujte pořadatele <a href='mailto:<?php echo $match_data[Zavod_email_from] ?>'>e-mailem</A>.</b></i>
+			<li>Při platbě startovaného předem <b>není registrace na místě možná.</b></li>
 		</ul>
 	</div>
 	</div>

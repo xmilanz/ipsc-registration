@@ -64,7 +64,7 @@ switch ($dbcreateParam) {
     Zavod_stages int(2) DEFAULT '8',
     Zavod_min_pocet_ran int(3) DEFAULT '135',
     Zavod_pocet_dni_na_platbu int(2) DEFAULT '10',
-    Zavod_vysledky varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'https://ipsc.zone/results',
+    Zavod_vysledky varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'https://www.ipsc.zone/v2/results.php',
     Squad_prem_max int(3) DEFAULT '30',
     Squad_main_max int(3) DEFAULT '10',
     Banka_ucet_CASTKA int(3) DEFAULT '900',
