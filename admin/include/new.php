@@ -77,7 +77,7 @@
 				</div>
 			</div>
 			<div class="col-md-4">
-				<label for="region" class="form-label mt-3">Region</label>
+				<label for="Region" class="form-label mt-3">Region</label>
 				<select name="Region" id="Region" class="custom-select" required>
 					  <option value="AUT">Austria</option>
 					  <option value="CZE" selected>Czech Republic</option>
@@ -107,8 +107,8 @@
 			</div>
 
 			<div class="col-md-4">
-				<label for="Pidiv" class="form-label mt-2">Divize</label>
-				  <select class="form-control" name="Pidiv" id="Pidiv" onchange="togglePidivMain()" required>
+				<label for="Divize" class="form-label mt-2">Divize</label>
+				  <select class="form-control" name="Divize" id="Divize" onchange="togglePidivMain()" required>
 					<option value="" selected>--- vyberte ---</option>
 					<?php
 					$query = mysql_query("SELECT * from $table_divisions");
@@ -121,19 +121,20 @@
 			</div>
 
 			<div class="col-md-4 <?php echo "$zavodMoreDivisionsClass"; ?>">
-				<label for="Pidiv_dalsi" class="form-label mt-2 mb-1 text-danger tooltip">Další divize
+				<label for="Divize_dalsi" class="form-label mt-2 mb-1 text-danger tooltip">Další divize <i class="fa fa-question-circle" aria-hidden="true"></i>
 						<span class="tooltiptext">
 						<span>Při registraci závodníka ve více divizích se postupuje tímto způsobem:
 							<ul>
-								<li>při první registaci použijte seznam divizí, který je pod řádkem Jméno, Příjmení ....</li>
-								<li>po dokončení registrace vyberte požadovaný squad a vyplňte stejné údaje (Alias, Jméno, Příjmení, Email, Kategorie, Region)</li>
-								<li>další DIVIZI vyberte ze seznamu "Registrace ve více divizích"</li>
+								<li>Při první registaci použijte první seznam divizí.</li>
+								<li>Po dokončení registrace vyberte squad a vyplňte stejné údaje (Alias, Jméno, Příjmení, Email, Kategorie, Region).</li>
+								<li>Další DIVIZI vyberte ze seznamu "Další divize"</li>
 							</ul>
+							<i>(jakmile se vybere jedna divize, není možné použít druhý seznam divizí)</i>
 						</span>
 					</span>
 				</label>
 
-					<select class="form-control" name="Pidiv_dalsi" id="Pidiv_dalsi" onchange="togglePidiv()">	
+					<select class="form-control" name="Divize_dalsi" id="Divize_dalsi" onchange="togglePidiv()">	
 					<option value="" selected>--- vyberte ---</option>
 					<?php
 					$query = mysql_query("SELECT * from $table_divisions");
@@ -159,8 +160,8 @@
 				  </select>
 			</div>
 			<div class="col-md-6">
-				<label for="Pifak" class="form-label mt-2">Faktor</label>
-					<select class="form-control" name=Pifak required>
+				<label for="Faktor" class="form-label mt-2">Faktor</label>
+					<select class="form-control" name=Faktor required>
 						<option value="" selected>--- vyberte ---</option>
 						<option value="MIN">Minor</option>
 						<option value="MAJ">Major</option>

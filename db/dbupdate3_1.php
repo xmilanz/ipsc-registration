@@ -1,40 +1,13 @@
 <?php
 /*
   MILANZ 20.7.2023
-  aktualizace tabulek na verzi 3.1 - slouceni Staff (VIP, RO, POM) do jedineho sloupce, evidence pubodniho squadu pri vyrazen
+  aktualizace tabulek na verzi 3.1 
 */
 
-$result = mysql_query("ALTER TABLE $table ADD `SquadReg` varchar(11) AFTER `Squad`;");
+$result = mysql_query("INSERT INTO match_config (Zavod_id) VALUE ('$table');");
 if (!$result) {
-     echo "no result for SquadReg";
+     die();
 }
-
-$result = mysql_query("ALTER TABLE $table ADD `Staff` varchar(3) AFTER `Pifak` ;");
-if (!$result) {
-     echo "no result for Staff";
-}
-
-
-/* 
-  smazeme nepotrebne sloupce
-*/
-
-$result = mysql_query("ALTER TABLE $table DROP `POM`");
-if (!$result) {
-    echo "";
-}
-
-$result = mysql_query("ALTER TABLE $table DROP `RO`;");
-if (!$result) {
-    echo "";
-}
-
-
-$result = mysql_query("ALTER TABLE $table DROP `VIP`;");
-if (!$result) {
-    echo "";
-}
-
 
 /* aktualizace verze databáze */
 $result = mysql_query("update $table_nastaveni set parValueI=3.1 where parName='dbver';");

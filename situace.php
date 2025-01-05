@@ -8,46 +8,13 @@ include "./header.php";
 			<h1 class="p-3">Situace</h1>
 		</div>
 		<div class="portfolio-item row pl-4 pb-4">
-			<div class="item col-lg-3 col-md-4 col-6 col-sm">
-				<a href="./stages/stage1.png" class="fancylight popup-btn" data-fancybox-group="light">
-					<img class="img-fluid img-thumbnail" src="./stages/stage1.png" alt="">
-				</a>
-			</div>
-			<div class="col-lg-3 col-md-4 col-6 col-sm">
-				<a href="./stages/stage2.png" class="fancylight popup-btn" data-fancybox-group="light">
-					<img class="img-fluid img-thumbnail" src="./stages/stage2.png" alt="">
-				</a>
-			</div>
-			<div class="col-lg-3 col-md-4 col-6 col-sm">
-				<a href="./stages/stage3.png" class="fancylight popup-btn" data-fancybox-group="light">
-					<img class="img-fluid img-thumbnail" src="./stages/stage3.png" alt="">
-				</a>
-			</div>
-			<div class="col-lg-3 col-md-4 col-6 col-sm">
-				<a href="./stages/stage4.png" class="fancylight popup-btn" data-fancybox-group="light">
-					<img class="img-fluid img-thumbnail" src="./stages/stage4.png" alt="">
-				</a>
-			</div>
-			<div class="col-lg-3 col-md-4 col-6 col-sm">
-				<a href="./stages/stage5.png" class="fancylight popup-btn" data-fancybox-group="light">
-					<img class="img-fluid img-thumbnail" src="./stages/stage5.png" alt="">
-				</a>
-			</div>
-			<div class="col-lg-3 col-md-4 col-6 col-sm">
-				<a href="./stages/stage6.png" class="fancylight popup-btn" data-fancybox-group="light">
-					<img class="img-fluid img-thumbnail" src="./stages/stage6.png" alt="">
-				</a>
-			</div>
-			<div class="col-lg-3 col-md-4 col-6 col-sm">
-				<a href="./stages/stage7.png" class="fancylight popup-btn" data-fancybox-group="light">
-					<img class="img-fluid img-thumbnail" src="./stages/stage7.png" alt="">
-				</a>
-			</div>
-			<div class="col-lg-3 col-md-4 col-6 col-sm">
-				<a href="./stages/stage8.png" class="fancylight popup-btn" data-fancybox-group="light">
-					<img class="img-fluid img-thumbnail" src="./stages/stage8.png" alt="">
-				</a>
-			</div>
+		  <?php for ($i = 1; $i <= $match_data[Zavod_stages]; $i++) {
+			echo "<div class='item col-lg-3 col-md-4 col-6 col-sm'>";
+				echo "<a href='./stages/stage$i.png' class='fancylight popup-btn' data-fancybox-group='light'>";
+					echo "<img class='img-fluid img-thumbnail' src='./stages/stage$i.png' alt='Stage $i'>";
+				echo "</a>";
+			echo "</div>";
+		  }; ?>
 		</div>
 		<div class="p-3"><a href="./stages/stages.pdf"><img src="./images/pdf.png" width="32px">Stáhnout vše</a></div>
 	</div>
@@ -55,12 +22,6 @@ include "./header.php";
 </div>
 
 <script>
-// https://isotope.metafizzy.co/layout-modes.html
-// $('.portfolio-item').isotope({
-//  	itemSelector: '.item',
-//  	layoutMode: 'fitRows',
-//  });
-
 
   $('.portfolio-menu ul li').click(function(){
   	$('.portfolio-menu ul li').removeClass('active');

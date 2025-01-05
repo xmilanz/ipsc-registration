@@ -16,7 +16,6 @@ if (file_exists('./db/dbconn.php')) {
 } elseif (file_exists('../db/dbconn.php')) {
     include '../db/dbconn.php';
 }
-//include ("../db/dbconn.php");
 
 // KONFIGRACE ZAVODU
 if (isset($_GET[match_config])) {
@@ -35,9 +34,10 @@ if (isset($_GET[match_config])) {
 		Zavod_zacatek_registrace='$_POST[Zavod_zacatek_registrace]',
 		Zavod_konec_registrace='$_POST[Zavod_konec_registrace]',
 		Zavod_registrace_pozastaveno='$_POST[Zavod_registrace_pozastaveno]',
-		Zavod_zobrazovat_sponzory='$_POST[Zavod_zobrazovat_sponzory]',
 		Zavod_more_divisions='$_POST[Zavod_more_divisions]',
+		Zavod_zobrazovat_sponzory='$_POST[Zavod_zobrazovat_sponzory]',
 		Zavod_zbrojni_prukaz='$_POST[Zavod_zbrojni_prukaz]',
+		Web_zobrazovat_situace='$_POST[Web_zobrazovat_situace]',
 		Zavod_cas_prematch='$_POST[Zavod_cas_prematch]',
 		Zavod_cas_prezence='$_POST[Zavod_cas_prezence]',
 		Zavod_cas_main='$_POST[Zavod_cas_main]',
@@ -65,7 +65,8 @@ if (isset($_GET[match_config])) {
 		Zavod_pocet_dni_na_platbu='$_POST[Zavod_pocet_dni_na_platbu]',
 		Zavod_vysledky='$_POST[Zavod_vysledky]',
 		Squad_main_max='$_POST[Squad_main_max]',
-		Squad_prem_max='$_POST[Squad_prem_max]'
+		Squad_prem_max='$_POST[Squad_prem_max]',
+		Payment_before='$_POST[Payment_before]'
 	WHERE Zavod_id='$table'";
  } 
  else {
@@ -75,9 +76,10 @@ if (isset($_GET[match_config])) {
 		Zavod='$_POST[Zavod]',
 		Zavod_datum='$_POST[Zavod_datum]',
 		Zavod_registrace_pozastaveno='$_POST[Zavod_registrace_pozastaveno]',
-		Zavod_zobrazovat_sponzory='$_POSTZavod_zobrazovat_sponzory]',
 		Zavod_more_divisions='$_POST[Zavod_more_divisions]',
-		Zavod_zbrojni_prukazy='$_POST[Zavod_zbrojni_prukazy]',
+		Zavod_zobrazovat_sponzory='$_POST[Zavod_zobrazovat_sponzory]',
+		Zavod_zbrojni_prukaz='$_POST[Zavod_zbrojni_prukaz]',
+		Web_zobrazovat_situace='$_POST[Web_zobrazovat_situace]',
 		Zavod_cas_prematch='$_POST[Zavod_cas_prematch]',
 		Zavod_cas_prezence='$_POST[Zavod_cas_prezence]',
 		Zavod_cas_main='$_POST[Zavod_cas_main]',
@@ -105,7 +107,8 @@ if (isset($_GET[match_config])) {
 		Zavod_pocet_dni_na_platbu='$_POST[Zavod_pocet_dni_na_platbu]',
 		Zavod_vysledky='$_POST[Zavod_vysledky]',
 		Squad_main_max='$_POST[Squad_main_max]',
-		Squad_prem_max='$_POST[Squad_prem_max]'
+		Squad_prem_max='$_POST[Squad_prem_max]',
+		Payment_before='$_POST[Payment_before]'
 	WHERE Zavod_id='$table'";
 }
 
@@ -125,7 +128,7 @@ else {
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
-			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>
@@ -141,15 +144,15 @@ else {
 // PRIDANI NOVEHO ZAVODNIKA
 if (isset($_GET[new_shooter])) {
   $varsymbol=substr(rand(),0,4);
-  $alias=trim(mb_convert_case($_POST[Alias], MB_CASE_UPPER, "UTF-8")).mb_convert_case($_POST[Pidiv_dalsi], MB_CASE_UPPER);
+  $alias=trim(mb_convert_case($_POST[Alias], MB_CASE_UPPER, "UTF-8")).mb_convert_case($_POST[Divize_dalsi], MB_CASE_UPPER);
   $jmeno=trim(mb_convert_case($_POST[Jmeno], MB_CASE_TITLE, "UTF-8"));
-  $prijmeni=trim(mb_convert_case($_POST[Prijmeni], MB_CASE_TITLE, "UTF-8")).mb_convert_case($_POST[Pidiv_dalsi], MB_CASE_UPPER).$_POST[Prijmeni_stav].'';
+  $prijmeni=trim(mb_convert_case($_POST[Prijmeni], MB_CASE_TITLE, "UTF-8")).mb_convert_case($_POST[Divize_dalsi], MB_CASE_UPPER).$_POST[Prijmeni_stav].'';
   $ip=($_SERVER["REMOTE_ADDR"]." - admin");
   
-  if ($_POST[pidiv]=="") {
-	$pidiv=substr("$_POST[pidiv_dalsi]", 1);
+  if ($_POST[Divize]=="") {
+	$divize=substr("$_POST[Divize_dalsi]", 1);
 	} else {
-	$pidiv=$_POST[pidiv];}
+	$divize=$_POST[Divize];}
 
   //kontrola, zda je závodnik s aliasem nebo jmenem a primenim uz zaregistrovan (bez vyřazených)
   $check="SELECT * FROM $table WHERE ((Alias = '$alias') OR (Jmeno = '$jmeno' AND Prijmeni = '$prijmeni')) AND Squad>=100";
@@ -205,7 +208,7 @@ else {
   $result = mysql_query($query) or die('Query failed: ' . mysql_error());
   $match_data = mysql_fetch_array($result);
   
-  $query="INSERT INTO ".$table." (Alias,Jmeno,Prijmeni,ZP,VarSym,Region,Mail,Kategorie,Pidiv,Pifak,Squad,DatReg,RegistraceIP,Staff,ZaplatiNaMiste,Poznamka,Zavod)
+  $query="INSERT INTO ".$table." (Alias,Jmeno,Prijmeni,ZP,VarSym,Region,Mail,Kategorie,Divize,Faktor,Squad,DatReg,RegistraceIP,Staff,ZaplatiNaMiste,Poznamka,Zavod)
   VALUES (
   '$alias',
   '$jmeno',
@@ -215,8 +218,8 @@ else {
   '$_POST[Region]',
   '$_POST[Mail]',
   '$_POST[Kategorie]',
-  '$pidiv',
-  '$_POST[Pifak]',
+  '$divize',
+  '$_POST[Faktor]',
   '$_POST[Squad]',
   '$_POST[datreg]',
   '$ip',
@@ -242,7 +245,7 @@ else {
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
-			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>
@@ -285,7 +288,8 @@ else {
 //  $squad=$nazvy_squadu[$z[Squad]]; //TO-DO získání squadůz databáze
   $squad=$z[Squad]; 
 
-  $tyden=intval(date("W",strtotime($zavod_datum)));
+  $tyden=str_replace(' ','',$match_data[Zavod_datum]);
+  $tyden=intval(date("W",strtotime($tyden)));
   $varsymbol_new="$tyden".($z[Cislo]); //prefix "18" pro var.symbol pistole.  
   $query="update ".$table." set VarSym='$varsymbol_new' where VarSym='$varsymbol'";
   $res=mysql_query($query);
@@ -323,7 +327,7 @@ else {
 // priprava podkladu pro email zavodnikovi
   $STRELEC="<b>Alias: $z[Alias]</b>"."\r\n";
   $STRELEC.="Střelec: #$z[Cislo] $z[Prijmeni] $z[Jmeno] [$link_cancel]"."\r\n";
-  $STRELEC.="Divize: $z[Pidiv] $z[Pifak]"."\r\n";
+  $STRELEC.="Divize: $z[Divize] $z[Faktor]"."\r\n";
   $STRELEC.="Kategorie: $z[Kategorie]"."\r\n";
   $STRELEC.="Squad: $squad"."\r\n\r\n";
   $STRELEC.="<i>Rozhodčí: $Rozhodci"."\r\n";
@@ -360,9 +364,9 @@ else
 
 // EDITACE ZAVODNIKA
 if (isset($_GET[edit_shooter])) {
-  $alias=trim(mb_convert_case($_POST[Alias], MB_CASE_UPPER, "UTF-8")).mb_convert_case($_POST[Pidiv_dalsi], MB_CASE_UPPER);
+  $alias=trim(mb_convert_case($_POST[Alias], MB_CASE_UPPER, "UTF-8")).mb_convert_case($_POST[Divize_dalsi], MB_CASE_UPPER);
   $jmeno=trim(mb_convert_case($_POST[Jmeno], MB_CASE_TITLE, "UTF-8"));
-  $prijmeni=trim(mb_convert_case($_POST[Prijmeni], MB_CASE_TITLE, "UTF-8")).mb_convert_case($_POST[Pidiv_dalsi], MB_CASE_UPPER).$_POST[Prijmeni_stav].'';
+  $prijmeni=trim(mb_convert_case($_POST[Prijmeni], MB_CASE_TITLE, "UTF-8")).mb_convert_case($_POST[Divize_dalsi], MB_CASE_UPPER).$_POST[Prijmeni_stav].'';
   $dnes=date_format(new DateTime(),"Y-m-d");
   $mena=$match_data[Banka_ucet_MENA];
 
@@ -373,9 +377,9 @@ $query="UPDATE ".$table." SET
   Prijmeni='$prijmeni',
   ZP='$_POST[ZP]',
   Mail='$_POST[Mail]',
-  Pidiv='$_POST[Pidiv]',
+  Divize='$_POST[Divize]',
   Kategorie='$_POST[Kategorie]',
-  Pifak='$_POST[Pifak]',
+  Faktor='$_POST[Faktor]',
   Region='$_POST[Region]',
   Squad='$_POST[Squad]',
   Staff='$_POST[Staff]',
@@ -395,9 +399,9 @@ $query="UPDATE ".$table." SET
   Prijmeni='$prijmeni',
   ZP='$_POST[ZP]',
   Mail='$_POST[Mail]',
-  Pidiv='$_POST[Pidiv]',
+  Divize='$_POST[Divize]',
   Kategorie='$_POST[Kategorie]',
-  Pifak='$_POST[Pifak]',
+  Faktor='$_POST[Faktor]',
   Region='$_POST[Region]',
   Squad='$_POST[Squad]',
   Staff='$_POST[Staff]',
@@ -420,7 +424,7 @@ if (!$result) {
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
-			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>
@@ -481,7 +485,7 @@ if (($_POST[Squad_old]=="-2") AND ($_POST[Squad_old]!=$_POST[Squad])){
 // priprava podkladu pro email zavodnikovi
   $STRELEC="<b>Alias: $z[Alias]</b>"."\r\n";
   $STRELEC.="Střelec: #$z[Cislo] $z[Prijmeni] $z[Jmeno] [$link_cancel]"."\r\n";
-  $STRELEC.="Divize: $z[Pidiv] $z[Pifak]"."\r\n";
+  $STRELEC.="Divize: $z[Divize] $z[Faktor]"."\r\n";
   $STRELEC.="Kategorie: $z[Kategorie]"."\r\n";
   $STRELEC.="Squad: $squad"."\r\n\r\n";
 
@@ -531,7 +535,7 @@ if (($_POST[Squad_old]=="-2") AND ($_POST[Squad_old]!=$_POST[Squad])){
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-2 '>Při odeslání registračního emailu došlo k chybě!</p>
-			<p class='text-center small '>Pošlete email z administrace pomocí tlačítka <i class='fa fa-envelope pr-1' style='font-size:16px; color: #007bff'></i><b>Poslat závodníkovi registrační email</b> nebo kontaktujte správce aplikace</p>
+			<p class='text-center small '>Pošlete email z administrace pomocí tlačítka <i class='fa fa-envelope pr-1' style='font-size:16px; color: #007bff'></i><b>Poslat závodníkovi registrační email</b> nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>
@@ -575,7 +579,7 @@ else {
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
-			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>
@@ -613,7 +617,7 @@ else {
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
-			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>
@@ -631,7 +635,7 @@ $z=mysql_fetch_array($strelci);
    $STRELEC="<b>Alias: $z[Alias]</b>"."\r\n";
    $STRELEC.="Střelec: #$z[Cislo] $z[Prijmeni] $z[Jmeno]"."\r\n";
    $STRELEC.="Kategorie: $z[Kategorie]"."\r\n";
-   $STRELEC.="Divize: $z[Pidiv] $z[Pifak]"."\r\n";
+   $STRELEC.="Divize: $z[Divize] $z[Faktor]"."\r\n";
 
    $from_text="";
    $from=$match_data[Zavod_email_from];
@@ -651,7 +655,7 @@ if (!$send_email) {
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-2 '>Při odeslání emailu došlo k chybě!</p>
-			<p class='text-center small '>Kontaktujte správce aplikace</p>
+			<p class='text-center small '>kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>
@@ -680,7 +684,7 @@ if (!$result) {
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-3 '>Nebylo možné dohledat střelce!</p>
-			<p class='text-center small'>Vraťte se zpět do administrace a zkontrolujte, zda nebyl mezitím smazán nebo kontaktujte správce aplikace.</p>
+			<p class='text-center small'>Vraťte se zpět do administrace a zkontrolujte, zda nebyl mezitím smazán nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>
@@ -729,7 +733,7 @@ else {
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
-			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>
@@ -749,7 +753,7 @@ $z=mysql_fetch_array($strelci);
    $STRELEC="<b>Alias: $z[Alias]</b>"."\r\n";
    $STRELEC.="Střelec: #$z[Cislo] $z[Prijmeni] $z[Jmeno]"."\r\n";
    $STRELEC.="Kategorie: $z[Kategorie]"."\r\n";
-   $STRELEC.="Divize: $z[Pidiv] $z[Pifak]"."\r\n";
+   $STRELEC.="Divize: $z[Divize] $z[Faktor]"."\r\n";
    $STRELEC.="Squad: $squad"."\r\n";
 
    $from_text="";
@@ -770,7 +774,7 @@ if (!$send_email) {
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-2 '>Při odeslání emailu došlo k chybě!</p>
-			<p class='text-center small '>Kontaktujte správce aplikace</p>
+			<p class='text-center small '>kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>
@@ -783,69 +787,71 @@ if (!$send_email) {
 // KONEC EVIDENCE UHRADY PLATBY
 
 
-// PLACENI ZAVODU NA MISTE
-if (isset($_GET[payment_before_off])) {
-  $query="update match_config set Payment_before='', Zavod_pocet_dni_na_platbu='365' where Zavod_id='$table'";
-  $result = mysql_query($query);
-
-if ($result) {
-	header("refresh:0;url=index.php");
-	exit;
- }
-
-else {
- echo "
-	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
-	 <div class='modal-dialog'>
-		<div class='modal-content'>
-		   <div class='modal-header bg-danger text-center'>
-			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
-		   </div>
-		<div class='modal-body'>
-			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
-			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
-		<div class='modal-footer border-top-0 mt-2'>
-			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
-		</div>
-	  </div>
-	 </div>
-	</div>
-	";
- }
-};
-// PLACENI ZAVODU NA MISTE
-
-// PLACENI ZAVODU do 10 dnu od registrace
-if (isset($_GET[payment_before_on])) {
-  $query="update match_config set Payment_before='on', Zavod_pocet_dni_na_platbu='10' where Zavod_id='$table'";
-  $result = mysql_query($query);
-
-if ($result) {
-	header("refresh:0;url=index.php");
-	exit;
- }
-
-else {
- echo "
-	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
-	 <div class='modal-dialog'>
-		<div class='modal-content'>
-		   <div class='modal-header bg-danger text-center'>
-			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
-		   </div>
-		<div class='modal-body'>
-			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
-			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
-		<div class='modal-footer border-top-0 mt-2'>
-			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
-		</div>
-	  </div>
-	 </div>
-	</div>
-	";
- }
-}
-// PLACENI ZAVODU do 10 dnu od registrace
+// // PLACENI ZAVODU NA MISTE
+// if (isset($_GET[payment_before_off])) {
+// //  $query="update match_config set Payment_before='', Zavod_pocet_dni_na_platbu='365' where Zavod_id='$table'";
+//   $query="update match_config set Payment_before='' where Zavod_id='$table'";
+//   $result = mysql_query($query);
+// 
+// if ($result) {
+// 	header("refresh:0;url=index.php");
+// 	exit;
+//  }
+// 
+// else {
+//  echo "
+// 	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+// 	 <div class='modal-dialog'>
+// 		<div class='modal-content'>
+// 		   <div class='modal-header bg-danger text-center'>
+// 			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+// 		   </div>
+// 		<div class='modal-body'>
+// 			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+// 			<p class='text-center small'>Zkuste to později nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
+// 		<div class='modal-footer border-top-0 mt-2'>
+// 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+// 		</div>
+// 	  </div>
+// 	 </div>
+// 	</div>
+// 	";
+//  }
+// };
+// // PLACENI ZAVODU NA MISTE
+// 
+// // PLACENI ZAVODU do 10 dnu od registrace
+// if (isset($_GET[payment_before_on])) {
+//   $query="update match_config set Payment_before='on' where Zavod_id='$table'";
+// //  $query="update match_config set Payment_before='on', Zavod_pocet_dni_na_platbu='10' where Zavod_id='$table'";
+//   $result = mysql_query($query);
+// 
+// if ($result) {
+// 	header("refresh:0;url=index.php");
+// 	exit;
+//  }
+// 
+// else {
+//  echo "
+// 	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+// 	 <div class='modal-dialog'>
+// 		<div class='modal-content'>
+// 		   <div class='modal-header bg-danger text-center'>
+// 			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+// 		   </div>
+// 		<div class='modal-body'>
+// 			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+// 			<p class='text-center small'>Zkuste to později nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
+// 		<div class='modal-footer border-top-0 mt-2'>
+// 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+// 		</div>
+// 	  </div>
+// 	 </div>
+// 	</div>
+// 	";
+//  }
+// }
+// // PLACENI ZAVODU do 10 dnu od registrace
 
 
 // SPRÁVA DIVIZÍ
@@ -873,7 +879,7 @@ else {
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
-			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>
@@ -906,7 +912,7 @@ else {
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
-			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujtekontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>
@@ -944,7 +950,7 @@ else {
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
-			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>
@@ -977,7 +983,7 @@ else {
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
-			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>
@@ -1015,7 +1021,7 @@ else {
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
-			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>
@@ -1048,7 +1054,7 @@ else {
 		   </div>
 		<div class='modal-body'>
 			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
-			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>
 		<div class='modal-footer border-top-0 mt-2'>
 			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
 		</div>

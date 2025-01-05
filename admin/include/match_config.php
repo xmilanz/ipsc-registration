@@ -53,12 +53,6 @@
 				</label>
 		  </div>
 
-			<div class="col-md-12 ml-4 mt-2 ">
-				<label class="form-check-label" for="Zavod_zobrazovat_sponzory">
-					<input type="checkbox" class="form-check-input" id="Zavod_zobrazovat_sponzory" name="Zavod_zobrazovat_sponzory" <?php if ( $match_configuration['Zavod_zobrazovat_sponzory']=="on"){ echo "CHECKED";};?> >Zobrazovat sponzory</span>
-				</label>
-		  </div>
-
 			<div class="col-md-12 py-2"></div>
 			
 			<div class="col-md-12">
@@ -83,24 +77,35 @@
       </div>
     </div>
 
-   <!-- accordion 2 Organizace závodu  -->
+   <!-- accordion 2 Nastavení závodu  -->
     <div class="card">
     <a class="card-link" data-toggle="collapse" href="#collapseTwo">
-	  <div class="card-header font-weight-bolder ">Organizace závodu</div>
+	  <div class="card-header font-weight-bolder ">Nastavení webových stránek a závodu</div>
       </a>
      <div id="collapseTwo" class="collapse" data-parent="#accordion">
         <div class="card-body">
 			<div class="row">
 
-			  <div class="col-md-12 ml-4 mt-2 ">
-					<label class="form-check-label" for="Zavod_more_divisions">
-						<input type="checkbox" class="form-check-input" id="Zavod_more_divisions" name="Zavod_more_divisions" <?php if ( $match_configuration['Zavod_more_divisions']=="on"){ echo "CHECKED";};?> ><span class="tooltip">Umožnit závodníkovi zaregistrovat se do více divizí<span class="tooltiptext">Závodník se může zaregistrovat vícekrát bez nutnosti zadat jiné registrační údaje (alias, jméno a příjmení).<br><br>Do aliasu a příjmení se doplní zkratka divize (např. ALIAS-MR, PŘÍJMENÍ-MR</span></span>
+			  <div class="col-md-5 mb-3  ml-3">
+				<label class="form-check-label" for="Zavod_zobrazovat_sponzory">
+					<input type="checkbox" class="form-check-input" id="Zavod_zobrazovat_sponzory" name="Zavod_zobrazovat_sponzory" <?php if ( $match_configuration['Zavod_zobrazovat_sponzory']=="on"){ echo "CHECKED";};?> >Zobrazovat sponzory</span>
+				</label>
+			</div>
+				<div class="col-md-6 mb-3">
+					<label class="form-check-label" for="Web_zobrazovat_situace">
+						<input type="checkbox" class="form-check-input" id="Web_zobrazovat_situace" name="Web_zobrazovat_situace" <?php if ( $match_configuration['Web_zobrazovat_situace']=="on"){ echo "CHECKED";};?> ><span class="tooltip">Zobrazovat situace<span class="tooltiptext">Pokud nebudete v registraci zveřejňovat obrázky situací, odškrtněte volbu</span></span>
 					</label>
 			  </div>
 
-			  <div class="col-md-12 ml-4 mt-2 ">
+			  <div class="col-md-5 mb-3  ml-3">
+					<label class="form-check-label" for="Zavod_more_divisions">
+						<input type="checkbox" class="form-check-input" id="Zavod_more_divisions" name="Zavod_more_divisions" <?php if ( $match_configuration['Zavod_more_divisions']=="on"){ echo "CHECKED";};?> ><span class="tooltip">Registrace do více divizí<span class="tooltiptext">Závodník se může zaregistrovat vícekrát bez nutnosti zadat jiné registrační údaje (alias, jméno a příjmení).<br><br>Do aliasu a příjmení se doplní zkratka divize (např. ALIAS-MR, PŘÍJMENÍ-MR</span></span>
+					</label>
+			  </div>
+
+			  <div class="col-md-6 mb-3">
 					<label class="form-check-label" for="Zavod_zbrojni_prukaz">
-						<input type="checkbox" class="form-check-input" id="Zavod_zbrojni_prukaz" name="Zavod_zbrojni_prukaz" <?php if ( $match_configuration['Zavod_zbrojni_prukaz']=="on"){ echo "CHECKED";};?> >Evidovat zbrojní průkazy
+						<input type="checkbox" class="form-check-input" id="Zavod_zbrojni_prukaz" name="Zavod_zbrojni_prukaz" <?php if ( $match_configuration['Zavod_zbrojni_prukaz']=="on"){ echo "CHECKED";};?> >Evidovat ZP
 					</label>
 			  </div>
 
@@ -326,11 +331,18 @@
 	<!-- accordion 4 placení závodu -->
 		<div class="card ">
 		<a class="collapsed card-link" data-toggle="collapse" href="#collapseFive">
-			<div class="card-header font-weight-bolder ">Placení závodu</div>
+			<div class="card-header font-weight-bolder ">Placení závodu <span class="text-secondary small"><?php if ($match_configuration['Payment_before']=="on") {echo "(startovné se platí do " .$match_configuration['Zavod_pocet_dni_na_platbu'] ." dnů od registrace)";} else {echo "(startovné se platí na místě)";} ?> </span></div>
 		</a>
 		<div id="collapseFive" class="collapse" data-parent="#accordion">
 			<div class="card-body">
 			<div class="row">
+
+			<div class="col-md-12 ml-4 mb-3 ">
+				<label class="form-check-label" for="Payment_before">
+					<input type="checkbox" class="form-check-input" id="Payment_before" name="Payment_before" <?php if ( $match_configuration['Payment_before']=="on"){ echo "CHECKED";};?> ><span class="font-weight-bold text-danger">Placení startovného <?php echo $match_configuration['Zavod_pocet_dni_na_platbu'];?> dnů od registrace</span>
+				</label>
+		  </div>
+
 
 			<div class="col-md-4">
 				<label for="Banka_ucet_CASTKA" class="form-label pt-1">Startovné (<?php echo $match_configuration['Banka_ucet_MENA']; ?>)</label>

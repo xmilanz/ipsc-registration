@@ -112,11 +112,11 @@ if ($match_data[Zavod_zbrojni_prukaz]=="") {
 			</div>
  			<div class="col-md-3">
 				<label class="form-label pt-1">Divize</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Pidiv']; ?>">
+				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Divize']; ?>">
 			  </div>
  			<div class="col-md-3">
 				<label class="form-label pt-1">Faktor</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Pifak']; ?>">
+				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Faktor']; ?>">
 			  </div>
  			<div class="col-md-3">
 				<label class="form-label pt-1">Region</label>

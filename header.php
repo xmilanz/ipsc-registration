@@ -1,6 +1,6 @@
 <?php
 
-if (file_exists('../db/dbconn.php')) {
+if (file_exists('./db/dbconn.php')) {
     require_once './db/dbconn.php';
 } elseif (file_exists('../db/dbconn.php')) {
     require_once '../db/dbconn.php';
@@ -18,18 +18,17 @@ if ($match_data[Payment_before]=="") {
    $paymentBeforeClass=" d-none";
 }
 
-if ($match_data[Payment_before]=="on") {
-   $paymentMatchClass=" d-none";
+if ($match_data[Web_zobrazovat_situace]=="") {
+   $ZobrazovatSituaceClass=" d-none";
 }
 
 // nastaveni poradatele pro soubor stylů
-if ((strpos($match_data[Zavod_poradatel], 'Eggenberg')) !== false) {
+if ((strpos($match_data[Zavod_poradatel], 'Eggenberg') | strpos($match_data[Zavod_poradatel],'EGGENBERG') | strpos($match_data[Zavod_poradatel],'eggenebrg')) !== false) {
 	$poradatel="eggenberg";
 	$sponzor="<a href='https://www.mujnuz.cz/' target='_blank'><img src='./images/mujnuz.png' class='img-thumbnail mb-3 mx-auto d-block' alt='Můj nůž.cz'></a>";
-
-
 }
-elseif ((strpos($match_data[Zavod_poradatel], 'Pelhřimov')) !== false) {
+elseif ((strpos($match_data[Zavod_poradatel], 'Pelhřimov') || strpos($match_data[Zavod_poradatel], 'PELHŘIMOV') || strpos($match_data[Zavod_poradatel], 'pelhřimov') || strpos($match_data[Zavod_poradatel], 'Pelhrimov') || strpos($match_data[Zavod_poradatel], 'PELHRIMOV') || strpos($match_data[Zavod_poradatel], 'pelhrimov')) !== false) {
+
 	$poradatel="pelhrimov";
 	$sponzor="<a href='http://www.jankruta.cz/' target='_blank'><img src='./images/jan_kruta.gif' width='30%' class='img-thumbnail mb-3 mx-auto d-block' alt='Jan Krůta'></a>";
 }
@@ -100,7 +99,7 @@ else {
     <li class="nav-item">
       <a class="nav-link" href="./zavodnici.php">Závodníci</a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item <?php echo "$ZobrazovatSituaceClass"; ?>">
       <a class="nav-link" href="./situace.php">Situace</a>
     </li>
     <li class="nav-item">

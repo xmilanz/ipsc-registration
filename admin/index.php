@@ -18,21 +18,26 @@ if (file_exists('./db/dbconn.php')) {
     include '../db/dbconn.php';
 }
 
+
+//$query = "SELECT * from match_config where Zavod_id='$table'";
+//$result = mysql_query($query) or die('Query failed: ' . mysql_error());
+//$match_data = mysql_fetch_array($result);
+
 // nastaveni poradatele pro soubor stylů
-if ((strpos($match_data[Zavod_poradatel], 'Eggenberg')) !== false) {
+if ((strpos($match_data[Zavod_poradatel], 'Eggenberg') | strpos($match_data[Zavod_poradatel],'EGGENBERG') | strpos($match_data[Zavod_poradatel],'eggenebrg')) !== false) {
 	$poradatel="eggenberg";
 }
-elseif ((strpos($match_data[Zavod_poradatel], 'Pelhřimov')) !== false) {
+elseif ((strpos($match_data[Zavod_poradatel], 'Pelhřimov') || strpos($match_data[Zavod_poradatel], 'PELHŘIMOV') || strpos($match_data[Zavod_poradatel], 'pelhřimov') || strpos($match_data[Zavod_poradatel], 'Pelhrimov') || strpos($match_data[Zavod_poradatel], 'PELHRIMOV') || strpos($match_data[Zavod_poradatel], 'pelhrimov')) !== false) {
 	$poradatel="pelhrimov";
 }
 else {
 	$poradatel="";
 }
 
+if ($match_data[Payment_before]=="") {
+     $paymentBeforeClass.=" d-none";
+  }
 
-$query = "SELECT * from match_config where Zavod_id='$table'";
-$result = mysql_query($query) or die('Query failed: ' . mysql_error());
-$match_data = mysql_fetch_array($result);
 ?>
 
 <HTML>
@@ -116,25 +121,18 @@ $match_data = mysql_fetch_array($result);
 		</div>
 
 		<div class="dropdown" id="dropdownContainer2">
-			<button class="btn btn-dark dropdown-toggle mx-2" id="dropdownButton2">Nastavení soutěže</button>
+			<button class="btn btn-dark dropdown-toggle mx-2" id="dropdownButton2">Nastavení závodu</button>
 				<div class="custom-dropdown" id="customDropdown2">
 					<a href="" class="" data-toggle="modal" data-target="#manage_squads">Squady</a>
 					<a href="" class="" data-toggle="modal" data-target="#manage_divisions">Divize</a>
 					<a href="" class="" data-toggle="modal" data-target="#manage_categories">Kategorie</a>
+					<a href="" class="" data-toggle="modal" data-target="#upload_stages">Nahrání situací</a>
 				</div>
 		</div>
 
     </ul>
 
-	<?php
-	if ($match_data[Payment_before]=="on") {
-		include ("./include/payment_before_off.php");  
-	}
-	else {
-		include ("./include/payment_before_on.php");
-	}
-	?>
-       <a class="btn btn-danger text-white ml-4" href="logout.php"><i class="fas fa-sign-out-alt mr-2"></i>Odhlásit [<?=$_SESSION['name']?>]</a>
+    <a class="btn btn-danger text-white ml-4" href="logout.php"><i class="fas fa-sign-out-alt mr-2"></i>Odhlásit [<?=$_SESSION['name']?>]</a>
   </div>
 </nav>
 
@@ -150,13 +148,13 @@ $ip=$_SERVER["REMOTE_ADDR"];
 
 if ($match_data[Payment_before]=="on"){
 	$query=" SELECT 
-		".$table.".Cislo,Prijmeni AS 'Příjmení',Jmeno AS 'Jméno',Alias,ZP,Region,DatReg,Pidiv AS Divize,Pifak AS 'PF',Kategorie,Squad,SquadReg,Staff,Klic,FROM_UNIXTIME(DatReg,'%d.%m.%Y %T') AS  Registrace,RegistraceIP AS 'IP&nbsp;registrace',Mail,VarSym AS 'VS',DatPay AS 'Zaplatit',ZaplatiNaMiste AS 'NaMiste',Zaplaceno,Castka,DatumZaplaceni AS 'Datum&nbsp;zaplaceni',Urgence,Vyrazeno,VyrazenoIP AS 'IP&nbsp;vyrazeni',Poznamka
+		".$table.".Cislo,Prijmeni AS 'Příjmení',Jmeno AS 'Jméno',Alias,ZP,Region,DatReg,Divize,Faktor,Kategorie,Squad,SquadReg,Staff,Klic,FROM_UNIXTIME(DatReg,'%d.%m.%Y %T') AS  Registrace,RegistraceIP AS 'IP&nbsp;registrace',Mail,VarSym AS 'VS',DatPay AS 'Zaplatit',ZaplatiNaMiste AS 'NaMiste',Zaplaceno,Castka,DatumZaplaceni AS 'Datum&nbsp;zaplaceni',Urgence,Vyrazeno,VyrazenoIP AS 'IP&nbsp;vyrazeni',Poznamka
 	  FROM ".$table."
 	  WHERE Squad >=-9 ";
 	}
 	else {
 		$query=" SELECT 
-		".$table.".Cislo,Prijmeni AS 'Příjmení',Jmeno AS 'Jméno',Alias,ZP,Region,DatReg,Pidiv AS Divize,Pifak AS 'PF',Kategorie,Squad,SquadReg,Staff,Klic,FROM_UNIXTIME(DatReg,'%d.%m.%Y %T') AS Registrace,RegistraceIP AS 'IP&nbsp;registrace',Mail,VarSym AS 'VS',Vyrazeno,VyrazenoIP AS 'IP&nbsp;vyřazení',Poznamka
+		".$table.".Cislo,Prijmeni AS 'Příjmení',Jmeno AS 'Jméno',Alias,ZP,Region,DatReg,Divize,Faktor,Kategorie,Squad,SquadReg,Staff,Klic,FROM_UNIXTIME(DatReg,'%d.%m.%Y %T') AS Registrace,RegistraceIP AS 'IP&nbsp;registrace',Mail,VarSym AS 'VS',Vyrazeno,VyrazenoIP AS 'IP&nbsp;vyřazení',Poznamka
 		FROM ".$table."";
 	}
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
@@ -194,11 +192,10 @@ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
   
   // harmonogram registrace
   // 1. zavodnik se zaregistruje
-  // 2. při registraci se automaticky posle mail s platebními údaji (QR kód) a s odkazem na případné zrušení registrace
-  //	- z kontroly placení jsou vyřazeni: rozhodčí, pomocníci, VIP, čekatelé a platící předem
+  // 2. při registraci se automaticky posle mail s platebními údaji (QR kód) a odkazem na zrušení registrace
+  //	- z kontroly placení jsou vyřazeni: rozhodčí, pomocníci, VIP, čekatelé
   // 3. zavodnik do 10 dnu zaplatí nebo sám zruší registraci pomocí odkazu v registračním mailu
-  // 4. závodník do 10 dnů nezaplatí (kontrola 10. den v 06:00) - automaticky se pošle email s urgencí platby 
-  // 5. závodník ani po urgenci nezaplatí (kontrola 11. den v 18:00) => automatické vyřazení
+  // 4. závodník do 10 dnů nezaplatí (kontrola 10. den v 18:00) => automatické vyřazení
   
   // podminene formatovani
   if ($z[NaMiste]=='on') {
@@ -220,13 +217,10 @@ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
     $rowClass.=" urgence";
   }
   
-  if ((($dnes >= date('Y-m-d', strtotime($z[Zaplatit]. ' - 5 days'))) and ($row_array[Squad]>=100) and ($row_array[Staff]==NULL) and ($row_array[Zaplaceno]!=="on"))) {
+  if ((($dnes >= date('Y-m-d', strtotime($z[Zaplatit]. ' - 5 days'))) and ($row_array[Squad]>=100) and ($row_array[Staff]==NULL) and ($row_array[Zaplaceno]!=="on") and ($match_data[Payment_before]=="on"))) {
     $rowClass.=" nezaplacenopolimitu";
   }
   
-  if ($match_data[Payment_before]=="") {
-     $paymentBeforeClass.=" d-none";
-  }
   // konec podminene formatovani
   
   echo "<TR class='$rowClass'>";
@@ -277,18 +271,22 @@ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
  ?>
  </table>
 
- <div>
+ <div class="mt-3<?php echo "$paymentBeforeClass"; ?>" >
 	<h5>Vyúčtování</h5>
-	<?php foreach ($sumaZaplaceno as $mena => $castka) {echo "- zaplaceno: $castka CZK<br><br>"; } ?>
+	<?php foreach ($sumaZaplaceno as $mena => $castka) {echo "&nbsp;- zaplaceno: $castka CZK"; } ?>
+</div>
 
-		<h5>Legenda</h5>
-		- registrováno<br>
-		- rozhodčí, pomocníci a VIP neplatí (automaticky se potvrdí účast a neposílá se ani urgence ani se automaticky nevyřadí)<br>
-		- <span style='background-color: #9fff9f'>zaplaceno</span><br>
-		- <span style='color: #7433FF'>zaplatí na místě</span><br>
-		- <span style='color: #ff0000; '>ruční urgence před limitem</span><br>
-		- <span style='color: #ff0000; font-weight: bolder; '>zbývá méně jak 5 dní do zaplacení</span><br>
-		- <span style='color:#858585;background-color: #d3d3d3'>vyřazeno</span> (ve výchozím nastavení se nezobrazuje -> filtr) <br><br>
+<div class="my-4">
+	<h5>Legenda</h5>
+	&nbsp;- registrováno<br>
+	<span class="<?php echo "$paymentBeforeClass"; ?>">
+		&nbsp;- rozhodčí, pomocníci a VIP neplatí (automaticky se potvrdí účast a neposílá se ani urgence ani se automaticky nevyřadí)<br>
+		&nbsp;- <span style='background-color: #9fff9f'>zaplaceno<br></span>
+		&nbsp;- <span style='color: #7433FF'>zaplatí na místě<br></span>
+		&nbsp;- <span style='color: #ff0000; '>ruční urgence před limitem<br></span>
+		&nbsp;- <span style='color: #ff0000; font-weight: bolder; '>zbývá méně jak 5 dní do zaplacení<br></span>
+	</span>
+	&nbsp;- <span style='color:#858585;background-color: #d3d3d3'>vyřazeno</span> (ve výchozím nastavení se nezobrazuje -> filtr)
  </div>
   
 </div>
@@ -303,6 +301,7 @@ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 	include_once ("./include/categories.php");
 	include_once ("./include/divisions.php");
 	include_once ("./include/squads.php");
+	include_once ("./include/stages.php");
 	include_once ("./include/pass_values.php");  
 ?>
 

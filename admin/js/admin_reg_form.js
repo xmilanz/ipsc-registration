@@ -35,20 +35,20 @@ function avoidspace(event) {
 
 
 function togglePidiv() {
-    var pidivDalsi = document.getElementById("Pidiv_dalsi");
-    var pidiv = document.getElementById("Pidiv");
+    var pidivDalsi = document.getElementById("Divize_dalsi");
+    var pidiv = document.getElementById("Divize");
 
     if (pidivDalsi.value) {
-        pidiv.disabled = true; // Deaktivuje pole "Pidiv", pokud je vybrána hodnota v "Pidiv_dalsi"
+        pidiv.disabled = true; // Deaktivuje pole "Divize", pokud je vybrána hodnota v "Divize_dalsi"
     } else {
-        pidiv.disabled = false; // Aktivuje pole "Pidiv", pokud je vybrána prázdná hodnota v "Pidiv_dalsi"
+        pidiv.disabled = false; // Aktivuje pole "Divize", pokud je vybrána prázdná hodnota v "Divize_dalsi"
     }
 }
 
 
 function togglePidivMain() {
-    var pidivDalsi = document.getElementById("Pidiv_dalsi");
-    var pidiv = document.getElementById("Pidiv");
+    var pidivDalsi = document.getElementById("Divize_dalsi");
+    var pidiv = document.getElementById("Divize");
 
     if (pidiv.value) {
         pidivDalsi.disabled = true;

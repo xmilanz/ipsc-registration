@@ -12,10 +12,6 @@ if (file_exists('./db/dbconn.php')) {
     include '../db/dbconn.php';
 }
 
-
-//require_once ("../db/dbconn.php");
-//require_once ("../functions.php");
-
 $query = "SELECT * from match_config where Zavod_id='$table'";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 $match_data = mysql_fetch_array($result);
@@ -46,7 +42,7 @@ $link_cancel="<a href='$web_adresa_admin/zrus_ucast.php?id=$z[Cislo]&klic=$z[kli
   $STRELEC="<b>ALIAS: $z[Alias]</b>"."\r\n";
   $STRELEC.="Střelec: #$z[Cislo] $z[Prijmeni] $z[Jmeno] [$link_cancel]"."\r\n";
   $STRELEC.="Kategorie: $z[Kategorie]"."\r\n";
-  $STRELEC.="Divize: $z[Pidiv] $z[Pifak]"."\r\n";
+  $STRELEC.="Divize: $z[Divize] $z[Faktor]"."\r\n";
   $STRELEC.="Squad: $squad"."\r\n\r\n";
   $STRELEC.="<i>Rozhodčí: $Rozhodci"."\r\n";
   $STRELEC.="Pomocnik: $Pomocnik</i>"."\r\n";
@@ -135,7 +131,7 @@ $link_cancel="<a href='$web_adresa_admin/zrus_ucast.php?id=$z[Cislo]&klic=$z[kli
   $STRELEC="<b>Alias: $z[Alias]</b>"."\r\n";
   $STRELEC.="Střelec: #$z[Cislo] $z[Prijmeni] $z[Jmeno] [$link_cancel]"."\r\n";
   $STRELEC.="Kategorie: $z[Kategorie]"."\r\n";
-  $STRELEC.="Divize: $z[Pidiv] $z[Pifak]"."\r\n";
+  $STRELEC.="Divize: $z[Divize] $z[Faktor]"."\r\n";
   $STRELEC.="Squad: $squad"."\r\n";
 
   $prematch_datum=date('Y-m-d', strtotime("-1 day", strtotime($match_data[Zavod_datum])));
@@ -175,7 +171,7 @@ $link_cancel="<a href='$web_adresa_admin/zrus_ucast.php?id=$z[Cislo]&klic=$z[kli
 $send_email = email($from_text,$from,$to,$subject, $message);
 if (!$send_email) {
 	echo "<center>";
-	echo"<p style='color:#ff0000;font-weight:bolder;'>Při odeslání emailu došlo k chybě. Zkuste to později.</p>";
+	echo"<p style='color:#ff0000;font-weight:bolder;'>Při odeslání emailu došlo k chybě. Zkuste to později nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba odeslani emailu [$table]'>správce aplikace</a></p>";
 	echo "<button style=\" padding:3px; cursor:pointer;\" onclick=\"window.location.href = 'index.php';\">Zpět</button>";
 	echo "</center>";
 }

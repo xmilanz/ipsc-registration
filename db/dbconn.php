@@ -3,9 +3,6 @@
 //ini_set('display_errors',1);
 //error_reporting(E_WARNING);
 
-//include_once './config/data.php';
-//include_once '../config/data.php';
-
 if (file_exists('./config/data.php')) {
     require_once './config/data.php';
 } elseif (file_exists('../config/data.php')) {
@@ -92,40 +89,14 @@ if (mysql_num_rows($result)==1) {
   $dbver=$z[parValueI];
 }
 
-if ($dbver<2) {
-  require_once 'dbupdate2.php';
-}
-if ($dbver<2.1) {
-  require_once 'dbupdate2_1.php';
-}
-if ($dbver<2.2) {
-  require_once 'dbupdate2_2.php';
-}
-if ($dbver<2.3) {
-  require_once 'dbupdate2_3.php';
-}
-if ($dbver<2.4) {
-  require_once 'dbupdate2_4.php';
-}
-if ($dbver<2.5) {
-  require_once 'dbupdate2_5.php';
-}
-if ($dbver<2.6) {
-  require_once 'dbupdate2_6.php';
-}
-if ($dbver<2.7) {
-  require_once 'dbupdate2_7.php';
-}
-if ($dbver<2.8) {
-  require_once 'dbupdate2_8.php';
-}
-if ($dbver<2.9) {
-  require_once 'dbupdate2_9.php';
-}
 if ($dbver<3) {
   require_once 'dbupdate3.php';
 }
 if ($dbver<3.1) {
   require_once 'dbupdate3_1.php';
+}
+
+if ($dbver<3.2) {
+  require_once 'dbupdate3_2.php';
 }
 ?>

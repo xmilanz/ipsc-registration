@@ -147,7 +147,7 @@ for ($i = -2; $i <= 211; $i++) {
 	<?php
 	#### - zobrazeni jmen v konkretnim squadu
 		if ($reg_started==true) {
-		  $query = "SELECT alias,Prijmeni,Jmeno,Zaplaceno,DatumZaplaceni,ZaplatiNaMiste,DatPay,Pidiv,Pifak,Staff,Squad,Urgence FROM ".$table." WHERE Squad='".$i."' ORDER BY Zaplaceno DESC,Prijmeni";
+		  $query = "SELECT Alias,Prijmeni,Jmeno,Zaplaceno,DatumZaplaceni,ZaplatiNaMiste,DatPay,Divize,Faktor,Staff,Squad,Urgence FROM ".$table." WHERE Squad='".$i."' ORDER BY Zaplaceno DESC,Prijmeni";
 		  $result =  mysql_query($query) or die('Query failed: ' . mysql_error());
 		  while ($line = mysql_fetch_array($result)) {
 
@@ -163,7 +163,7 @@ for ($i = -2; $i <= 211; $i++) {
 			$vipIcon="";
 				if ($line[Staff]=="VIP") {$vipIcon="<i class='far fa-crown' style='font-size:12px'></i>";};
 
-			echo "<span class='font-weight-bold text-nowrap'>".$serieIcon.$roIcon.$pomIcon.$vipIcon."&nbsp;$line[Jmeno]&nbsp;$line[Prijmeni]</span>&nbsp;<span class=\"font-weight-light\">'$line[alias]'</span></span>,  ";
+			echo "<span class='font-weight-bold text-nowrap'>".$serieIcon.$roIcon.$pomIcon.$vipIcon."&nbsp;$line[Jmeno]&nbsp;$line[Prijmeni]</span>&nbsp;<span class=\"font-weight-light\">'$line[Alias]'</span></span>,  ";
 			};
 		}
 		#### - konec zobrazeni jmen v konkretnim squadu
@@ -189,13 +189,13 @@ for ($i = -2; $i <= 211; $i++) {
 
 			echo "<input type=hidden name=varsymbol value=".$varsymbol.">";
 			echo "<input type=hidden name=datreg value=".$sec.">";
-			echo "<input type=hidden name=squad value=".$i.">";
+			echo "<input type=hidden name=Squad value=".$i.">";
 			?>
 
 			<div class="col-md-4">
 				<!--div class="form"-->
-				  <label for="alias" class="form-label font-weight-bold">Alias&nbsp;&nbsp;<a href="https://www.ipsc-tech.org/ics/hq/embdAliasAvail.aspx"  target="_blank"  data-toggle="tooltip" title="Ověřte, zda není zadávaný alias již registrovaný."><button type="button" class="btn btn-outline-success btn-sm">Ověřit</button></a>&nbsp;&nbsp;<a href="https://www.ipsc-tech.org/ics/hq/embdAliasReg.aspx" target="_blank" data-toggle="tooltip" title="Pokud ještě nemáte alias, zaregistrujte si jej."><button type="button" class="btn btn-outline-primary btn-sm">Vytvořit</button></a></label>
-				  <input pattern=".{3,16}" class="form-control" type="text" name="alias" id="alias<?php echo"$i";?>" placeholder="3-16 znaků, diakritiky a spec. znaků" onkeypress="return avoidspace(event)" onfocus="this.placeholder = ''" onblur="replaceChars()" required>
+				  <label for="Alias" class="form-label font-weight-bold">Alias&nbsp;&nbsp;<a href="https://www.ipsc-tech.org/ics/hq/embdAliasAvail.aspx"  target="_blank"  data-toggle="tooltip" title="Ověřte, zda není zadávaný alias již registrovaný."><button type="button" class="btn btn-outline-success btn-sm">Ověřit</button></a>&nbsp;&nbsp;<a href="https://www.ipsc-tech.org/ics/hq/embdAliasReg.aspx" target="_blank" data-toggle="tooltip" title="Pokud ještě nemáte alias, zaregistrujte si jej."><button type="button" class="btn btn-outline-primary btn-sm">Vytvořit</button></a></label>
+				  <input pattern=".{3,16}" class="form-control" type="text" name="Alias" id="Alias<?php echo"$i";?>" placeholder="3-16 znaků, diakritiky a spec. znaků" onkeypress="return avoidspace(event)" onfocus="this.placeholder = ''" onblur="replaceChars(<?php echo $i; ?>)" required>
 				  <div class="invalid-feedback">Nevyplnili jste IPSC alias nebo má neplatnou délku (3-16 znaků)</div>
 				  <label class="alias_validation" data-error="Použili jste písmena s diakritikou nebo speciální znaky"></label>
 				<!--/div-->
@@ -210,37 +210,37 @@ for ($i = -2; $i <= 211; $i++) {
 			<div class="<?php if ($match_data[Zavod_zbrojni_prukaz]=="on") {echo "col-md-4";} else {echo "col-md-8";}; ?>"></div>
 
 			<div class="col-md-3">
-				<label for="jmeno" class="form-label mt-3">Jméno</label>
-				<input class="form-control" type="text" name="jmeno" id="jmeno<?php echo"$i";?>" onkeypress="return avoidspace(event)" placeholder="Jan" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Jan'" required>
+				<label for="Jmeno" class="form-label mt-3">Jméno</label>
+				<input class="form-control" type="text" name="Jmeno" id="Jmeno<?php echo"$i";?>" onkeypress="return avoidspace(event)" placeholder="Jan" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Jan'" required>
 				<div class="invalid-feedback">Nevyplnili jste jméno</div>
 			  </div>
 			  <div class="col-md-3">
 				<label class="form-label mt-3">Příjmení</label>
-				<input class="form-control" type="text" name="prijmeni" id="prijmeni<?php echo"$i";?>" onkeypress="return avoidspace(event)" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Novák'" placeholder="Novák" required>
+				<input class="form-control" type="text" name="Prijmeni" id="Prijmeni<?php echo"$i";?>" onkeypress="return avoidspace(event)" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Novák'" placeholder="Novák" required>
 				<div class="invalid-feedback">Nevyplnili jste příjmení</div>
 			  </div>
 			  <div class="col-md-2">
 				<label class="form-label mt-3">Doplnění jména</label>
-				<select name="prijmeni_stav" id="prijmeni_stav<?php echo"$i";?>" class="custom-select">
+				<select name="Prijmeni_stav" id="Prijmeni_stav<?php echo"$i";?>" class="custom-select">
 					<option value="" selected>-</option>
 					<option value=" ml.">ml.</option>
 					<option value=" st.">st.</option>
 				</select>
 			  </div>
 			<div class="col-md-4">
-				<label for="email" class="form-label mt-3">Email</label>
+				<label for="Email" class="form-label mt-3">Email</label>
 				<div class="input-group">
 					<div class="input-group-prepend">
 					<div class="input-group-text">@</div>
 					</div>
-						<input class="form-control" type="email" id="email<?php echo"$i";?>" name="email" onfocus="this.placeholder = ''" onkeypress="return avoidspace(event)" placeholder="novak@mujemail.cz" onblur="replaceChars()" required>
+						<input class="form-control" type="Email" id="Email<?php echo"$i";?>" name="Email" onfocus="this.placeholder = ''" onkeypress="return avoidspace(event)" placeholder="novak@mujemail.cz" onblur="replaceChars(<?php echo $i; ?>)" required>
 				</div>
 				<div class="invalid-feedback">Nevyplnili jste email</div>
 			</div>
 	 
 			<div class="col-md-2">
-				<label for="kategorie" class="form-label mt-3">Kategorie</label>
-				<select name="kategorie" id="kategorie<?php echo"$i";?>" class="custom-select" required>
+				<label for="Kategorie" class="form-label mt-3">Kategorie</label>
+				<select name="Kategorie" id="Kategorie<?php echo"$i";?>" class="custom-select" required>
 					<option value="" selected>--- vyberte ---</option>
 					<?php
 					$query = mysql_query("SELECT * from $table_categories");
@@ -253,11 +253,9 @@ for ($i = -2; $i <= 211; $i++) {
 				<div class="invalid-feedback">Nevybrali jste kategorii</div>
 			</div>
 
-<!-- TO-DO - required u divizí a ZP -->
-
 			<div class="col-md-2">
 				<label for="divize" class="form-label mt-3">Divize</label>
-				  <select class="form-control" name="pidiv" id="pidiv<?php echo"$i";?>" onchange="togglePidivMain()" <?php echo "$zavodDivisionsRequired"; ?>>
+				  <select class="form-control" name="Divize" id="Divize<?php echo"$i";?>" onchange="toggleDivizeMain(<?php echo $i; ?>)" <?php echo "$zavodDivisionsRequired"; ?>>
 					<option value="" selected>--- vyberte ---</option>
 					<?php
 					$query = mysql_query("SELECT * from $table_divisions");
@@ -271,18 +269,19 @@ for ($i = -2; $i <= 211; $i++) {
 			  </div>
 
 			<div class="col-md-2 <?php echo "$zavodMoreDivisionsClass"; ?>">
-				<label for="divize_dalsi" class="form-label mt-3 mb-1 text-danger tooltip">Další divize
+				<label for="divize_dalsi" class="form-label mt-3 mb-1 text-danger tooltip">Další divize <i class="fa fa-question-circle" aria-hidden="true"></i>
 					<span class="tooltiptext">
 						<span>Střílíte-li v závodě ve více divizích, postupujte tímto způsobem:
 							<ul>
-								<li>při první registaci použijte seznam divizí, který je pod řádkem Jméno, Příjmení ....</li>
-								<li>po dokončení registrace vyberte požadovaný squad a vyplňte stejné údaje (Alias, Jméno, Příjmení, Email, Kategorie, Region)</li>
-								<li>další DIVIZI vyberte ze seznamu "Registrace ve více divizích"</li>
+								<li>Při první registaci použijte první seznam divizí.</li>
+								<li>Po dokončení registrace vyberte squad a vyplňte stejné údaje (Alias, Jméno, Příjmení, Email, Kategorie, Region).</li>
+								<li>Další DIVIZI vyberte ze seznamu "Další divize"</li>
 							</ul>
+							<i>(jakmile se vybere jedna divize, není možné použít druhý seznam divizí)</i>
 						</span>
 					</span>
 				</label>
-					<select class="form-control" name="pidiv_dalsi" id="pidiv_dalsi<?php echo"$i";?>" onchange="togglePidiv()" <?php echo "$zavodMoreDivisionsRequired"; ?> >	
+					<select class="form-control" name="Divize_dalsi" id="Divize_dalsi<?php echo"$i";?>" onchange="toggleDivize(<?php echo $i; ?>)" <?php echo "$zavodMoreDivisionsRequired"; ?> >	
 					<option value="" selected>--- vyberte ---</option>
 					<?php
 					$query = mysql_query("SELECT * from $table_divisions");
@@ -295,8 +294,8 @@ for ($i = -2; $i <= 211; $i++) {
 			</div>
 
 			<div class="col-md-2">
-				<label for="faktor" class="form-label mt-3">Faktor</label>
-				<select name="pifak" id="faktor<?php echo"$i";?>" class="custom-select" required>
+				<label for="Faktor" class="form-label mt-3">Faktor</label>
+				<select name="Faktor" id="Faktor<?php echo"$i";?>" class="custom-select" required>
 				  <option value="" selected>--- vyberte ---</option>
 					  <option value="MIN">Minor</option>
 					  <option value="MAJ">Major</option>
@@ -305,8 +304,8 @@ for ($i = -2; $i <= 211; $i++) {
 			</div>
 
 			<div class="col-md-2">
-				<label for="region" class="form-label mt-3">Region</label>
-				<select name="region" id="region<?php echo"$i";?>" class="custom-select" required>
+				<label for="Region" class="form-label mt-3">Region</label>
+				<select name="Region" id="Region<?php echo"$i";?>" class="custom-select" required>
 					  <option value="AUS">Austria</option>
 					  <option value="CZE" selected>Czech Republic</option>
 					  <option value="GER">Germany</option>

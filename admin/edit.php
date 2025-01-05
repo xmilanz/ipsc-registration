@@ -101,9 +101,9 @@ if ($match_data[Payment_before]=="") {
 
 		<div class="col-md-10 pt-4 font-weight-bolder">Závod</div>
 			<div class="col-md-6">
-				<label for="Pidiv" class="form-label pt-2">Divize</label>
-				  <select class="form-control" name=Pidiv required>
-					<option value="<?php echo "$line[Pidiv]";?>"><?php echo "$line[Pidiv]";?></option>
+				<label for="Divize" class="form-label pt-2">Divize</label>
+				  <select class="form-control" name=Divize required>
+					<option value="<?php echo "$line[Divize]";?>"><?php echo "$line[Divize]";?></option>
 					<?php
 					$query = mysql_query("SELECT * from $table_divisions");
 						while($division = mysql_fetch_array($query))
@@ -114,22 +114,22 @@ if ($match_data[Payment_before]=="") {
 				  </select>
 			</div>
 			<div class="col-md-6">
-				<label for="Kategorie" class="form-label pt-2">Kategorie</label>
+				<label for="Kategorie" class="form-label mt-2">Kategorie</label>
 				  <select class="form-control" name=Kategorie required>
 					<option value="<?php echo "$line[Kategorie]";?>"><?php echo "$line[Kategorie]";?></option>
 					<?php
 					$query = mysql_query("SELECT * from $table_categories");
 						while($category = mysql_fetch_array($query))
 						{
-							echo "<option value=".$category['id'].">". $category['Name']."</option>";
+							echo "<option value=".$category['Name'].">". $category['Name']."</option>";
 						}
 					?>
 				  </select>
 			</div>
 			<div class="col-md-6">
-				<label for="Pifak" class="form-label pt-2">Faktor</label>
-					<select class="form-control" name=Pifak required>
-						<option value="<?php echo "$line[Pifak]";?>"><?php echo "$line[Pifak]";?></option>
+				<label for="Faktor" class="form-label pt-2">Faktor</label>
+					<select class="form-control" name=Faktor required>
+						<option value="<?php echo "$line[Faktor]";?>"><?php echo "$line[Faktor]";?></option>
 						<option value="MIN">Minor</option>
 						<option value="MAJ">Major</option>
 					</select>

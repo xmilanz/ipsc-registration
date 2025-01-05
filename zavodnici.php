@@ -1,7 +1,7 @@
 <?php
 include "./header.php";
 
-$query = "SELECT Prijmeni,Jmeno,Alias,Pidiv,Pifak,Kategorie,Squad FROM ".$table." where Squad>=100 ORDER BY Prijmeni";
+$query = "SELECT Prijmeni,Jmeno,Alias,Divize,Faktor,Kategorie,Squad FROM ".$table." where Squad>=100 ORDER BY Prijmeni";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 ?>
 
@@ -31,7 +31,7 @@ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
   	while ($line = mysql_fetch_array($result)) {
   	  echo "\t<tr>\n";
   	  echo "<TD>";
-		echo $line["Prijmeni"]."</TD><TD>".$line["Jmeno"]."</TD><TD>".$line["Alias"]."</TD><TD>".$line["Pidiv"]."</TD><TD>".$line["Pifak"]."</TD><TD>".$line["Kategorie"]."</TD><TD>".$line["Squad"]."</TD></tr>\n";
+		echo $line["Prijmeni"]."</TD><TD>".$line["Jmeno"]."</TD><TD>".$line["Alias"]."</TD><TD>".$line["Divize"]."</TD><TD>".$line["Faktor"]."</TD><TD>".$line["Kategorie"]."</TD><TD>".$line["Squad"]."</TD></tr>\n";
   	}
   	?>
   </table>
@@ -70,10 +70,10 @@ $resNEPLACENO=mysql_query($queryNEPLACENO);
 $zNEPLACENO=mysql_fetch_array($resNEPLACENO);
 
 if ($match_data[Payment_before]=="") {
-	$query = "SELECT Pidiv,Count(Alias) as Count FROM $table where Squad>=100 GROUP BY Pidiv HAVING count(Alias)>=0 ORDER BY Pidiv";
+	$query = "SELECT Divize,Count(Alias) as Count FROM $table where Squad>=100 GROUP BY Divize HAVING count(Alias)>=0 ORDER BY Divize";
 	}
 else {
-	$query = "SELECT Pidiv,Count(Alias) as Count FROM $table where Squad>=100 and Zaplaceno='on' GROUP BY Pidiv HAVING count(Alias)>=0 ORDER BY Pidiv";
+	$query = "SELECT Divize,Count(Alias) as Count FROM $table where Squad>=100 and Zaplaceno='on' GROUP BY Divize HAVING count(Alias)>=0 ORDER BY Divize";
 }
 
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
@@ -85,41 +85,41 @@ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 		echo"<tr><th>Počet závodníků: $zCOMP[comp] ($zNEPLATI[neplatici] rozhodčích a pomocníků)</th></tr>";
 		echo "<tr><td><dl>";
 		while ($line = mysql_fetch_assoc($result)) {
-			  if ($line[Pidiv]=="OPN") {
-				$Divize=str_replace("OPN","Open","$line[Pidiv]");
+			  if ($line[Divize]=="OPN") {
+				$Divize=str_replace("OPN","Open","$line[Divize]");
 				echo "<dt>$Divize</dt>";
 			  }
-			  if ($line[Pidiv]=="PRD") {
-				$Divize=str_replace("PRD","Production","$line[Pidiv]");
+			  if ($line[Divize]=="PRD") {
+				$Divize=str_replace("PRD","Production","$line[Divize]");
 				echo "<dt>$Divize</dt>";
 			  }		  
-			  if ($line[Pidiv]=="STD") {
-				$Divize=str_replace("STD","Standard","$line[Pidiv]");
+			  if ($line[Divize]=="STD") {
+				$Divize=str_replace("STD","Standard","$line[Divize]");
 				echo "<dt>$Divize</dt>";
 			  }		  
-			  if ($line[Pidiv]=="CLA") {
-				$Divize=str_replace("CLA","Classic","$line[Pidiv]");
+			  if ($line[Divize]=="CLA") {
+				$Divize=str_replace("CLA","Classic","$line[Divize]");
 				echo "<dt>$Divize<d/t>";
 			  }		  
-			  if ($line[Pidiv]=="REV") {
-				$Divize=str_replace("REV","Revolver","$line[Pidiv]");
+			  if ($line[Divize]=="REV") {
+				$Divize=str_replace("REV","Revolver","$line[Divize]");
 				echo "<dt>$Divize</dt>";
 			  }		  
-			  if ($line[Pidiv]=="PDO") {
-				$Divize=str_replace("PDO","Production Optics","$line[Pidiv]");
+			  if ($line[Divize]=="PDO") {
+				$Divize=str_replace("PDO","Production Optics","$line[Divize]");
 				echo "<dt>$Divize</dt>";
 			  }
-			  if ($line[Pidiv]=="PCC") {
-				//$Divize=str_replace("PCC","PCC","$line[Pidiv]");
+			  if ($line[Divize]=="PCC") {
+				//$Divize=str_replace("PCC","PCC","$line[Divize]");
 				$Divize="PCC";
 				echo "<dt>$Divize</dt>";
 			  }
 
 			if ($match_data[Payment_before]=="") {
-				$queryCat="SELECT Kategorie,Count(Prijmeni) as Count FROM ".$table." where Squad>=100 and Pidiv='".$line[Pidiv]."' GROUP BY Kategorie HAVING count(Prijmeni)>=0 ORDER BY Pidiv";
+				$queryCat="SELECT Kategorie,Count(Prijmeni) as Count FROM ".$table." where Squad>=100 and Divize='".$line[Divize]."' GROUP BY Kategorie HAVING count(Prijmeni)>=0 ORDER BY Divize";
 				}
 			else {
-				$queryCat="SELECT Kategorie,Count(Prijmeni) as Count FROM ".$table." where Squad>=100 and Pidiv='".$line[Pidiv]."' and Zaplaceno='on' GROUP BY Kategorie HAVING count(Prijmeni)>=0 ORDER BY Pidiv";
+				$queryCat="SELECT Kategorie,Count(Prijmeni) as Count FROM ".$table." where Squad>=100 and Divize='".$line[Divize]."' and Zaplaceno='on' GROUP BY Kategorie HAVING count(Prijmeni)>=0 ORDER BY Divize";
 				}
 			$Cats=mysql_query($queryCat);
 			while ($Cat=mysql_fetch_array($Cats)) {
@@ -138,10 +138,10 @@ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 <?php 
 
 if ($match_data[Payment_before]=="") {
-	$query = "SELECT Pidiv,Count(Prijmeni) FROM ".$table." where Squad>=100 GROUP BY Pidiv ORDER BY Pidiv";
+	$query = "SELECT Divize,Count(Prijmeni) FROM ".$table." where Squad>=100 GROUP BY Divize ORDER BY Divize";
 	}
 else {
-	$query = "SELECT Pidiv,Count(Prijmeni) FROM ".$table." where Squad>=100 and Zaplaceno='on' GROUP BY Pidiv ORDER BY Pidiv";
+	$query = "SELECT Divize,Count(Prijmeni) FROM ".$table." where Squad>=100 and Zaplaceno='on' GROUP BY Divize ORDER BY Divize";
 }
 	$result = mysql_query($query) or die('Query failed: ' . mysql_error());
 

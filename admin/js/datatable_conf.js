@@ -5,7 +5,7 @@ $(document).ready(function() {
 		colReorder: true,
 		deferRender: true,
 		columnDefs: [
-                    { targets: [0,1,2,3,6,7,8,9,11,13,16], visible: true }, 
+                    { targets: [0,1,2,3,6,7,8,9,11,13,16,17], visible: true }, 
                     { targets: '_all', visible: false } 
                 ],
 		language: {

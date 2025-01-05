@@ -23,60 +23,39 @@ function avoidspace(event) {
     if (k == 32) return false;
 }
 
-function replaceChars() {
-    // IDs aliasů a emailů
-    var aliasIDs = [
-        "alias-2", 
-		"alias101", "alias102", "alias103", "alias104",
-        "alias105", "alias106", "alias107", "alias108",
+function replaceChars(index) {
+	var inputAlias = document.getElementById(`Alias${index}`).value;
+	var inputEmail = document.getElementById(`Email${index}`).value;
+	
+	var outputAlias = inputAlias.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]/g, "");
+	var outputEmail = inputEmail.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9@\.]/g, "");
 
-		"alias201", "alias202", "alias203", "alias204", 
-        "alias205", "alias206", "alias207", "alias208"
-    ];
-
-    var emailIDs = [
-        "email-2", 
-		"email101", "email102", "email103", "email104", 
-        "email105", "email106", "email107", "email108", 
-
-		"email201", "email202", "email203", "email204", 
-		"email205", "email206", "email207", "email208"
-    ];
-
-    // Zpracování aliasů
-    aliasIDs.forEach(function(id) {
-        var input = document.getElementById(id).value;
-        var output = input.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]/g, "");
-        document.getElementById(id).value = output;
-    });
-
-    // Zpracování emailů
-    emailIDs.forEach(function(id) {
-        var input = document.getElementById(id).value;
-        var output = input.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9@\.]/g, "");
-        document.getElementById(id).value = output;
-    });
+	document.getElementById(`Alias${index}`).value = outputAlias;
+	document.getElementById(`Email${index}`).value = outputEmail;
 }
 
-function togglePidiv() {
-    var pidivDalsi = document.getElementById("pidiv_dalsi100");
-    var pidiv = document.getElementById("pidiv100");
+function toggleDivizeMain(index) {
+    var divize = document.getElementById(`Divize${index}`);
+    var divizeDalsi = document.getElementById(`Divize_dalsi${index}`);
 
-    if (pidivDalsi.value) {
-        pidiv.disabled = true; // Deaktivuje pole "Pidiv", pokud je vybrána hodnota v "Pidiv_dalsi"
-    } else {
-        pidiv.disabled = false; // Aktivuje pole "Pidiv", pokud je vybrána prázdná hodnota v "Pidiv_dalsi"
+    if (divize && divizeDalsi) { // Kontrola, zda oba prvky existují
+        if (divize.value) {
+            divizeDalsi.disabled = true;
+        } else {
+            divizeDalsi.disabled = false;
+        }
     }
 }
 
+function toggleDivize(index) {
+    var divize = document.getElementById(`Divize${index}`);
+    var divizeDalsi = document.getElementById(`Divize_dalsi${index}`);
 
-function togglePidivMain() {
-    var pidivDalsi = document.getElementById("pidiv_dalsi100");
-    var pidiv = document.getElementById("pidiv100");
-
-    if (pidiv.value) {
-        pidivDalsi.disabled = true;
-    } else {
-        pidivDalsi.disabled = false;
+    if (divize && divizeDalsi) { // Kontrola, zda oba prvky existují
+        if (divizeDalsi.value) {
+            divize.disabled = true;
+        } else {
+            divize.disabled = false;
+        }
     }
 }

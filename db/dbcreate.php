@@ -10,18 +10,34 @@ switch ($dbcreateParam) {
     echo "Vytvarim tabulku [$dbcreateTable] ...";
     $query="CREATE TABLE ".$dbcreateTable." (
     Cislo int(4)AUTO_INCREMENT PRIMARY KEY,
+    Alias varchar(16),
     Prijmeni varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Jmeno varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    ZP varchar(255),
     Region varchar(3),
-    Pidiv varchar(3),
     Kategorie varchar(20),
+    Divize varchar(3),
+    Faktor varchar(3),
     Squad varchar(3),
-    Pifak varchar(3),
-    VarSym varchar(5) UNIQUE,
+    SquadReg varchar(3),
+    Staff varchar(3),
     Mail varchar(40),
     Poznamka varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    DatReg varchar (11),
+    DatPay varchar (11),
+    RegistraceIP varchar (50),
+    Urgence varchar(255),
     Zaplaceno varchar(3),
-    DatReg varchar (11)
+    ZaplatiNaMiste varchar(3),
+    DatumZaplaceni varchar(3),
+    VarSym varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+    klic int(11) NOT NULL DEFAULT '0',
+    OdeslanRegMail varchar(3),
+    Vyrazeno varchar(255),
+    VyrazenoIP varchar(50),
+    Castka float(9,2),
+    Mena varchar(3),
+    Zavod varchar(25)
     )";
     $result = mysql_query($query);
     if (!$result) {
@@ -40,36 +56,35 @@ switch ($dbcreateParam) {
     Zavod_zacatek_registrace int(3) DEFAULT '10',
     Zavod_konec_registrace int(3) DEFAULT '10',
     Zavod_registrace_pozastaveno varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
-    Zavod_divisions_more varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Zavod_cas_prematch varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '13:00 - 17:00',
     Zavod_cas_prezence varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '8:00 - 9:00',
     Zavod_cas_main varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '9:00 - 14:00',
     Zavod_cas_main_dopoledne varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Zavod_cas_main_odpoledne varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
-    Zavod_misto varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'střelnice Opařany',
-    Zavod_misto_mapa varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'https://goo.gl/maps/ehm6pwDKJbPsvSpB6',
-    Zavod_poradatel varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Klub praktické střelby EGGENBERG',
-    Zavod_poradatel_adresa varchar(255) NULL [Heydukova 514/23, České Budějovice 7, 370 01 České Budějovice] 
-    Zavod_match_director varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Jan Hátle',
+    Zavod_misto varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    Zavod_misto_mapa varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    Zavod_poradatel varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT 'Klub praktické střelby EGGENBERG',
+    Zavod_poradatel_adresa varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Heydukova 514/23, České Budějovice 7, 370 01 České Budějovice',
+    Zavod_match_director varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT 'Jan Hátle',
     Zavod_email_poradatel varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'jan.hatle1@gmail.com',
     Zavod_telefon_poradatel varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '+420 724 521 364',
     Zavod_range_master varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Ondřej Bárta',
     Zavod_email_range_master varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Zavod_telefon_range_master varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '+420 777 154 158',
     Zavod_stats varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Milan Žídek',
-    Zavod_email_stats varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    Zavod_email_stats varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'statistik@kps-eggenberg.cz',
     Zavod_telefon_stats varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Zavod_hospodar varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Antonín Liška',
     Zavod_email_hospodar varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'antoni.liska@seznam.cz',
     Zavod_telefon_hospodar varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '+420 777 286 040',
     Zavod_email_from varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'registrace@kps-eggenberg.cz',
     Zavod_stages int(2) DEFAULT '8',
-    Zavod_min_pocet_ran int(3) DEFAULT '135',
+    Zavod_min_pocet_ran int(3),
     Zavod_pocet_dni_na_platbu int(2) DEFAULT '10',
     Zavod_vysledky varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'https://www.ipsc.zone/v2/results.php',
     Squad_prem_max int(3) DEFAULT '30',
     Squad_main_max int(3) DEFAULT '10',
-    Banka_ucet_CASTKA int(3) DEFAULT '900',
+    Banka_ucet_CASTKA int(3),
     Banka_ucet_MENA varchar(3) DEFAULT 'CZK',
     Banka_ucet_cislo varchar(20) DEFAULT '296257146',
     Banka_ucet_kod varchar(4) DEFAULT '0300',
@@ -80,6 +95,7 @@ switch ($dbcreateParam) {
     Payment_before varchar(2) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'on',
     PRIMARY KEY (Zavod_id)
     )";
+
     $result = mysql_query($query);
     if (!$result) {
        die('Invalid query: ' . mysql_error());
@@ -112,7 +128,9 @@ switch ($dbcreateParam) {
     parId int(4)AUTO_INCREMENT PRIMARY KEY,
     parName varchar(20) UNIQUE not null,
     parValue varchar(50),
-    parValueI FLOAT(9,3)
+    parValueI FLOAT(9,3),
+	parNote1 varchar(100) DEFAULT NULL,
+	parNote2 varchar(100) DEFAULT NULL
     )";
     $result = mysql_query($query);
     if (!$result) {
@@ -132,7 +150,7 @@ switch ($dbcreateParam) {
     echo "Vytvarim tabulku [$dbcreateTable] ...";
     $query="CREATE TABLE ".$dbcreateTable." (
     Id int(4)AUTO_INCREMENT PRIMARY KEY,
-    Name varchar(3) UNIQUE not null,
+    Name varchar(4) UNIQUE not null,
     Value varchar(50)
     )";
     $result = mysql_query($query);
@@ -148,6 +166,7 @@ switch ($dbcreateParam) {
 	('REV', 'Revolver'),
 	('REV6', 'Revolver šestiraňák'),
 	('PDO', 'Production Optics'),
+	('SDO', 'Standard Optics'),
 	('PCC', 'Pistol Caliber Carbines'),
 	('PCCI', 'PCC Iron'),
 	('PCCO', 'PCC Optics'),

@@ -45,7 +45,7 @@ if ($match_data[Zavod_registrace_pozastaveno]=="on") {
 ?>
 
 <div class="row">
-	<div class="col-md-5">
+	<div class="col-md-6">
 	<div class="article">
 	<div class="jumbotron"><H3>Základní informace</H3></div>
 		<dl class="row  text-left">
@@ -64,11 +64,10 @@ if ($match_data[Zavod_registrace_pozastaveno]=="on") {
 	</div>
 	</div>
 
-	<div class="col-md-7">
-	<div class="article <?php if ($match_data[Zavod_zobrazovat_sponzory]=="") echo "d-none";?>">
-		<div class="jumbotron "><H3>Sponzoři závodu</H3></div>
+	<div class="col-md-6">
+	<div class="article pb-1 mb-4 <?php if ($match_data[Zavod_zobrazovat_sponzory]=="") echo "d-none";?>">
+		<div class="jumbotron "><H3>Sponzoři záavodu</H3></div>
 		<?php echo "$sponzor" ?>
-		<div class="border border-left-0 border-right-0 border-bottom-0 border-info"></div>
 	</div>
 
 	<div class="article">
@@ -84,7 +83,7 @@ if ($match_data[Zavod_registrace_pozastaveno]=="on") {
 </div>
 
 <div class="row my-3">
-   <div class="col-md-5">
+   <div class="col-md-6">
    <div class="article">
    <div class="jumbotron"><H3>Vedení závodu</H3></div>
        <dl class="row  text-left">
@@ -108,7 +107,7 @@ if ($match_data[Zavod_registrace_pozastaveno]=="on") {
    </div>
 
 
-	<div class="col-md-7">
+	<div class="col-md-6">
 	<div class="article">
 	<div class="jumbotron"><H3>Časový plán</H3></div>
 		<table class="<?php if ($match_data[Zavod_registrace_pozastaveno]=="on") echo "d-none";?> table table-borderless m-2">
@@ -150,7 +149,7 @@ while ($row = mysql_fetch_assoc($result)) {
 	<div class="jumbotron"><H3>Další informace</H3></div>
 		<dl class="row  text-left">
 			<dt class="col-2 text-right pr-1">Divize:</dt><dd class="col-9 pl-2"><?php echo implode(', ', $zavod_divize );?>
-			    <span class="text-danger small"><br>V závislosti na počtu závodníků v divizích CLASIC a STANDARD může dojít k jejich sloučení.</span></dd>
+			    <span class="text-danger small"><br>V závislosti na počtu závodníků v jednotlivých divizích může dojít k jejich sloučení.</span></dd>
 			<dt class="col-2 text-right pr-1">Kategorie:</dt><dd class="col-9 pl-2"><?php echo implode(', ', $zavod_kategorie );?>
 			    <span class="text-danger small"><br>V závislosti na počtu závodníků v jednotlivých kategoriích může dojít k jejich sloučení</span></dd>
 			<dt class="col-2 text-right pr-1">Povinná výbava:</dt><dd class="col-9 pl-2">ochrana sluchu a zraku (sluchátka, brýle)</dd>
@@ -175,9 +174,9 @@ while ($row = mysql_fetch_assoc($result)) {
 			<li>Rozhodčí a pomocníci se registrují po dohodě s RM nebo MD</li>
 			<li>Registrace se uzavírá 3 dny před konáním hlavního závodu.</li>
 			<li>Pořadatelé si vyhrazují právo dodatečně měnit zařazení závodníků do squadů za účelem zajištění hladkého průběhu závodu.</li>
-			<li>Změny v registraci (např. náhrada závodníka při přenosu startovného) lze provést nejpozději v den prematche.</li>
+			<li><strong>Změny v registraci</strong> (např. náhrada závodníka při přenosu startovného) lze provést nejpozději v den prematche.</li>
 			<li>Přesuny závodníků mezi squady na základě jejich žádosti lze provést nejpozději do 30 minut před oficiálním zahájením hlavního závodu.</li>
-			<li>Změny v průběhu závodu (např. divize, power faktor, kategorie,...) jsou zpoplatněné částkou 100 Kč.</li>
+			<li><strong>Změny v průběhu závodu</strong> (např. divize, power faktor, kategorie,...) jsou zpoplatněné částkou 100 Kč.</li>
 			<li>Protože jsou podklady pro zaplacení startovaného posílány emailem, zbavuje se závodník při zadání neplatné emailové adresy možnosti zúčastnit se závodu.</li>
 		</ul>
 	</div>
@@ -238,7 +237,7 @@ while ($row = mysql_fetch_assoc($result)) {
 		</li>
 		<li>S výše uvedeným zpracováním udělujete svůj výslovný souhlas a prohlašujete, že poskytnuté osobní údaje jsou pravdivé. Souhlas lze vzít kdykoliv zpět, zasláním emailu nebo dopisu Správci.</li><br>
 		<li>Osobní údaje bude Správce zpracovávat manuálně nebo automaticky prostřednictvím svých zaměstnanců nebo dalších pořadatelů pověřených Správcem. Pro Správce mohou data zpracovávat případně i další poskytovatelé zpracovatelských softwarů, služeb a aplikací, které však v současné době Správce nevyužívá.</li><br>
-		<li>Vezměte, prosíme, na vědomí, že podle zákona o ochraně osobních údajů máte právo:
+		<li>Vezměte, prosím, na vědomí, že podle zákona o ochraně osobních údajů máte právo:
 			<ul>
 				<li>vzít váš souhlas kdykoliv zpět,</li>
 				<li>požadovat po nás informaci, jaké vaše osobní údaje zpracováváme,</li>

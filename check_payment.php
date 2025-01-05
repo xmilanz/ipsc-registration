@@ -7,6 +7,8 @@ $query = "SELECT * from match_config where Zavod_id='$table'";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 $match_data = mysql_fetch_array($result);
 
+ if ($match_data[Payment_before]=="on"){
+
 // ziskame seznam zavodniku, kteri nezaplatili do "zavod_pocet_dni_na_platbu" (10) dnu od registrace - ty pak vyřadíme
 $query="SELECT * FROM $table WHERE DatPay = DATE_FORMAT(CURDATE(), \"%d.%m.%Y\") AND Squad >= '100' AND ZaplatiNaMiste IS NULL  AND Zaplaceno IS NULL";
 
@@ -68,5 +70,11 @@ else {
 
 	email($from_text,$from,$to, $subject, $message);
     }
+  }
+ }
+
+else {
+	die();
 }
+
 ?>
