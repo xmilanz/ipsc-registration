@@ -31,10 +31,10 @@ th.sorting, th.sorting.dtfc-fixed-left {background-color: gold !important; font-
 #zavodnici img  {margin: 1px;}
 td.functions {width: 1px; white-space: nowrap; text-align:center;}
 
-#zavodnici td.squad, #zavodnici td.RegMail {text-align: center;}
-#zavodnici td.RO, #zavodnici td.VIP,#zavodnici td.POM {color: #ff0000 !important; font-weight: bolder; text-align: center;}
+#zavodnici td.squad, #zavodnici td.RegMail, #zavodnici td.NaMiste {text-align: center;}
+#zavodnici td.Staff {color: #ff0000 !important; text-align: center;}
 #zavodnici tr.zaplaceno td {color: #000000 !important ;background-color: #9fff9f;}
-#zavodnici tr.ZaplatiNaMiste td {color: #7433FF !important;}
+#zavodnici tr.zaplatinamiste td {color: #7433FF !important;}
 #zavodnici tr.nezaplacenopolimitu td {color: #ff0000; font-weight: bolder; }
 #zavodnici tr.urgence td {color: #ff0000;}
 #zavodnici tr.zrusenaregistrace td {color:#858585 !important;background-color: #d3d3d3 !important;}
@@ -49,7 +49,25 @@ th.print {background-color: #dee2e6 !important; }
 	DatTable
 -----------------------------------------------*/
 .dataTables_scroll {font-size: 10px;}
-.dtsb-titleRow {display: none;}
-.dtsb-group {max-width: 550px;}
+.dtsb-titleRow, .dtsb-searchBuilder {display: none;}
+.dtsb-group {max-width: 600px; margin-left: 40px !important;}
 .btn-secondary, .btn-light{background-color: #939393 !important; color: #ffffff!important;}
 .dt-print-view {background: #ffffff;}
+
+/*----------------------------------------------
+  Bootstrap
+-----------------------------------------------*/
+
+.close {opacity: .75;}
+.navbar { border-bottom: 2px solid #e9ecef; }
+.jumbotron, .alert { border-radius: 0px !important;}
+
+::placeholder {
+  color: #ced4da85 !important;
+}
+
+
+/*----------------------------------------------
+  Datepicker
+-----------------------------------------------*/
+.datepicker-days th {border: none !important;}

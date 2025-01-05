@@ -1,4 +1,11 @@
-<?
+<?php
+session_start();
+// If the user is not logged in redirect to the login page...
+if (!isset($_SESSION['loggedin'])) {
+    header('Location: ../index.php');
+    exit;
+}
+
 require_once ("../config/data.php");
 
 $ID=$_GET['ID'];
@@ -9,7 +16,7 @@ $line=mysql_fetch_array($res);
       <div class="modal-header bg-danger text-center">
 		<h4 class="modal-title text-white w-100 font-weight-bold py-2">Mazání závodníka</h4><br>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="window.location.href = 'index.php';">
-          <span aria-hidden="true" class="white-text">&times;</span>
+          <span aria-hidden="true" class="text-white">&times;</span>
         </button>
 	  </div>
       <div class="modal-body text-center">

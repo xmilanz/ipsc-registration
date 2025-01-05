@@ -2,6 +2,8 @@
 include "./config/data.php";
 include "db/dbconn.php";
 
+$dnes=date_format(new DateTime(),"Y-m-d H:i:s");
+
 $query = "SELECT * from match_config where Zavod_id='$table'";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 $match_data = mysql_fetch_array($result);
@@ -16,7 +18,7 @@ if ($match_data[Payment_before]=="") {
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo "$match_data[Zavod]"; ?></title>
-	<link rel="shortcut icon" href="./images/favicon.ico" />
+    <link rel="shortcut icon" href="./images/favicon.ico" />
 	<link rel="apple-touch-icon" href="./images/apple-touch-icon.png" />
 	<link rel="apple-touch-icon" sizes="57x57" href="./images/apple-touch-icon-57x57.png" />
 	<link rel="apple-touch-icon" sizes="72x72" href="./images/apple-touch-icon-72x72.png" />
@@ -25,8 +27,8 @@ if ($match_data[Payment_before]=="") {
 	<link rel="apple-touch-icon" sizes="120x120" href="./images/apple-touch-icon-120x120.png" />
 	<link rel="apple-touch-icon" sizes="144x144" href="./images/apple-touch-icon-144x144.png" />
 	<link rel="apple-touch-icon" sizes="152x152" href="./images/apple-touch-icon-152x152.png" />
-	<link rel="apple-touch-icon" sizes="180x180" href="./images/apple-touch-icon-180x180.png" />	
-	<link rel='stylesheet' href='//fonts.googleapis.com/css?family=Roboto+Condensed%3A400%2C700%7CArimo%3A400%2C700&#038;ver=eb423f0ac3bea64e1037184f3b727fe6' type='text/css' media='all' />
+	<link rel="apple-touch-icon" sizes="180x180" href="./images/apple-touch-icon-180x180.png" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed%3A400%2C700%7CArimo%3A400%2C700&#038;ver=eb423f0ac3bea64e1037184f3b727fe6" type="text/css" media="all" />
 	<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 <!-- bootstrap -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -67,13 +69,13 @@ if ($match_data[Payment_before]=="") {
       <a class="nav-link" href="./situace.php">Situace</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="./kontrola_aliasu.php">Kontrola aliasů série</a>
+      <a class='nav-link' href='./kontrola_aliasu_<?php echo date("Y") ?>.php'>Aliasy</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="<?php echo $match_data[Zavod_vysledky];?>">Výsledky</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="./admin/">&nbsp<i class='fas fa-user-lock' style='font-size:16px'></i>&nbsp;</a>
+      <a class="nav-link" href="./login.php">&nbsp<i class='fas fa-user-lock' style='font-size:16px'></i>&nbsp;</a>
     </li>
   </ul>
   </div>

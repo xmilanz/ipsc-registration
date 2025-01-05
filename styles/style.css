@@ -222,10 +222,11 @@ label.alias_validation {padding-bottom: 1rem;}
 		 color: #ffffff;
 		 border: 0px;
 	}
-	.nav-link:hover {
+	a.nav-link {
 		 background-color: #2a5a8e !important;
 		 color: #ffffff !important;
 	}
+	img.registrovat-bkg {display: none;}
 
 }
 /*----------------------------------------------
@@ -236,3 +237,15 @@ label.alias_validation {padding-bottom: 1rem;}
 div.dtsb-searchBuilder div.dtsb-group {width: 600px;}
 .btn-secondary, .btn-light{background-color: #4a9fff; color: #ffffff;}
 .dt-print-view {background: #ffffff;}
+
+.close {opacity: .75;}
+
+.toast.show {
+    z-index: 100;
+    background-color: white;
+}
+
+::placeholder {
+  color: #ced4da85 !important;
+}
+

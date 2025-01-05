@@ -1,13 +1,12 @@
 <?php
 include "./header.php"; 
 
-$dnes=date_format(new DateTime(),"Y-m-d H:i:s");
 $prematch_datum=date('j.n.Y', strtotime("-1 day", strtotime($match_data[Zavod_datum])));
 
-// spusteni registrace 30 dni pred hlavnim zavodem (konfigurace v data.php)
+// spusteni registrace 30 dni pred hlavnim zavodem (konfigurace v conf/data.php)
 $zavod_datum_zacatek_registrace=date('d.m.Y', strtotime("-$zavod_limit_zacatek_registrace days", strtotime($match_data[Zavod_datum])));
 
-// ukonceni registrace 3 dny pred hlavnim zavodem (konfigurace v data.php)
+// ukonceni registrace 3 dny pred hlavnim zavodem (konfigurace v conf/data.php)
 $zavod_konec_registrace=date('Y-m-d H:i:s', strtotime("-$zavod_limit_konec_registrace days", strtotime($match_data[Zavod_datum])));
 $zavod_konec_registrace_h=date('j.n.Y H:i:s', strtotime("-$zavod_limit_konec_registrace days", strtotime($match_data[Zavod_datum])));
 
@@ -20,9 +19,6 @@ $zavod_zacatek_registrace=date('Y-m-d', strtotime("$zavod_datum_zacatek_registra
 $zavod_zacatek_registrace_h=date('j.n.Y', strtotime("$zavod_datum_zacatek_registrace"))." $zavod_cas_zacatek_registrace";
 $reg_started=false;
 
-// echo "dnes: $dnes<br><br>";
-// echo "zacatek registrace: $zavod_zacatek_registrace<br>";
-// echo "konec registrace: $zavod_konec_registrace<br><br>";
 
 if ($dnes < $zavod_zacatek_registrace) {
   $reg_text="Registrace bude spuštěna $zavod_zacatek_registrace_h";
@@ -44,19 +40,21 @@ elseif ($dnes > $zavod_konec_registrace) {
 
 echo"<H2 class='pb-3'>$reg_text</H2>";
 
-for ($i = -2; $i <= $match_data[Zavod_stages]; $i++) {
+for ($i = -2; $i <= 211; $i++) {
     if (!$nazvy_squadu[$i]) {
       continue;
     }
-    $nazev_squadu=$nazvy_squadu[$i]; 
+    $nazev_squadu=$nazvy_squadu[$i];
 
     ######################
-    if ($i==0) {echo "<H4>Prematch - $prematch_datum ($match_data[Zavod_cas_prematch])</h4>";};
-    if ($i==1) {echo "<H4>Hlavní závod - $match_data[Zavod_datum] ($match_data[Zavod_cas_main])</h4>";};
+    if ($i==100 AND $match_data[Squad_prem_max]>0) {echo "<H4>Prematch - $prematch_datum ($match_data[Zavod_cas_prematch])</h4>";};
+    if ($i==101 AND $match_data[Zavod_cas_main]!=='' AND $match_data[Zavod_cas_main_odpoledne]=='') {echo "<H4>Hlavní závod - $match_data[Zavod_datum] ($match_data[Zavod_cas_main])</h4>";};
+    if ($i==101 AND ($match_data[Zavod_cas_main_dopoledne]!=='' OR $match_data[Zavod_cas_main_odpoledne]!=='')) {echo "<H4>Hlavní závod - dopolední směna - $match_data[Zavod_datum] ($match_data[Zavod_cas_main_dopoledne])</h4>";};
+    if ($i==201 AND ($match_data[Zavod_cas_main_dopoledne]!=='' OR $match_data[Zavod_cas_main_odpoledne]!=='')) {echo "<H4>Hlavní závod - odpolední směna - $match_data[Zavod_datum] ($match_data[Zavod_cas_main_odpoledne])</h4>";};
     #######################
 ?>
 
-<div class="row my-3 mx-1 border border-primary bg-white clearfix">
+<div class="row my-3 mx-1 ml-2 border border-primary bg-white clearfix">
 	<!-- název squadu + počty -->
 	<div class="col h5 font-weight-bolder jumbotron">
 	
@@ -69,7 +67,7 @@ for ($i = -2; $i <= $match_data[Zavod_stages]; $i++) {
 		if ($i<=0) {
 		echo "";
 		} else {
-		  if ($i<111) {
+		  if ($i>100 AND $i<211) {
 			echo "&nbsp<small>[obsazenost: ".$line[0]."/".($match_data[Squad_main_max])."]</small>";
 		  }
 		}
@@ -78,18 +76,18 @@ for ($i = -2; $i <= $match_data[Zavod_stages]; $i++) {
 	<?php
 // spustena registrace
 		if ( 
-				((($dnes > $zavod_zacatek_registrace) AND ($dnes < $zavod_konec_registrace)) AND ( ($line[0] < $match_data[Squad_main_max] AND $i >0)) ) 
+				((($dnes > $zavod_zacatek_registrace) AND ($dnes < $zavod_konec_registrace)) AND ( ($line[0] < $match_data[Squad_main_max] AND $i >100)) ) 
 			XOR
-				((($dnes > $zavod_zacatek_registrace) AND ($dnes < $zavod_konec_registrace)) AND (($line[0] < $match_data[Squad_prem_max] AND $i <=0)) ) 
+				((($dnes > $zavod_zacatek_registrace) AND ($dnes < $zavod_konec_registrace)) AND (($line[0] < $match_data[Squad_prem_max] AND $i <=100)) ) 
 			)
 		{
 			echo "<button type='button' class='btn btn-primary float-right' data-toggle='collapse' href='#reg_form_$i'>Vybrat</button>";
 		}
 // spustena registrace (plny squad)
 		if (
-				((($dnes > $zavod_zacatek_registrace) AND ($dnes < $zavod_konec_registrace)) AND (($line[0] >= $match_data[Squad_main_max] AND $i > 0)) )
+				((($dnes > $zavod_zacatek_registrace) AND ($dnes < $zavod_konec_registrace)) AND (($line[0] >= $match_data[Squad_main_max] AND $i >100 )) )
 			XOR 
-				((($dnes > $zavod_zacatek_registrace) AND ($dnes < $zavod_konec_registrace)) AND (($line[0] >= $match_data[Squad_prem_max] AND $i <= 0)) )
+				((($dnes > $zavod_zacatek_registrace) AND ($dnes < $zavod_konec_registrace)) AND (($line[0] >= $match_data[Squad_prem_max] AND $i <=100 )) )
 			) 
 		{
 			echo "<button type='button' class='btn btn-danger float-right' disabled>Obsazeno</button>";
@@ -99,7 +97,6 @@ for ($i = -2; $i <= $match_data[Zavod_stages]; $i++) {
 		{
 		  echo "";
 		}
-		
 	?>
 	</div>
 
@@ -108,29 +105,21 @@ for ($i = -2; $i <= $match_data[Zavod_stages]; $i++) {
 	<?php
 	#### - zobrazeni jmen v konkretnim squadu
 		if ($reg_started==true) {
-		  $query = "SELECT alias,Prijmeni,Jmeno,Zaplaceno,DatumZaplaceni,DatReg,Pidiv,Pifak,RO,POM,VIP,Squad,Urgence FROM ".$table." WHERE Squad='".$i."' ORDER BY Zaplaceno DESC,Prijmeni";
+		  $query = "SELECT alias,Prijmeni,Jmeno,Zaplaceno,DatumZaplaceni,ZaplatiNaMiste,DatPay,Pidiv,Pifak,Staff,Squad,Urgence FROM ".$table." WHERE Squad='".$i."' ORDER BY Zaplaceno DESC,Prijmeni";
 		  $result =  mysql_query($query) or die('Query failed: ' . mysql_error());
 		  while ($line = mysql_fetch_array($result)) {
 
-			$DatReg=date('Y-m-d', $line["DatReg"]);
-			$RegLimit=date('Y-m-d', strtotime($DatReg .+$match_data[Zavod_pocet_dni_na_platbu].' days'));
-			$CancelLimit=date('Y-m-d', strtotime($DatReg. +$match_data[Zavod_pocet_dni_do_vyrazeni].' days'));
-
 			if (($line[Zaplaceno]=="on") and ($match_data[Payment_before]=="on")) {echo "<span class=text-success>";};
-			if (($dnes >= $RegLimit) and $line[Zaplaceno]!="on" and $line[Urgence]="on") {echo "<span class= text-danger>";};
-			$zbran=$line[Pidiv];
-			$zbranFactor="";
-			if ($line[Pifak]=="MAJ") {
-			$zbranFactor="+";
-			}
+			if (($dnes >= date('Y-m-d', strtotime($line[DatPay]. ' - 5 days')))  and $line[Squad]>=100 and $line[Zaplaceno]!="on" and $line[ZaplatiNaMiste]!="on" ) {echo "<span class= text-danger>";};
+
 		// definice ikon 
 			$serieIcon="";
 			$roIcon="";
-				if ($line[RO]=="on") {$roIcon="<i class='far fa-clock' style='font-size:12px'></i>";};
+				if ($line[Staff]=="RO") {$roIcon="<i class='far fa-clock' style='font-size:12px'></i>";};
 			$pomIcon="";
-				if ($line[POM]=="on") {$pomIcon="<i class='far fa-handshake' style='font-size:12px'></i>";};
+				if ($line[Staff]=="POM") {$pomIcon="<i class='far fa-handshake' style='font-size:12px'></i>";};
 			$vipIcon="";
-				if ($line[VIP]=="on") {$vipIcon="<i class='far fa-crown' style='font-size:12px'></i>";};
+				if ($line[Staff]=="VIP") {$vipIcon="<i class='far fa-crown' style='font-size:12px'></i>";};
 
 			echo "<span class='font-weight-bold text-nowrap'>".$serieIcon.$roIcon.$pomIcon.$vipIcon."&nbsp;$line[Jmeno]&nbsp;$line[Prijmeni]</span>&nbsp;<span class=\"font-weight-light\">'$line[alias]'</span></span>,  ";
 			};
@@ -147,22 +136,24 @@ for ($i = -2; $i <= $match_data[Zavod_stages]; $i++) {
 			$query = "SELECT Max(Cislo) FROM ".$table."";
 			$result = mysql_query($query) or die('Query failed: ' . mysql_error());
 			$line = mysql_fetch_row($result);
+
 			$tyden=str_replace(' ','',$match_data[Zavod_datum]);
 			$tyden=intval(date("W",strtotime($tyden)));
-			$varsymbol="$tyden".($line[0]+1); //prefix "18" pro var.symbol pistole.
+
+			$varsymbol="$tyden".($line[0]+1);
+
 			list($usec, $sec) = explode(" ", microtime());
 
 			echo "<input type=hidden name=varsymbol value=".$varsymbol.">";
 			echo "<input type=hidden name=datreg value=".$sec.">";
 			echo "<input type=hidden name=squad value=".$i.">";
 			?>
-			<input type="hidden" name="region" value="CZE">
 
 			<div class="col-md-5">
 				<div class="form">
 				  <label for="alias" class="form-label font-weight-bold">Alias&nbsp;&nbsp;<a href="https://www.ipsc-tech.org/ics/hq/embdAliasAvail.aspx"  target="_blank"  data-toggle="tooltip" title="Ověřte, zda není zadávaný alias již registrovaný."><button type="button" class="btn btn-outline-success btn-sm">Ověřit</button></a>&nbsp;&nbsp;<a href="https://www.ipsc-tech.org/ics/hq/embdAliasReg.aspx" target="_blank" data-toggle="tooltip" title="Pokud ještě nemáte alias, zaregistrujte si jej."><button type="button" class="btn btn-outline-primary btn-sm">Vytvořit</button></a></label>
-				  <input pattern=".{3,16}" class="form-control" type="text" name="alias" id="alias<?php echo"$i";?>" placeholder="3-16 znaků, bez mezer, diakritiky a spec. znaků" onfocus="this.placeholder = ''" onblur="this.placeholder = '3-16 znaků, bez mezer, diakritiky a spec. znaků'" required>
-				  <label class="alias_validation" data-error="Použili jste mezeru, písmena s diakritikou nebo speciální znaky"></label>
+				  <input pattern=".{3,16}" class="form-control" type="text" name="alias" id="alias<?php echo"$i";?>" placeholder="3-16 znaků, diakritiky a spec. znaků" onkeypress="return avoidspace(event)" onfocus="this.placeholder = ''" onblur="this.placeholder = '3-16 znaků, bez diakritiky a spec. znaků'" required>
+				  <label class="alias_validation" data-error="Použili jste písmena s diakritikou nebo speciální znaky"></label>
 				  <div class="invalid-feedback">Nevyplnili jste IPSC alias nebo má neplatnou délku (3-16 znaků)</div>
 				</div>
 			</div>
@@ -175,7 +166,7 @@ for ($i = -2; $i <= $match_data[Zavod_stages]; $i++) {
 			  </div>
 			  <div class="col-md-3">
 				<label class="form-label pt-3">Příjmení</label>
-				<input class="form-control" type="text" name="prijmeni" id="prijmeni<?php echo"$i";?>" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Novák'" placeholder="Novák" required>
+				<input class="form-control" type="text" name="prijmeni" id="prijmeni<?php echo"$i";?>" onkeypress="return avoidspace(event)" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Novák'" placeholder="Novák" required>
 				<div class="invalid-feedback">Nevyplnili jste příjmení</div>
 			  </div>
 			  <div class="col-md-2">
@@ -192,15 +183,15 @@ for ($i = -2; $i <= $match_data[Zavod_stages]; $i++) {
 					<div class="input-group-prepend">
 					<div class="input-group-text">@</div>
 					</div>
-						<input class="form-control" type="email" id="email<?php echo"$i";?>" name="email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'novak@mujemail.cz'" placeholder="novak@mujemail.cz" required>
+						<input class="form-control" type="email" id="email<?php echo"$i";?>" name="email" onkeypress="return avoidspace(event)" onfocus="this.placeholder = ''" onblur="this.placeholder = 'novak@mujemail.cz'" placeholder="novak@mujemail.cz" required>
 				</div>
 				<div class="invalid-feedback">Nevyplnili jste email</div>
 			</div>
 	 
-			<div class="col-md-4">
+			<div class="col-md-2">
 				<label for="kategorie" class="form-label pt-3">Kategorie</label>
 				<select name="kategorie" id="kategorie<?php echo"$i";?>" class="custom-select" required>
-					<option value="" selected>--vyberte--</option>
+					<option value="Regular" selected>Regular</option>
 					<?php
 					  foreach( $zavod_kategorie as $kategorie => $popis ){
 					  echo "<option value='$kategorie'>$popis</option>"; 
@@ -209,8 +200,8 @@ for ($i = -2; $i <= $match_data[Zavod_stages]; $i++) {
 				</select>
 				<div class="invalid-feedback">Nevybrali jste kategorii</div>
 			</div>
-			 
-			<div class="col-md-4">
+
+			<div class="col-md-2">
 				<label for="divize" class="form-label pt-3">Divize</label>
 				<select name ="pidiv" id="divize<?php echo"$i";?>" class="custom-select" required>
 				  <option value="" selected>--- vyberte ---</option>
@@ -222,37 +213,39 @@ for ($i = -2; $i <= $match_data[Zavod_stages]; $i++) {
 				</select>
 				<div class="invalid-feedback">Nevybrali jste divizi</div>
 			  </div>
-			 
-			<div class="col-md-4">
+
+			<div class="col-md-2">
 				<label for="faktor" class="form-label pt-3">Faktor</label>
 				<select name="pifak" id="faktor<?php echo"$i";?>" class="custom-select" required>
-				  <option value="" selected>--- vyberte ---</option>
+				  <option value="MIN" selected>Minor</option>
 					  <option value="MIN">Minor</option>
 					  <option value="MAJ">Major</option>
 				</select>
 				<div class="invalid-feedback">Nevybrali jste faktor</div>
 			</div>
-			 
-			<div class="col-12 pt-3">
-				<div class="custom-control custom-checkbox">
-				  <input class="custom-control-input" type="checkbox" id="rozhodci<?php echo"$i";?>" name="RO">
-				  <label class="custom-control-label" for="rozhodci<?php echo"$i";?>">
-					Rozhodčí
-				  </label>
-				</div>
+
+			<div class="col-md-2">
+				<label for="region" class="form-label pt-3">Region</label>
+				<select name="region" id="faktor<?php echo"$i";?>" class="custom-select" required>
+					  <option value="AUS">Austria</option>
+					  <option value="CZE" selected>Czech Republic</option>
+					  <option value="GER">Germany</option>
+					  <option value="POL">Poland</option>
+					  <option value="SVK">Slovak Republic</option>
+				</select>
+				<div class="invalid-feedback">Nevybrali jste region</div>
 			</div>
 
-			<div class="col-12 pt-3">
-				<div class="custom-control custom-checkbox">
-				  <input class="custom-control-input" type="checkbox" id="pomocnik<?php echo"$i";?>" name="POM">
-				  <label class="custom-control-label" for="pomocnik<?php echo"$i";?>">
-					Pomocník
-				  </label>
-				</div>
+			<div class="col-md-2">
+				<label for="Staff" class="form-label pt-3">Staff</label>
+					<select class="form-control" name=Staff>
+						<option value="" selected>--- vyberte ---</option>
+						<option value="RO">Rozhodčí</option>
+						<option value="POM">Pomocník</option>
+					</select>
 			</div>
 
-
-			<div class="col-12 pt-3">
+			<div class="col-12 pt-4">
 				<div class="custom-control custom-checkbox">
 				  <input class="custom-control-input" type="checkbox" id="souhlas<?php echo"$i";?>" required>
 				  <label class="custom-control-label" for="souhlas<?php echo"$i";?>">
@@ -265,16 +258,20 @@ for ($i = -2; $i <= $match_data[Zavod_stages]; $i++) {
 			<div class="position-absolute d-flex">
 			  <div class="toast hide">
 					<div class="toast-header">
-					  <strong class="mr-auto text-primary font-weight-bolder">Pravidla registrace</strong>
+					  <strong class="mr-auto text-primary font-weight-bolder">Pravidla registrace a úhrady startovaného</strong>
 					  <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">×</button>
 				  </div>
 					<div class="toast-body ml-1">
+						<p>V souladu s pravidlem 6.6.2 je účast v prematchi omezena na organizátory, rozhodčí, pomocníky a sponzory.</p>
+						<p>Rozhodčí se registrují po dohodě s RM.</p>
+						<p>Registrace se uzavírá 3 dny před konáním hlavního závodu.</p>
 						<p>Pořadatelé si vyhrazují právo dodatečně měnit zařazení závodníků do squadů dle potřeb hladkého průběhu závodu.</p>
-						<p>V souladu s pravidlem 6.6.2 je účast v prematchi omezena na organizátory, sponzory a rozhodčí.</p>
-						<p><strong>Rozhodčí se registrují po dohodě s RM.</p>
-						<p>Registrace bez platby je platná maximálně 10 dnů.</strong> Po tomto termínu bude registrace zrušená. <br><i>- Neplatí pro organizátory, pomocníky a rozhodčí.</i></p>
-						<p>Při zadání neplatné emailové adresy, se zbavujete možnosti být informováni o případných změnách.</p>
-				
+						<p>Změny v registraci (např. náhrada závodníka při přenosu startovného) lze provést nejpozději v den prematche.</p>
+						<p>Přesuny závodníků mezi squady na základě jejich žádosti lze provést <b>nejpozději do 30 minut před oficiálním zahájením hlavního závodu.</b></p>
+						<p class="text-danger font-weight-bold">Protože jsou podklady pro zaplacení startovaného posílány emailem, zbavuje se závodník při zadání neplatné emailové adresy možnosti zúčastnit se závodu. Rovněž nebude moci být informován o případných změnách.</p>
+						<p>Startovné se hradí tak, aby platba proběhla do 10 dnů od registrace.<br>- u závodníků zaregistrovaných méně jak 10 dní před závodem je třeba startovné zaplatit <strong>nejpozději jeden den před prematchem</strong></p>
+						<p>Pokud se startované platí předem, není možná registrace na místě.<br>
+						<p>V případě neuhrazení startovného v řádném termínu je registrace zrušena.<br>- neplatí pro organizátory, pomocníky a rozhodčí</p>
 					</div>
 			  </div>
 			</div>
@@ -297,13 +294,21 @@ for ($i = -2; $i <= $match_data[Zavod_stages]; $i++) {
 - pomocník <i class='far fa-handshake' style='font-size:14px'></i>
 - VIP <i class='far fa-crown' style='font-size:12px'></i>
 <span class="<?php echo "$paymentBeforeClass"; ?> text-success">- zaplaceno nebo potvrzeno pořadatelem (pomocníci a rozhodčí)</span>
-<span class="<?php echo "$paymentBeforeClass"; ?> font-weight-bold">- nezaplaceno</span>
-<span class="<?php echo "$paymentBeforeClass"; ?> text-danger">- nezaplaceno s urgencí po 10 dnech</span>
+<span class="<?php echo "$paymentBeforeClass"; ?> text-danger">- zbývá méně jak 5 dní do zaplacení</span>
 </pre>
 
 <script type="text/javascript" src="./js/pravidla.js"></script>
 <script type="text/javascript" src="./js/form_validation.js"></script>
 <script type="text/javascript" src="./js/validate_alias.js"></script>
 <script type="text/javascript" src="./js/mdb.js"></script>
+
+<script>
+function avoidspace(event) {
+    var k = event ? event.which : window.event.keyCode;
+    if (k == 32) return false;
+}
+</script>
+
+
 
 <?php include "./footer.php"; ?>

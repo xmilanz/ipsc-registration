@@ -1,68 +1,68 @@
 $(document).ready(function(){
-  $("#pravidla_registrace-2").click(function(){
+  $("#pravidla_registrace10-2").click(function(){
 	 $('.toast').toast({autohide: false});
     $('.toast').toast('show');
   });
 });
 
 $(document).ready(function(){
-  $("#pravidla_registrace0").click(function(){
+  $("#pravidla_registrace100").click(function(){
 	 $('.toast').toast({autohide: false});
     $('.toast').toast('show');
   });
 });
 
 $(document).ready(function(){
-  $("#pravidla_registrace1").click(function(){
+  $("#pravidla_registrace101").click(function(){
 	 $('.toast').toast({autohide: false});
     $('.toast').toast('show');
   });
 });
 
 $(document).ready(function(){
-  $("#pravidla_registrace2").click(function(){
+  $("#pravidla_registrace102").click(function(){
 	 $('.toast').toast({autohide: false});
     $('.toast').toast('show');
   });
 });
 
 $(document).ready(function(){
-  $("#pravidla_registrace3").click(function(){
+  $("#pravidla_registrace103").click(function(){
 	 $('.toast').toast({autohide: false});
     $('.toast').toast('show');
   });
 });
 
 $(document).ready(function(){
-  $("#pravidla_registrace4").click(function(){
+  $("#pravidla_registrace104").click(function(){
 	 $('.toast').toast({autohide: false});
     $('.toast').toast('show');
   });
 });
 
 $(document).ready(function(){
-  $("#pravidla_registrace5").click(function(){
+  $("#pravidla_registrace105").click(function(){
 	 $('.toast').toast({autohide: false});
     $('.toast').toast('show');
   });
 });
 
 $(document).ready(function(){
-  $("#pravidla_registrace6").click(function(){
+  $("#pravidla_registrace106").click(function(){
 	 $('.toast').toast({autohide: false});
     $('.toast').toast('show');
   });
 });
 
 $(document).ready(function(){
-  $("#pravidla_registrace7").click(function(){
+  $("#pravidla_registrace107").click(function(){
 	 $('.toast').toast({autohide: false});
     $('.toast').toast('show');
   });
 });
 
 $(document).ready(function(){
-  $("#pravidla_registrace8").click(function(){
+  $("#pravidla_registrace108").click(function(){
 	 $('.toast').toast({autohide: false});
     $('.toast').toast('show');
   });

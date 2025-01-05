@@ -2,11 +2,7 @@
  if ($match_data[Payment_before]=="") {
    $paymentBeforeClass.=" d-none";
  }
-
 ?>
-
-
-
 <div class="modal fade" id="new_shooter" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel"  aria-hidden="true">
   <div class="modal-dialog modal-notify modal-warning" role="document">
     <!--Content-->
@@ -15,7 +11,7 @@
       <div class="modal-header bg-primary text-center">
         <h4 class="modal-title text-white w-100 font-weight-bold">Nový závodník</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true" class="white-text">&times;</span>
+          <span aria-hidden="true" class="text-white">&times;</span>
         </button>
 
       </div>
@@ -25,26 +21,25 @@
 				list($usec, $sec) = explode(" ", microtime());
 				echo "<INPUT TYPE=HIDDEN NAME=datreg VALUE=".$sec.">";
 			?>
-			<INPUT TYPE=HIDDEN NAME=Region VALUE='CZE'>
-			
 			<div class="col-md-10 font-weight-bolder">Osobní informace</div>
 			<div class="col-md-6">
 				<label for="Alias" class="form-label pt-2">Alias</label>
-				<input class="form-control" type="text" name="Alias" id="Alias" onkeypress="return avoidspace(event)" placeholder="ALIAS" onfocus="this.placeholder = ''" onblur="this.placeholder = 'ALIAS'" value="" required>
-				<div class="invalid-feedback">Nevyplnili jste alias</div>
+				<input pattern=".{3,16}" class="form-control" type="text" name="Alias" id="Alias" placeholder="3-16 znaků, bez diakritiky a spec. znaků" onfocus="this.placeholder = ''" onblur="replaceChars()" required>
+				<label class="alias_validation" data-error="Použili jste písmena s diakritikou nebo speciální znaky"></label>
+				<div class="invalid-feedback">Nevyplnili jste alias nebo má neplatnou délku</div>
 			</div>
 			<div class="col-md-6"></div>
-			<div class="col-md-6">
+			<div class="col-md-3">
 				<label for="Jmeno" class="form-label pt-2">Jméno</label>
-				<input class="form-control" type="text" name="Jmeno" id="Jmeno" onkeypress="return avoidspace(event)" placeholder="Jan" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Jan'" value="" required>
+				<input class="form-control" type="text" name="Jmeno" id="Jmeno" placeholder="Jan" onfocus="this.placeholder = ''" onblur="replaceChars()" required>
 				<div class="invalid-feedback">Nevyplnili jste jméno</div>
 			  </div>
-			<div class="col-md-6">
+			<div class="col-md-5">
 				<label for="Prijmeni" class="form-label pt-2">Příjmení</label>
-				<input class="form-control" type="text" name="Prijmeni" id="Prijmeni" onkeypress="return avoidspace(event)" placeholder="Novák" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Novák'" value="" required>
+				<input class="form-control" type="text" name="Prijmeni" id="Prijmeni" placeholder="Novák" onfocus="this.placeholder = ''" onblur="replaceChars()" required>
 				<div class="invalid-feedback">Nevyplnili jste příjemní</div>
 			  </div>
-			<div class="col-md-6">
+			<div class="col-md-4">
 				<label for="Prijmeni_stav" class="form-label pt-2">Doplnění jména</label>
 					<select class="form-control" name=Prijmeni_stav>
 						<option value="" selected>--- vyberte ---</option>
@@ -53,14 +48,29 @@
 					</select>
 			</div>
 			<div class="col-md-6">
-				<label for="Mail" class="form-label pt-2">Email</label>
+				<label for="Mail" class="form-label pt-3">Email</label>
 				<div class="input-group">
 					<div class="input-group-prepend">
 					<div class="input-group-text">@</div>
 					</div>
-						<input class="form-control" type="email" id="Mail" name="Mail" onfocus="this.placeholder = ''" onblur="this.placeholder = 'novak@mujemail.cz'" placeholder="novak@mujemail.cz" value="" required>
+						<input class="form-control" type="email" id="Mail" name="Mail" onfocus="this.placeholder = ''" onblur="replaceChars()" placeholder="novak@mujemail.cz" value="" required>
 				</div>
 			</div>
+			<div class="col-md-4">
+				<label for="region" class="form-label pt-3">Region</label>
+				<select name="Region" id="Region" class="custom-select" required>
+					  <option value="AUT">Austria</option>
+					  <option value="CZE" selected>Czech Republic</option>
+					  <option value="DEN">Denmark</option>
+					  <option value="GER">Germany</option>
+					  <option value="POL">Poland</option>
+					  <option value="SUI">Switzerland</option>
+					  <option value="SVK">Slovak Republic</option>
+				</select>
+				<div class="invalid-feedback">Nevybrali jste region</div>
+			</div>
+
+
 			<div class="col-md-10 pt-4 font-weight-bolder">Závod</div>
 			<div class="col-md-6">
 				<label for="Pidiv" class="form-label pt-2">Divize</label>
@@ -103,28 +113,28 @@
 					?>
 				  </select>
 			</div>
-			<div class="col-md-10 pt-4 font-weight-bolder">Ostatní</div>
-			<div class="col-md-12">
-			 <div class="form-check form-check-inline">
-			   <input class="form-check-input" type="checkbox" id="RO" name="RO">
-			   <label class="form-check-label" for="RO">Rozhodčí</label>
-			 </div>
-			 <div class="form-check form-check-inline">
-			   <input class="form-check-input" type="checkbox" id="POM" name="POM">
-			   <label class="form-check-label" for="RO">Pomocník</label>
-			 </div>
-			 <div class="form-check form-check-inline">
-			   <input class="form-check-input" type="checkbox" id="VIP" name="VIP">
-			   <label class="form-check-label" for="RO">VIP</label>
-			 </div>
-			 <div class=" <?php echo $paymentBeforeClass; ?>form-check form-check pt-2">
+			<div class="col-md-12 pt-4 font-weight-bolder">Ostatní</div>
+			<div class="col-md-6">
+				<label for="Staff" class="form-label pt-2">Staff</label>
+					<select class="form-control" name=Staff>
+						<option value="" selected>--- vyberte ---</option>
+						<option value="" >Platící závodník</option>
+						<option value="RO">Rozhodčí</option>
+						<option value="POM">Pomocník</option>
+						<option value="VIP">VIP</option>
+					</select>
+			</div>
+
+			<div class="col-md-6">
+			 <div class=" <?php echo $paymentBeforeClass; ?>form-check form-check pt-5">
 			   <input class="form-check-input" type="checkbox" id="ZaplatiNaMiste" name="ZaplatiNaMiste">
 			   <label class="form-check-label" for="ZaplatiNaMiste">Zaplatí na místě</label>
 			 </div>
-			 </div>
+			</div>
+
 			<div class="col-md-12">
 				<label for="Poznamka" class="form-label pt-3">Poznámka</label>
-				<input class="form-control" type="text" name="Poznamka" id="Poznamka" onkeypress="return avoidspace(event)" placeholder="Poznámka" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Poznámka'" value="">
+				<input class="form-control" type="text" name="Poznamka" id="Poznamka" placeholder="Poznámka" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Poznámka'" value="">
 			  </div>
 			</div>
       <!--Footer-->
@@ -137,31 +147,7 @@
     <!--/.Content-->
   </div>
 </div>
-
-<div class="text-left"><br>
-	<div class="text-left"><a href="" class="btn btn-primary btn-rounded" data-toggle="modal" data-target="#new_shooter">Přidat nového závodníka</a></div>
-</div>
+	<a href="" class="btn btn-primary btn-rounded mr-3" data-toggle="modal" data-target="#new_shooter">Přidat nového závodníka</a>
 </div>
 </div>
 <br>
-
-<script>
-// Disable form submissions if there are invalid fields
-(function() {
-  'use strict';
-  window.addEventListener('load', function() {
-    // Get the forms we want to add validation styles to
-    var forms = document.getElementsByClassName('needs-validation');
-    // Loop over them and prevent submission
-    var validation = Array.prototype.filter.call(forms, function(form) {
-      form.addEventListener('submit', function(event) {
-        if (form.checkValidity() === false) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        form.classList.add('was-validated');
-      }, false);
-    });
-  }, false);
-})();
-</script>

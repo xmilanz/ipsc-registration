@@ -5,50 +5,51 @@ $(document).ready(function() {
 		colReorder: true,
 
 	language: {
-			url: './lang/cs.json'
+		url: './lang/cs.json'
         },
 
-		dom: 'QBfrtip',
+//	dom: 'QBfrtip', - Q - filtry
+	dom: 'Bfrtip',
 
        buttons: [
-			{
-				extend: 'pageLength'
-			},
+		{
+			extend: 'pageLength'
+		},
 //            'colvis',
            {
                 extend: 'spacer',
                 text: '     '
             },
-			{
-				extend: 'pdf',
-				exportOptions: {
-                    columns: ':visible'
-                }
-			},
-			{
-				extend: 'excel',
-				exportOptions: {
-                    columns: ':visible'
-                }
-			},
+		{
+			extend: 'pdfHtml5',
+//			orientation: 'landscape',
+			pageSize: 'A4'
+		},
+		{
+			extend: 'excelHtml5',
+		},
+		{
+			extend: 'csvHtml5',
+		},
             {
                 extend: 'print',
                 exportOptions: {
                     columns: ':visible'
                 },
-		autoPrint: false,
-		customize: function ( win ) {
-                    $(win.document.body)
-                        .css( 'font-size', '10pt' )
-                    $(win.document.body).find( 'table' )
-                        .addClass( 'compact' )
-                        .css( 'background-image', 'none' );
-                }
+			autoPrint: false,
+			messageBottom: 'Vytisknuto z registrace závodu Eggenberg CUP [registrace.kps-eggenberg.cz]',
+			customize: function ( win ) {
+				$(win.document.body)
+					.css( 'font-size', '10pt' )
+				$(win.document.body).find( 'table' )
+					.addClass( 'compact' )
+					.css( 'background-image', 'none' );
+            }
             }
         ],
         lengthMenu: [
-            [ -1, 15, 50 ],
-            [ 'Všechny', '15 řádků', '50 řádků' ]
+            [ 10, 20, 50, -1 ],
+            [ '10 řádků', '20 řádků', '50 řádků', 'Všechny' ]
         ],
     } );
 } )

@@ -5,7 +5,7 @@
 */
 
 
-$result = mysql_query("ALTER TABLE $table ADD `RO` varchar(3) DEFAULT NULL;");
+$result = mysql_query("ALTER TABLE $table ADD `RO` varchar(3);");
 if (!$result) {
     die();
 }

@@ -42,9 +42,15 @@ if (mysql_num_rows($result)==0) {
 $result = mysql_query("SHOW TABLES LIKE 'match_config'");
 if (mysql_num_rows($result)==0) {
   $dbcreateParam="match_config";
-//  $dbcreateTable=match_config";
   require_once ("dbcreate.php");
 }
+
+$result = mysql_query("SHOW TABLES LIKE 'site_admins'");
+if (mysql_num_rows($result)==0) {
+  $dbcreateParam="match_admins";
+  require_once ("dbcreate.php");
+}
+
 
 // aktualizace klicu - query presunuta do registrovat.php
 //$result = mysql_query("update $table set klic= FLOOR(10 + (RAND(Cislo) * 9000)) where klic is null or klic=0;");
@@ -85,5 +91,11 @@ if ($dbver<2.8) {
 }
 if ($dbver<2.9) {
   require_once 'dbupdate2_9.php';
+}
+if ($dbver<3) {
+  require_once 'dbupdate3.php';
+}
+if ($dbver<3.1) {
+  require_once 'dbupdate3_1.php';
 }
 ?>

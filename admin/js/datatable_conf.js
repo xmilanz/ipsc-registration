@@ -10,6 +10,17 @@ $(document).ready(function() {
 
 		dom: 'QBfrtip',
 		stateSave: false,
+        searchBuilder: {
+            preDefined: {
+                criteria:[
+                    {
+                        condition: '!=',
+                        data: 'Squad',
+                        value: ['-9']
+                    }
+                ],
+            }
+        },
         buttons: [
 			{
 				extend: 'pageLength'
@@ -24,16 +35,10 @@ $(document).ready(function() {
                 text: '     '
             },
 			{
-				extend: 'pdf',
-				exportOptions: {
-                    columns: ':visible'
-                }
+				extend: 'excelHtml5',
 			},
 			{
-				extend: 'excel',
-				exportOptions: {
-                    columns: ':visible'
-                }
+				extend: 'csvHtml5',
 			},
             {
                 extend: 'print',
@@ -41,6 +46,7 @@ $(document).ready(function() {
                     columns: ':visible'
                 },
 				autoPrint: false,
+				messageBottom: 'Vytisknuto z administrace závodu Eggenberg CUP [registrace.kps-eggenberg.cz]',
 				customize: function ( win ) {
                     $(win.document.body)
                         .css( 'font-size', '10px' )

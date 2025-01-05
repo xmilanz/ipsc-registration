@@ -33,6 +33,7 @@ else {
 	$platba_na_miste="";
 }
 ?>
+
 <div class="row">
 	<div class="col-md-5">
 	<div class="article">
@@ -43,7 +44,7 @@ else {
 			<dt class="col-4 text-right pr-0">Obtížnost:</dt><dd class="col-8 pl-2">IPSC Level I.</dd>
 			<dt class="col-4 text-right pr-0">Počet situací:</dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_stages]";?></dd>
 			<dt class="col-4 text-right pr-0">Min. počet ran:</dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_min_pocet_ran]";?></dd>
-			<dt class="col-4 text-right pr-0">Prematch:</dt><dd class="col-8 pl-2"><?php echo "$match_data[Squad_prem_max]";?> závodníků</dd>
+			<dt class="d-none col-4 text-right pr-0 <?php if ($match_data[Squad_prem_max]=='0') echo "d-none";?>">Prematch:</dt><dd class="d-none col-8 pl-2 <?php if ($match_data[Squad_prem_max]=='0') echo "d-none";?>"><?php echo "$match_data[Squad_prem_max]";?> závodníků</dd>
 			<dt class="col-4 text-right pr-0">Hlavní závod:</dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_stages]" * "$match_data[Squad_main_max]";?> závodníků</dd>
 			<dt class="col-4 text-right pr-0">Pořadatel:</dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_poradatel]";?></dd>
 			<dt class="col-4 text-right pr-0">Místo: </dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_misto]";?>&nbsp;&nbsp;<a href='https://goo.gl/maps/ehm6pwDKJbPsvSpB6' target='_new'><i class='fas fa-crosshairs text-dark'></i></a>&nbsp;&nbsp;<a href='https://www.google.cz/maps/dir//Shooting+Club+Opa%C5%99any,+Opa%C5%99any+372,+391+61+Opa%C5%99any/@49.4014151,14.4730687,1641m/data=!3m1!1e3!4m8!4m7!1m0!1m5!1m1!1s0x470ca05e2e879acf:0xdfe1c002d0d9509b!2m2!1d14.4692126!2d49.4000376' target='_new'><i class='fas fa-route text-dark'></i></a></dd>
@@ -54,48 +55,58 @@ else {
 
 	<div class="col-md-7">
 	<div class="article">
-		<div class="jumbotron"><H3>Sponzoři závodu</H3></div>
+		<div class="jumbotron "><H3>Sponzoři závodu</H3></div>
 		<a href="https://www.mujnuz.cz/" target="_blank"><img src="./images/mujnuz.png" class="img-thumbnail mb-3 mx-auto d-block" alt="Můj nůž.cz"></a>
-		<!--a href="http://www.jankruta.cz/" target="_blank"><img src="https://shoot79.webnode.cz/_files/200000069-7d9437e8c7/kondor.gif" width="30%" class="img-thumbnail mb-3 mx-auto d-block" alt="Jan Krůta"></a-->
+		<a class="d-none" href="http://www.jankruta.cz/" target="_blank"><img src="./images/jan_kruta.gif" width="30%" class="img-thumbnail mb-3 mx-auto d-block" alt="Jan Krůta"></a>
 		<div class="border border-left-0 border-right-0 border-bottom-0 border-info"></div>
+
 		<div class="jumbotron"><H3>Bezpečnost</H3></div>
 			<ol class="text-danger pr-2 text-left">
 				<li>Jakákoliv manipulace se zbraní mimo stanoviště je zakázaná.</li>
 				<li>zbraň musí být v pouzdru / v zavazadle / vybitá se spuštěným kohoutem.</li>
 				<li>Střelec smí vyjmout zbraň z pouzdra pouze na stanovišti na na povel rozhodčího nebo na místě k tomu účelu speciálně určeném = BEZPEČNOSTNÍ  ZÓNA. V bezpečnostní zóně je zakázaná manipulace se střelivem.</li>
 			</ol>
-				<p class="text-center font-weight-bold text-danger pb-2">Jakékoliv porušení zásad bezpečnosti znamená okamžitou DISKVALIFIKACI!!!</p>
+				<p class="text-center font-weight-bold text-danger pb-2">Na základě rozhodnutí předsedy klubu SK OPAŘANY došlo k úpravě závodu.<br />Byly odstraněny 2&nbsp;situace. Tím byl zredukován počet ran.<br />&nbsp;<br />Jakékoliv porušení zásad bezpečnosti znamená okamžitou DISKVALIFIKACI!!!</p>
 	</div>
 	</div>
 </div>
 
 <div class="row my-3">
-	<div class="col-md-5">
-	<div class="article">
-	<div class="jumbotron"><H3>Vedení závodu</H3></div>
-		<dl class="row  text-left">
+   <div class="col-md-5">
+   <div class="article">
+   <div class="jumbotron"><H3>Vedení závodu</H3></div>
+       <dl class="row  text-left">
 			<dt class="col-4 text-right pr-0">Match director:</dt><dd class="col-6 pl-2"><?php echo "$match_data[Zavod_match_director]";?></dd>
 			<dt class="col-4 text-right pr-0">Email:</dt><dd class="col-6 pl-2"><?php echo "$match_data[Zavod_email_poradatel]";?></dd>
 			<dt class="col-4 text-right pr-0">Telefon:</dt><dd class="col-6 pl-2"><?php echo "$match_data[Zavod_telefon_poradatel]";?></dd>
+
 			<dt class="col-4 text-right pr-0">Range Master:</dt><dd class="col-6 pl-2"><?php echo "$match_data[Zavod_range_master]";?></dd>
+			<dt class="col-4 text-right pr-0 <?php if ($match_data[Zavod_email_range_master]=="") echo "d-none";?>">Email:</dt><dd class="col-6 pl-2 <?php if ($match_data[Zavod_email_range_master]=="") echo "d-none";?>"><?php echo "$match_data[Zavod_email_range_master]";?></dd>
+			<dt class="col-4 text-right pr-0 <?php if ($match_data[Zavod_telefon_range_master]=="") echo "d-none";?>">Telefon:</dt><dd class="col-6 pl-2 <?php if ($match_data[Zavod_telefon_range_master]=="") echo "d-none";?>"><?php echo "$match_data[Zavod_telefon_range_master]";?></dd>
+
 			<dt class="col-4 text-right pr-0">Statistik:</dt><dd class="col-6 pl-2"><?php echo "$match_data[Zavod_stats]";?></dd>
-			<dt class="col-4 text-right pr-0">Hospodář:</dt><dd class="col-6 pl-2"><?php echo "$match_data[Zavod_hospodar]";?></dd>
-			<dt class="col-4 text-right pr-0">Email:</dt><dd class="col-6 pl-2"><?php echo "$match_data[Zavod_email_hospodar]";?></dd>
-			<dt class="col-4 text-right pr-0">Telefon:</dt><dd class="col-6 pl-2"><?php echo "$match_data[Zavod_telefon_hospodar]";?></dd>
-		</dl>
-	</div>
-	</div>
+			<dt class="col-4 text-right pr-0 <?php if ($match_data[Zavod_email_stats]=="") echo "d-none";?>">Email:</dt><dd class="col-6 pl-2 <?php if ($match_data[Zavod_email_stats]=="") echo "d-none";?>"><?php echo "$match_data[Zavod_email_stats]";?></dd>
+			<dt class="col-4 text-right pr-0 <?php if ($match_data[Zavod_telefon_stats]=="") echo "d-none";?>">Telefon:</dt><dd class="col-6 pl-2 <?php if ($match_data[Zavod_telefon_stats]=="") echo "d-none";?>"><?php echo "$match_data[Zavod_telefon_stats]";?></dd>
+
+			<dt class="col-4 text-right pr-0 <?php if ($match_data[Zavod_hospodar]=="") echo "d-none";?>">Hospodář:</dt><dd class="col-6 pl-2 <?php if ($match_data[Zavod_hospodar]=="") echo "d-none";?>"><?php echo "$match_data[Zavod_hospodar]";?></dd>
+			<dt class="col-4 text-right pr-0 <?php if ($match_data[Zavod_hospodar]=="") echo "d-none";?>">Email:</dt><dd class="col-6 pl-2 <?php if ($match_data[Zavod_hospodar]=="") echo "d-none";?>"><?php echo "$match_data[Zavod_email_hospodar]";?></dd>
+			<dt class="col-4 text-right pr-0 <?php if ($match_data[Zavod_hospodar]=="") echo "d-none";?>">Telefon:</dt><dd class="col-6 pl-2 <?php if ($match_data[Zavod_hospodar]=="") echo "d-none";?>"><?php echo "$match_data[Zavod_telefon_hospodar]";?></dd>
+       </dl>
+   </div>
+   </div>
+
 
 	<div class="col-md-7">
 	<div class="article">
 	<div class="jumbotron"><H3>Časový plán</H3></div>
 		<table class="table table-borderless m-2">
-			<tr><td><strong>Prematch</strong></td><td><?php echo "$prematch_den $prematch_datum";?></td><td><?php echo "$match_data[Zavod_cas_prematch]";?></td></tr>
+			<tr class="<?php if ($match_data[Squad_prem_max]=='0') echo "d-none";?>""><td><strong>Prematch</strong></td><td><?php echo "$prematch_den $prematch_datum";?></td><td><?php echo "$match_data[Zavod_cas_prematch]";?></td></tr>
 			<tr><td><strong>Prezence</strong></td><td><?php echo "$zavod_den $match_data[Zavod_datum]";?></td><td><?php echo "$match_data[Zavod_cas_prezence]";?></td></tr>
-			<tr><td><strong>Závod</strong></td><td><?php echo "$zavod_den $match_data[Zavod_datum]";?></td><td><?php echo "$match_data[Zavod_cas_main]";?></td></tr>
+			<tr class="<?php if ($match_data[Zavod_cas_main_dopoledne]!=='' AND $match_data[Zavod_cas_main_odpoledne]!=='') echo "d-none";?>"><td><strong>Závod</strong></td><td><?php echo "$zavod_den $match_data[Zavod_datum]";?></td><td><?php echo "$match_data[Zavod_cas_main]";?></td></tr>
+			<tr class="<?php if ($match_data[Zavod_cas_main_dopoledne]=='' OR $match_data[Zavod_cas_main_odpoledne]=='') echo "d-none";?>"><td><strong>Závod</strong></td><td><?php echo "$zavod_den $match_data[Zavod_datum]";?></td><td>dopolední směna: <?php echo "$match_data[Zavod_cas_main_dopoledne]";?><br>odpolední směna: <?php echo "$match_data[Zavod_cas_main_odpoledne]";?></td></tr-->
 		</table>
 	</div>
-</div>
+	</div>
 </div>
 
 
@@ -105,8 +116,10 @@ else {
 	<div class="article">
 	<div class="jumbotron"><H3>Další informace</H3></div>
 		<dl class="row  text-left">
-			<dt class="col-2 text-right pr-1">Divize:</dt><dd class="col-9 pl-2">Open, Standard, Production, Production Optic, Classic, Revolver, Revolver 6</dd>
-			<dt class="col-2 text-right pr-1">Kategorie:</dt><dd class="col-9 pl-2">Regular, Lady, Junior, Senior a Super Senior</dd>
+			<dt class="col-2 text-right pr-1">Divize:</dt><dd class="col-9 pl-2"><?php echo implode(', ', $zavod_divize );?>
+			    <span class="d-none text-danger small"><br>V závislosti na počtu závodníků v divizích CLASIC a STANDARD může dojít k jejich sloučení.</span></dd>
+			<dt class="col-2 text-right pr-1">Kategorie:</dt><dd class="col-9 pl-2"><?php echo implode(', ', $zavod_kategorie );?>
+			    <span class="text-danger small"><br>Ve vyhodnocení poháru je kategorie Grand Senior sloučena s kategorií  Super Senior</span></dd>
 			<dt class="col-2 text-right pr-1">Povinná výbava:</dt><dd class="col-9 pl-2">ochrana sluchu a zraku (sluchátka, brýle)</dd>
 			<dt class="col-2 text-right pr-1">Účast:</dt><dd class="col-9 pl-2">Držitelé zbrojního průkazu</dd>
 			<dt class="col-2 text-right pr-1">Zbraně a střelivo:</dt><dd class="col-9 pl-2">Vlastní, jsou povoleny všechny druhy velkorážních pistolí a revolverů od ráže 9mm Luger (dle pravidel IPSC). Není povoleno používat střelivo s průbojnou a zápalnou střelou.</dd>
@@ -120,13 +133,33 @@ else {
 	</div>
 </div>
 
+<div class="row my-3">
+	<div class="col-md-12">
+	<div class="article">
+	<div class="jumbotron"><H3>Pravidla registrace</H3></div>
+		<ul class="pb-3 text-left">
+			<li>V souladu s pravidlem 6.6.2 je účast v prematchi omezena na organizátory, rozhodčí, pomocníky a sponzory.</li>
+			<li>Rozhodčí a pomocníci se registrují po dohodě s RM nebo MD</li>
+			<li>Registrace se uzavírá 3 dny před konáním hlavního závodu.</li>
+			<li>Pořadatelé si vyhrazují právo dodatečně měnit zařazení závodníků do squadů za účelem zajištění hladkého průběhu závodu.</li>
+			<li>Změny v registraci (např. náhrada závodníka při přenosu startovného) lze provést nejpozději v den prematche.</li>
+			<li>Přesuny závodníků mezi squady na základě jejich žádosti lze provést <b>nejpozději do 30 minut před oficiálním zahájením hlavního závodu</b>.</li>
+			<li>Pokud se startované platí předem, není možná registrace na místě.<br>
+			<li class="text-danger">Protože jsou podklady pro zaplacení startovaného posílány emailem, zbavujete se při zadání neplatné emailové adresy možnosti zúčastnit se závodu. Rovněž nebudete moci být informováni o případných změnách.</li>
+		</ul>
+	</div>
+	</div>
+</div>
+
 <div class="row my-3 <?php echo "$paymentBeforeClass"; ?> ">
 	<div class="col-md-6">
 	<div class="article">
 	<div class="jumbotron"><H3>Úhrada startovného</H3></div>
-		<ul class="pb-3  text-left">
-			<li><i>Startovné uhraďte tak, aby platba proběhla do 10 dnů od registrace.
-			<li>V případě neuhrazení startovného do 10 dnů, bude Vaše registrace smazaná.
+		<ul class="pb-3 text-left">
+			<li>Startovné uhraďte tak, aby platba proběhla do 10 dnů od registrace.<br>
+			- <span class="text-danger">u závodníků zaregistrovaných méně jak 10 dní před závodem je třeba startovné zaplatit <b>nejpozději jeden den před prematchem</b></span>
+			<li>V případě neuhrazení startovného v řádném termínu bude Vaše registrace zrušena.<br>
+			<i>- neplatí pro organizátory, pomocníky a rozhodčí</i>
 			<li><b>Startovné je nevratné, ale lze přenést na jiného závodníka.
 			<li>Při platbě za více závodníků uveďte pouze jedno číslo a o platbě informujte pořadatele <a href='mailto:<?php echo $match_data[Zavod_email_from] ?>'>e-mailem</A>.</b></i>
 		</ul>
@@ -137,15 +170,13 @@ else {
 	<div class="article">
 	<div class="jumbotron"><H3>Platební údaje</H3></div>
 	<p class="text-monospace px-3  text-left">Číslo účtu: <?php echo "$match_data[Banka_ucet_cislo]/$match_data[Banka_ucet_kod]";?><br>
-	Jméno příjemce: Klub praktické střelby EGGENBERG z.s.<br>
-	Adresa příjemce: Heydukova 514/23, České Budějovice 7, 370 01 České Budějovice</p>
-
-	<p class="text-monospace px-3 pb-3">Banka: Československá obchodní banka, a. s.<br>
-	Adresa banky: Praha 5, Radlická 333/150, PSČ 150 57</p>
+	Jméno příjemce: <?php echo "$match_data[Zavod_poradatel]";?><br>
+	Adresa příjemce: <?php echo "$match_data[Zavod_poradatel_adresa]";?>
+	<p class="text-monospace px-3 pb-3">Banka: <?php echo "$match_data[Banka_nazev]";?><br>
+	Adresa banky: <?php echo "$match_data[Banka_adresa]";?></p>
 	</div>
 	</div>
 </div>
-
 
 <div class="row my-3">
 	<div class="col">
@@ -155,7 +186,7 @@ else {
 	</div>
 	<div id="gdpr" class="collapse pr-3  pb-3">
 	<ol>
-		<li>Udělujete tímto dobrovolně souhlas pořadateli <?php echo "$match_data[GDPR_spravce]";?> (dále jen "Správce"), aby ve smyslu zákona č.101/2000 Sb., o ochraně osobních údajů (dále jen "zákon o ochraně osobních údajů") zpracovávala tyto osobní údaje:
+		<li>Udělujete tímto dobrovolně souhlas pořadateli <?php echo "$match_data[Zavod_poradatel]";?> (dále jen "Správce"), aby ve smyslu zákona č.101/2000 Sb., o ochraně osobních údajů (dále jen "zákon o ochraně osobních údajů") zpracovávala tyto osobní údaje:
 			<ul>
 				<li>jméno a příjmení</li>
 				<li>datum narození</li>

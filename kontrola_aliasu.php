@@ -2,49 +2,64 @@
 include "./db/dbconn.php";
 include "./header.php";
 
-// Performing SQL query
-
 $result = mysql_query("
-CREATE VIEW ec2022_uniq_alias AS
-SELECT Prijmeni,Jmeno,Alias
- FROM (SELECT Prijmeni,Jmeno,Alias
-  FROM ec2022_1 where squad >=0
+CREATE VIEW ec_uniq_alias AS
+SELECT Prijmeni,Jmeno,Alias,Zavod
+ FROM (
+  SELECT Prijmeni,Jmeno,Alias,Zavod
+   FROM ec2021_1 where squad >=0
   union all
-  SELECT Prijmeni,Jmeno,Alias 
-  FROM ec2022_2 where squad >=0
+  SELECT Prijmeni,Jmeno,Alias,Zavod
+   FROM ec2021_2 where squad >=0
   union all
-  SELECT Prijmeni,Jmeno,Alias 
-  FROM ec2022_3 where squad >=0)
+   SELECT Prijmeni,Jmeno,Alias,Zavod
+  FROM ec2021_3 where squad >=0
+  union all
+  SELECT Prijmeni,Jmeno,Alias,Zavod
+   FROM ec2022_1 where squad >=0
+  union all
+  SELECT Prijmeni,Jmeno,Alias,Zavod
+   FROM ec2022_2 where squad >=0
+  union all
+   SELECT Prijmeni,Jmeno,Alias,Zavod
+  FROM ec2022_3 where squad >=0
+  union all
+  SELECT Prijmeni,Jmeno,Alias,Zavod
+   FROM ec2023_1 where squad >=0
+  union all
+  SELECT Prijmeni,Jmeno,Alias,Zavod
+   FROM ec2023_2 where squad >=0
+  union all
+   SELECT Prijmeni,Jmeno,Alias,Zavod
+  FROM ec2023_3 where squad >=0
+  )
 temp
-group by Alias
- having count(Alias)>0
-ORDER BY Prijmeni
+group by Prijmeni,Jmeno,Alias
+ having count(*)>0
+ORDER BY Prijmeni,Jmeno,Alias
 ;");
 
 $query = "
-SELECT 
-  ec2022_uniq_alias.Prijmeni,
-  ec2022_uniq_alias.Jmeno,
-  ec2022_uniq_alias.Alias
-FROM ec2022_uniq_alias
-  INNER JOIN (SELECT * FROM ec2022_uniq_alias
-    group by Prijmeni,Jmeno
-    having count(Prijmeni)>1 ) dupl
-   ON 
-    ec2022_uniq_alias.Prijmeni = dupl.Prijmeni";
+SELECT ec_uniq_alias.Prijmeni,ec_uniq_alias.Jmeno,ec_uniq_alias.Alias,ec_uniq_alias.Zavod FROM ec_uniq_alias
+  INNER JOIN 
+	(SELECT * FROM ec_uniq_alias
+		group by Prijmeni,Jmeno
+		having count(Prijmeni)>1 
+	) AS dupl 
+	ON 
+		ec_uniq_alias.Prijmeni = dupl.Prijmeni AND ec_uniq_alias.Jmeno = dupl.Jmeno
+	";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 
 if (!$result) {
   echo "<pre>:.. Nejsou žádní závodníci ke zpracování ..:</pre>";
 }
+
 ?>
 
-
-
-<H2>Kontrola registračních údajů (1.-3. kolo)</H2>
-<p>Tabulka obsahuje unikátní aliasy použité při registraci do jednotlivých kol série závodu tohoto roku.<br>
-<i>- výjimkou jsou závodníci se stejným příjmením :)</i></p>
-<h6>Po kontrole pošlete změny <u><a style="color:#2a5a8e;" href="mailto:milan&#064;g17.cz?subject=Oprava registracnich udaju Eggeneberg CUP">statistikovi</a></u> nejpozději před posledním závodem série.</h6/>
+<H2>Kontrola alisů zadaných při registraci od roku 2021</H2>
+<p>Tabulka obsahuje aliasy použité při registraci do <strong>jednotlivých kol</strong> Eggenberg CUPu od roku 2021.<br>
+<h6><span class='text-danger'> Nejdůležitější je sice použít stejný alias v rámci jedné série, ale stejně je v zájmu každého závodníka používat stále stejný alias ;).</span> <br><br>Po kontrole prosím pošlete <u><a style="color:#2a5a8e;" href="mailto:milan&#064;g17.cz?subject=Oprava registracnich udaju Eggenberg CUP">statistikovi email</a></u> s informací, <span class='text-danger'>který alias je správný (= zaregistrovaný)</span>.</h6/>
 <br>
 <div class="row">
 	<div class="col-md-8">
@@ -53,6 +68,7 @@ if (!$result) {
 			<th>Příjmení</th>
 			<th>Jméno</th>
 			<th>Alias</th>
+			<th>Závod</th>
 		</tr>
 		<tbody id="dataTable">
 <?php
@@ -61,6 +77,7 @@ if (!$result) {
 			<TD>".$line["Prijmeni"]."</TD>
 			<TD>".$line["Jmeno"]."</TD>
 			<TD>".$line["Alias"]."</TD>
+			<TD>".$line["Zavod"]."</TD>
 		</TR>";
 	}
 ?>

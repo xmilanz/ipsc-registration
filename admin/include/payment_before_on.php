@@ -13,7 +13,7 @@
       <div class="modal-header bg-success text-center">
         <h4 class="modal-title text-white w-100 font-weight-bold py-2">Způsob placení závodu</h4><br>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true" class="white-text">&times;</span>
+          <span aria-hidden="true" class="text-white">&times;</span>
         </button>
       </div>
 	  <!--Body-->
@@ -41,9 +41,6 @@
   </div>
   </div>
 </div>
-
-<div class="col-md-12 text-center">
-	<a href="" class="btn btn-sm btn-success btn-rounded " data-toggle="modal" data-target="#payment_before_on">Zapnout placení do 10 dnů po registraci</a>
-</div>
+	<a href="" class="btn btn-success btn-rounded" data-toggle="modal" data-target="#payment_before_on">Zapnout placení do 10 dnů po registraci</a>
 </div>
 </div>

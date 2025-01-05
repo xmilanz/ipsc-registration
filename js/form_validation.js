@@ -16,3 +16,18 @@
     });
   }, false);
 })();
+
+function replaceChars() {
+	var input0 = document.getElementById("Alias").value;
+	var input1 = document.getElementById("Jmeno").value;
+	var input2 = document.getElementById("Prijmeni").value;
+	var input3 = document.getElementById("Mail").value;
+	var output0 = input0.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]/g, "");
+    var output1 = input1.replace(/\s+/g, '');
+    var output2 = input2.replace(/\s+/g, '');
+	var output3 = input3.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9@\.]/g, "");
+  document.getElementById("Alias").value = output0;
+  document.getElementById("Jmeno").value = output1;
+  document.getElementById("Prijmeni").value = output2;
+  document.getElementById("Mail").value = output3;
+}

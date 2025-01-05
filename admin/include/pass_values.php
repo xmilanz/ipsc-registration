@@ -91,7 +91,7 @@
 </script>
 <!-- OZNACENI ZAPLACENI -->
 
-<!-- VYRAZENÍ ZAVODNIKA -->
+<!-- VYRAZENI ZAVODNIKA -->
 <div class="modal fade" id="cancel_shooter" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel"  aria-hidden="true">
         <div class="modal-dialog modal-notify modal-warning" role="document">
         <div class="modal-content">

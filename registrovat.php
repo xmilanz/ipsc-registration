@@ -3,7 +3,7 @@ include "./header.php";
 
 /* zkontrolovat max pocet ve squadu */
 $squad_max=$match_data[Squad_main_max];
-if ($_POST[squad]==0) {
+if ($_POST[squad]==100) {
   $squad_max=$match_data[Squad_prem_max];
 }
 $query = "SELECT Count(Prijmeni) FROM ".$table." WHERE Squad=\"".$_POST[squad]."\"";
@@ -25,8 +25,8 @@ if ($chyba<>"1") {
 
 $ip=$_SERVER["REMOTE_ADDR"];
 
-//kontrola, zda je závodnik s aliasem nebo jmenem a primenim uz zaregistrovan
-$check="SELECT * FROM $table WHERE ((Alias = '$alias') OR (Jmeno = '$jmeno' AND Prijmeni = '$prijmeni')) AND Squad>=-2";
+//kontrola, zda je závodnik s aliasem nebo jmenem a primenim uz zaregistrovan (bez vyřazených)
+$check="SELECT * FROM $table WHERE ((Alias = '$alias') OR (Jmeno = '$jmeno' AND Prijmeni = '$prijmeni')) AND Squad>=100";
 $check_z=mysql_query($check);
 $zavodnik=mysql_fetch_array($check_z);
 
@@ -114,7 +114,7 @@ var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
 
 else
 {
-  $query="INSERT INTO ".$table." (Alias,Prijmeni,Jmeno,VarSym,Region,Mail,Kategorie,Pidiv,Pifak,DatReg,RegistraceIP,Squad,VIP,RO,POM,OdeslanRegMail) 
+  $query="INSERT INTO ".$table." (Alias,Prijmeni,Jmeno,VarSym,Region,Mail,Kategorie,Pidiv,Pifak,DatReg,RegistraceIP,Squad,Staff,Zavod) 
   VALUES (
   '$alias',
   '$prijmeni',
@@ -128,10 +128,8 @@ else
   '$_POST[datreg]',
   '$ip',
   '$_POST[squad]',
-  '$_POST[VIP]',
-  '$_POST[RO]',
-  '$_POST[POM]',
-  '1'
+  NULLIF('$_POST[Staff]',''),
+  '$table'
   )";
 
   $result = mysql_query($query);
@@ -150,39 +148,59 @@ $result = mysql_query("update $table set klic= FLOOR(10 + (RAND(Cislo) * 9000)) 
   $z=mysql_fetch_array($strelec);
   $squad=$nazvy_squadu[$z[Squad]];
 
-   if ($z[RO]=="on") {
+   if ($z[Staff]=="RO") {
      $Rozhodci="ANO";
    } else {
      $Rozhodci="NE";
    }
 
-   if ($z[POM]=="on") {
+   if ($z[Staff]=="POM") {
      $Pomocnik="ANO";
    } else {
      $Pomocnik="NE";
    }
 
-  $tyden=str_replace(' ','',$zavod_datum);
+  $prematch_datum=date('Y-m-d', strtotime("-1 day", strtotime($match_data[Zavod_datum])));
+  $DatReg=date('d.m.Y', $z[DatReg]);
+
+  $payLimit=$match_data[Zavod_pocet_dni_na_platbu];
+
+  // Převod datumů na objekty typu DateTime
+  $prematchDateTime = new DateTime($prematch_datum);
+  $regDateTime = new DateTime($datReg);
+
+  // Odčítání 10 dní od datumu konání prematche
+  $prematchDateTime->modify("-$payLimit days");
+
+  if ($regDateTime >= $prematchDateTime) {
+      $DatPay=date('d.m.Y', strtotime("-2 day", strtotime($match_data[Zavod_datum])));
+  } else {
+  	  $DatPay=date('d.m.Y', strtotime("+$match_data[Zavod_pocet_dni_na_platbu] day", strtotime($DatReg)));
+  }
+
+  $tyden=str_replace(' ','',$match_data[Zavod_datum]);
   $tyden=intval(date("W",strtotime($tyden)));
-  $varsymbol_new="$tyden".($z[Cislo]); //prefix "18" pro var.symbol pistole.  
-  $query="update ".$table." set VarSym='$varsymbol_new' where VarSym='$varsymbol'";
+  $varsymbol_new="$tyden".($z[Cislo]);
+
+  $query="update ".$table." set VarSym='$varsymbol_new',DatPay='$DatPay' where VarSym='$varsymbol'";
+
   $res=mysql_query($query);
   $varsymbol=$varsymbol_new;
 
-  $STRELEC_ALIAS="ALIAS: $z[Alias]"."\r\n";
-  $STRELEC_SHOOTER="STŘELEC: #$z[Cislo] $z[Prijmeni] $z[Jmeno]"."\r\n";
-  $STRELEC_CATEGORY="KATEGORIE: $z[Kategorie]"."\r\n";
-  $STRELEC_DIVISION="DIVIZE: $z[Pidiv] $z[Pifak]"."\r\n";
-  $STRELEC_SQUAD="SQUAD: $squad"."\r\n";
-  $STRELEC_RO="ROZHODČÍ: $Rozhodci"."\r\n";
-  $STRELEC_POM="POMOCNÍK: $Pomocnik"."\r\n";
+  $STRELEC_ALIAS="<b>Alias: $z[Alias]<b>"."\r\n";
+  $STRELEC_SHOOTER="Střelec: #$z[Cislo] $z[Prijmeni] $z[Jmeno]"."\r\n";
+  $STRELEC_CATEGORY="Kategorie: $z[Kategorie]"."\r\n";
+  $STRELEC_DIVISION="Divize: $z[Pidiv] $z[Pifak]"."\r\n";
+  $STRELEC_SQUAD="Squad: $squad"."\r\n";
+  $STRELEC_RO="Rozhodčí: $Rozhodci"."\r\n";
+  $STRELEC_POM="Pomocník: $Pomocnik"."\r\n";
   $STRELEC_VS="Variabilní symbol: $varsymbol"."\r\n";
 
-  $link_cancel="<a href='$web_adresa/zrus_ucast.php?id=$z[Cislo]&klic=$z[klic]&vyradit=ano'><strong>zrušit účast</strong></a>";
+  $link_cancel="<a href='$web_adresa/zrus_ucast.php?id=$z[Cislo]&klic=$z[klic]'><strong>zrušit účast</strong></a>";
 
 echo "
 <div class='text-center'>
-	<img src='./images/EC_ASCII.png'>
+	<img class='registrovat-bkg' src='./images/EC_ASCII.png'>
 </div>
 <div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
   <div class='modal-dialog'>
@@ -200,12 +218,12 @@ echo "
 		$STRELEC_SQUAD<br>
 		$STRELEC_RO<br>
 		$STRELEC_POM<br>
-		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Potvrzení registrace bylo odeslané na email $_POST[email] zadaný při registraci.</p>
+		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Potvrzení registrace bylo odesláno na email $_POST[email] zadaný při registraci.</p>
       </div>
       <div class='modal-footer mb-3'>
 		<a href='./registrace.php' rel='modal:close'><button type='button' class='btn btn-primary'>Nová registrace</button></a>&nbsp;&nbsp;
-		<a href='./kontrola_aliasu.php' rel='modal:close'><button type='button' class='$paymentBeforeClass btn btn-success'>Kontrola aliasů série</button></a>&nbsp;&nbsp;
-		<a href='./zavodnici.php' rel='modal:close'><button type='button' class='btn btn-secondary'>Zavřít</button></a>
+		<a href='./kontrola_aliasu_2023.php' rel='modal:close'><button type='button' class='$paymentBeforeClass btn btn-success'>Kontrola aliasů série</button></a>&nbsp;&nbsp;
+		<!--a href='./zavodnici.php' rel='modal:close'><button type='button' class='btn btn-default'>Zavřít</button></a-->
       </div>
     </div>
   </div>
@@ -227,16 +245,15 @@ var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
 ";
 
 // priprava podkladu pro email zavodnikovi
-  $STRELEC="ALIAS: $z[Alias]"."\r\n";
-  $STRELEC.="STŘELEC: #$z[Cislo] $z[Prijmeni] $z[Jmeno] [$link_cancel]"."\r\n";
-  $STRELEC.="KATEGORIE: $z[Kategorie]"."\r\n";
-  $STRELEC.="DIVIZE: $z[Pidiv] $z[Pifak]"."\r\n";
-  $STRELEC.="SQUAD: $squad"."\r\n";
-  $STRELEC.="ROZHODČÍ: $Rozhodci"."\r\n";
-  $STRELEC.="POMOCNIK: $Pomocnik"."\r\n";
+  $STRELEC="<b>Alias: $z[Alias]</b>"."\r\n";
+  $STRELEC.="Střelec: #$z[Cislo] $z[Prijmeni] $z[Jmeno] [$link_cancel]"."\r\n";
+  $STRELEC.="Kategorie: $z[Kategorie]"."\r\n";
+  $STRELEC.="Divize: $z[Pidiv] $z[Pifak]"."\r\n";
+  $STRELEC.="Squad: $squad"."\r\n\r\n";
+  $STRELEC.="<i>Rozhodčí: $Rozhodci"."\r\n";
+  $STRELEC.="Pomocnik: $Pomocnik</i>"."\r\n";
 
-  $DatReg=date('d.m.Y', $z["DatReg"]);
-  $DatPay=date('Y-m-d', strtotime("+$match_data[Zavod_pocet_dni_na_platbu] day", $z["DatReg"]));
+  $DatReg=date('d.m.Y', $z[DatReg]);
 
   $qr_link="https://api.paylibo.com/paylibo/generator/czech/image?accountNumber=$match_data[Banka_ucet_cislo]&bankCode=$match_data[Banka_ucet_kod]&amount=$match_data[Banka_ucet_CASTKA]&currency=$match_data[Banka_ucet_MENA]&vs=".$varsymbol."&message=$match_data[Zavod]&size=100";
 
@@ -245,11 +262,11 @@ var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
   $to=$_POST[email];
   $subject = "Registrace ".$match_data[Zavod];
 
-	if (($z[RO]=="on") or ($z[POM]=="on")) {
+	if (($z[Staff]=="RO") or ($z[Staff]=="POM")) {
 		$message=$email_registrace_bez_platby_text;
-		$query="UPDATE ".$table." SET Zaplaceno='on' ,Castka='0',Mena='$match_data[Banka_ucet_MENA]',DatumZaplaceni='$dnes' where Cislo='$z[Cislo]' and klic='$z[klic]'";
+		$query="UPDATE ".$table." SET Zaplaceno='on' ,Castka='0',Mena='$match_data[Banka_ucet_MENA]',DatumZaplaceni='$dnes' WHERE Cislo='$z[Cislo]' AND klic='$z[klic]'";
 		$res=mysql_query($query);
-	} elseif ($z[squad]=="-2") {
+	} elseif ($_POST[squad]=="-2") {
 		$message=$email_registrace_cekatel_text;
 	} elseif ($match_data[Payment_before]=="") {
  		$message=$email_registrace_zavod_bez_platby_predem;
@@ -264,8 +281,9 @@ var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
 
 // posilame email zavodnikovi
   email($from_text,$from,$to,$subject, $message);
+
 // zapiseme do DB, ze registracni mail byl odeslan
-  $query_odeslano="update ".$table." set OdeslanRegMail='1' where Mail='$_POST[email].' and OdeslanRegMail is null";
+  $query_odeslano="UPDATE ".$table." SET OdeslanRegMail='1' WHERE Mail='$_POST[email]' AND OdeslanRegMail IS NULL";
   $res3=mysql_query($query_odeslano);
 };
 include "./footer.php"

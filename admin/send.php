@@ -1,4 +1,11 @@
 <?php
+session_start();
+// If the user is not logged in redirect to the login page...
+if (!isset($_SESSION['loggedin'])) {
+	header('Location: ../index.php');
+	exit;
+}
+
 require_once ("../db/dbconn.php");
 require_once ("functions.php");
 
@@ -6,39 +13,53 @@ $query = "SELECT * from match_config where Zavod_id='$table'";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 $match_data = mysql_fetch_array($result);
 
-// REGISTRACNI MAIL
+// REGISTRACNI MAIL ODESLANY Z ADMINISTRACE
 if (isset($_GET[regmail])) {
 $query="select * from $table where Cislo=$_POST[shooterID]";
 $strelec=mysql_query($query);
 $z=mysql_fetch_array($strelec);
 $squad=$nazvy_squadu[$z[Squad]];
 $varsymbol=$z[VarSym];
-$link_cancel="<a href='$web_adresa_admin/zrus_ucast.php?id=$z[Cislo]&klic=$z[klic]&vyradit=ano'><strong>zrušit účast</strong></a>";
+$link_cancel="<a href='$web_adresa_admin/zrus_ucast.php?id=$z[Cislo]&klic=$z[klic]'><strong>zrušit účast</strong></a>";
 
-   if ($z[RO]=="on") {
+   if ($z[Staff]=="RO") {
      $Rozhodci="ANO";
    } else {
      $Rozhodci="NE";
    }
 
-   if ($z[POM]=="on") {
+   if ($z[Staff]=="POM") {
      $Pomocnik="ANO";
    } else {
      $Pomocnik="NE";
    }
 
-
 // priprava podkladu pro email zavodnikovi
-  $STRELEC="ALIAS: $z[Alias]"."\r\n";
-  $STRELEC.="STŘELEC: #$z[Cislo] $z[Prijmeni] $z[Jmeno] [$link_cancel]"."\r\n";
-  $STRELEC.="KATEGORIE: $z[Kategorie]"."\r\n";
-  $STRELEC.="DIVIZE: $z[Pidiv] $z[Pifak]"."\r\n";
-  $STRELEC.="SQUAD: $squad"."\r\n";
-  $STRELEC.="ROZHODČÍ: $Rozhodci"."\r\n";
-  $STRELEC.="POMOCNIK: $Pomocnik"."\r\n";
+  $STRELEC="<b>ALIAS: $z[Alias]</b>"."\r\n";
+  $STRELEC.="Střelec: #$z[Cislo] $z[Prijmeni] $z[Jmeno] [$link_cancel]"."\r\n";
+  $STRELEC.="Kategorie: $z[Kategorie]"."\r\n";
+  $STRELEC.="Divize: $z[Pidiv] $z[Pifak]"."\r\n";
+  $STRELEC.="Squad: $squad"."\r\n\r\n";
+  $STRELEC.="<i>Rozhodčí: $Rozhodci"."\r\n";
+  $STRELEC.="Pomocnik: $Pomocnik</i>"."\r\n";
+
+  $prematch_datum=date('Y-m-d', strtotime("-1 day", strtotime($match_data[Zavod_datum])));
 
   $DatReg=date('d.m.Y', $z["DatReg"]);
-  $DatPay=date('d.m.Y', strtotime("+$match_data[Zavod_pocet_dni_na_platbu] day", $z["DatReg"]));
+  $payLimit=$match_data[Zavod_pocet_dni_na_platbu];
+
+  // Převod datumů na objekty typu DateTime
+  $prematchDateTime = new DateTime($prematch_datum);
+  $regDateTime = new DateTime($datReg);
+
+  // Odčítání 10 dní od datumu konani prematche
+  $prematchDateTime->modify("-$payLimit days");
+
+  if ($regDateTime >= $prematchDateTime) {
+      $DatPay=date('d.m.Y', strtotime("-2 day", strtotime($match_data[Zavod_datum])));
+  } else {
+  	  $DatPay=date('d.m.Y', strtotime("+$match_data[Zavod_pocet_dni_na_platbu] day", strtotime($DatReg)));
+  }
 
   $qr_link="https://api.paylibo.com/paylibo/generator/czech/image?accountNumber=$match_data[Banka_ucet_cislo]&bankCode=$match_data[Banka_ucet_kod]&amount=$match_data[Banka_ucet_CASTKA]&currency=$match_data[Banka_ucet_MENA]&vs=".$varsymbol."&message=$match_data[Zavod]&size=100";
 
@@ -48,7 +69,7 @@ $link_cancel="<a href='$web_adresa_admin/zrus_ucast.php?id=$z[Cislo]&klic=$z[kli
   $subject = "Registrace ".$match_data[Zavod];
 
 //to-do check odeslani mailu pri platbe na miste
-	if (($z[VIP]=="on") or ($z[RO]=="on") or ($z[POM]=="on")){
+	if (($z[Staff]=="VIP") or ($z[Staff]=="RO") or ($z[Staff]=="POM")){
 		$message=$email_registrace_bez_platby_text_admin;
 	}	elseif ($z[Squad]=="-2"){
  		$message=$email_registrace_cekatel_text_admin;
@@ -97,31 +118,33 @@ $strelec=mysql_query($query);
 $z=mysql_fetch_array($strelec);
 $squad=$nazvy_squadu[$z[Squad]];
 $varsymbol=$z[VarSym];
-$link_cancel="<a href='$web_adresa_admin/zrus_ucast.php?id=$z[Cislo]&klic=$z[klic]&vyradit=ano'><strong>zrušit účast</strong></a>";
-
-   if ($z[RO]=="on") {
-     $Rozhodci="ANO";
-   } else {
-     $Rozhodci="NE";
-   }
-
-   if ($z[POM]=="on") {
-     $Pomocnik="ANO";
-   } else {
-     $Pomocnik="NE";
-   }
+$link_cancel="<a href='$web_adresa_admin/zrus_ucast.php?id=$z[Cislo]&klic=$z[klic]'><strong>zrušit účast</strong></a>";
 
 // priprava podkladu pro email zavodnikovi
-  $STRELEC="ALIAS: $z[Alias]"."\r\n";
-  $STRELEC.="STŘELEC: #$z[Cislo] $z[Prijmeni] $z[Jmeno] [$link_cancel]"."\r\n";
-  $STRELEC.="KATEGORIE: $z[Kategorie]"."\r\n";
-  $STRELEC.="DIVIZE: $z[Pidiv] $z[Pifak]"."\r\n";
-  $STRELEC.="SQUAD: $squad"."\r\n";
-  $STRELEC.="ROZHODČÍ: $Rozhodci"."\r\n";
-  $STRELEC.="POMOCNIK: $Pomocnik"."\r\n";
+  $STRELEC="<b>Alias: $z[Alias]</b>"."\r\n";
+  $STRELEC.="Střelec: #$z[Cislo] $z[Prijmeni] $z[Jmeno] [$link_cancel]"."\r\n";
+  $STRELEC.="Kategorie: $z[Kategorie]"."\r\n";
+  $STRELEC.="Divize: $z[Pidiv] $z[Pifak]"."\r\n";
+  $STRELEC.="Squad: $squad"."\r\n";
 
+  $prematch_datum=date('Y-m-d', strtotime("-1 day", strtotime($match_data[Zavod_datum])));
   $DatReg=date('d.m.Y', $z["DatReg"]);
-  $DatPay=date('d.m.Y', strtotime("+$match_data[Zavod_pocet_dni_na_platbu] day", $z["DatReg"]));
+
+  // $WarnLimit=date('Y-m-d', strtotime($DatReg. +($match_data[Zavod_pocet_dni_na_platbu]).' days'));
+  $payLimit=$match_data[Zavod_pocet_dni_na_platbu];
+
+  // Převod datumů na objekty typu DateTime
+  $prematchDateTime = new DateTime($prematch_datum);
+  $regDateTime = new DateTime($datReg);
+
+  // Odčítání 10 dní od datumu konani prematche
+  $prematchDateTime->modify("-$payLimit days");
+
+  if ($regDateTime >= $prematchDateTime) {
+      $DatPay=date('d.m.Y', strtotime("-2 day", strtotime($match_data[Zavod_datum])));
+  } else {
+  	  $DatPay=date('d.m.Y', strtotime("+$match_data[Zavod_pocet_dni_na_platbu] day", strtotime($DatReg)));
+  }
 
   $qr_link="https://api.paylibo.com/paylibo/generator/czech/image?accountNumber=$match_data[Banka_ucet_cislo]&bankCode=$match_data[Banka_ucet_kod]&amount=$match_data[Banka_ucet_CASTKA]&currency=$match_data[Banka_ucet_MENA]&vs=".$varsymbol."&message=$match_data[Zavod]&size=100";
 
