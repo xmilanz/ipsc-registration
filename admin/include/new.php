@@ -3,7 +3,7 @@
    $paymentBeforeClass.=" d-none";
  }
 ?>
-<div class="modal fade" id="new_shooter" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel"  aria-hidden="true">
+<div class="modal fade" id="new_shooter" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel"  aria-hidden="true">
   <div class="modal-dialog modal-notify modal-warning" role="document">
     <!--Content-->
     <div class="modal-content">
@@ -21,14 +21,27 @@
 				list($usec, $sec) = explode(" ", microtime());
 				echo "<INPUT TYPE=HIDDEN NAME=datreg VALUE=".$sec.">";
 			?>
-			<div class="col-md-10 font-weight-bolder">Osobní informace</div>
-			<div class="col-md-6">
+			<div class="col-md-8 font-weight-bolder">Osobní informace</div>
+			<div class="col-md-8">
 				<label for="Alias" class="form-label pt-2">Alias</label>
 				<input pattern=".{3,16}" class="form-control" type="text" name="Alias" id="Alias" placeholder="3-16 znaků, bez diakritiky a spec. znaků" onfocus="this.placeholder = ''" onblur="replaceChars()" required>
 				<label class="alias_validation" data-error="Použili jste písmena s diakritikou nebo speciální znaky"></label>
 				<div class="invalid-feedback">Nevyplnili jste alias nebo má neplatnou délku</div>
 			</div>
-			<div class="col-md-6"></div>
+			<div class="col-md-4">
+				<label for="Pidiv_dalsi" class="form-label pt-2">Další divize</label>
+				  <select class="form-control" name=Pidiv_dalsi>
+					<option value="" selected>--- vyberte ---</option>
+					<?php
+					$query = mysql_query("SELECT * from $table_divisions");
+						while($division = mysql_fetch_array($query))
+						{
+							echo "<option value=".'-'.$division['Name'].">". $division['Name']."</option>";
+						}
+					?>
+				  </select>
+			</div>
+			<div class="col-md-12"></div>
 			<div class="col-md-3">
 				<label for="Jmeno" class="form-label pt-2">Jméno</label>
 				<input class="form-control" type="text" name="Jmeno" id="Jmeno" placeholder="Jan" onfocus="this.placeholder = ''" onblur="Jan" onkeypress="return avoidspace(event)" required>
@@ -47,7 +60,7 @@
 						<option value=" st.">st.</option>
 					</select>
 			</div>
-			<div class="col-md-6">
+			<div class="col-md-8">
 				<label for="Mail" class="form-label pt-3">Email</label>
 				<div class="input-group">
 					<div class="input-group-prepend">
@@ -92,7 +105,7 @@
 					$query = mysql_query("SELECT * from $table_categories");
 						while($category = mysql_fetch_array($query))
 						{
-							echo "<option value=".$category['Name'].">". $category['Value']."</option>";
+							echo "<option value=".$category['Name'].">". $category['Name']."</option>";
 						}
 					?>
 				  </select>
@@ -149,10 +162,6 @@
 		</div>
 	 </form>
     </div>
-    <!--/.Content-->
+    <!--Content-->
   </div>
 </div>
-	<a href="" class="btn btn-primary btn-rounded mr-3" data-toggle="modal" data-target="#new_shooter">Přidat nového závodníka</a>
-</div>
-</div>
-<br>

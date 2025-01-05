@@ -1,4 +1,4 @@
-<div class="modal fade" id="manage_divisions" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel"  aria-hidden="true">
+<div class="modal fade" id="manage_divisions" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel"  aria-hidden="true">
   <div class="modal-dialog modal-notify modal-warning" role="document">
     <!--Content-->
     <div class="modal-content">
@@ -44,9 +44,9 @@
 			</div>
 
 			<div id="accordion" class="col-md-12 mt-3 ml-3 pr-5">
-				<div class="card">
+			  <div class="card">
 				<a class="collapsed card-link" data-toggle="collapse" href="#collapse">
-					<div class="card-header font-weight-bolder ">Seznam použitelných divizí</div>
+					<div class="card-header font-weight-bolder ">Seznam všech divizí</div>
 				</a>
 				<div id="collapse" class="collapse" data-parent="#accordion">
 					<div class="card-body">
@@ -54,25 +54,27 @@
 					<div class="col-md-6">
 						<dl class="row  text-left">
 							<dt class="col-3 text-right pr-0">PRD</dt><dd class="col-9 pl-2">Production</dd>
+							<dt class="col-3 text-right pr-0">PDO</dt><dd class="col-9 pl-2">Production Optics</dd>
 							<dt class="col-3 text-right pr-0">STD</dt><dd class="col-9 pl-2">Standard</dd>
 							<dt class="col-3 text-right pr-0">OPN</dt><dd class="col-9 pl-2">Open</dd>
 							<dt class="col-3 text-right pr-0">CLA</dt><dd class="col-9 pl-2">Classic</dd>
 							<dt class="col-3 text-right pr-0">REV</dt><dd class="col-9 pl-2">Revolver</dd>
 							<dt class="col-3 text-right pr-0">RE6</dt><dd class="col-9 pl-2">Revolver (šestiraňák)</dd>
-							<dt class="col-3 text-right pr-0">PDO</dt><dd class="col-9 pl-2">Production Optics</dd>
-							<dt class="col-3 text-right pr-0">PCC</dt><dd class="col-9 pl-2">Pistol Caliber Carbines</dd>
+							<dt class="col-3 text-right pr-0">PCC</dt><dd class="col-9 pl-2">PCC</dd>
+							<dt class="col-3 text-right pr-0">PCCI</dt><dd class="col-9 pl-2">PCC Iron</dd>
+							<dt class="col-3 text-right pr-0">PCCO</dt><dd class="col-9 pl-2">PCC Optics</dd>
+							<dt class="col-3 text-right pr-0">MR</dt><dd class="col-9 pl-2">Mini Rifle</dd>
+							<dt class="col-3 text-right pr-0">MRS</dt><dd class="col-9 pl-2">Mini Rifle Standard</dd>
+							<dt class="col-3 text-right pr-0">MRO</dt><dd class="col-9 pl-2">Mini Rifle Open</dd>
 						</dl>
 					</div>
 					</div>
 				</div>
 				</div>
-		
-				</div>
+			 </div>
 			</div>
 		</form>
 	</div>
-
-	
       <!--Footer-->
 		<div class="modal-footer border-top-0">
 			<button type="button" class="btn btn-outline-dark" data-dismiss="modal" aria-label="Close">Zavřít</button>
@@ -81,7 +83,4 @@
     <!--/.Content-->
   </div>
 </div>
-	<a href="" class="btn btn-success btn-rounded mr-3" data-toggle="modal" data-target="#manage_divisions">Správa divizí</a>
-</div>
-</div>
-<br>
+	<!--a href="" class="nav-link" data-toggle="modal" data-target="#manage_divisions">Divize</a-->

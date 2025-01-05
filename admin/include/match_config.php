@@ -1,14 +1,14 @@
-<?php 
+	<?php 
 	$query = "SELECT * from match_config where Zavod_id='$table'";
 	$result = mysql_query($query) or die('Query failed: ' . mysql_error());
 	$match_configuration = mysql_fetch_array($result);
 
- if ($match_data[Payment_before]=="") {
+ if ($match_configuration[Payment_before]=="") {
    $paymentBeforeClass=" d-none";
  }
 ?>
 
-<div class="modal fade" id="match_configuration" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel"  aria-hidden="true">
+<div class="modal fade" id="match_configuration" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel"  aria-hidden="true">
   <div class="modal-dialog modal-notify modal-warning" role="document">
     <!--Content-->
     <div class="modal-content">
@@ -37,7 +37,7 @@
 
  			<div class="col-md-6">
 				<label for="Zavod" class="form-label pt-1">Název závodu</label>
-				<input class="form-control" type="text" name="Zavod" id="Zavod" onkeypress="return avoidspace(event)" placeholder="název závodu" onfocus="this.placeholder = ''" onblur="this.placeholder = 'název závodu'" value="<?php echo $match_configuration['Zavod']; ?>" required>
+				<input class="form-control" type="text" name="Zavod" id="Zavod" placeholder="název závodu" onfocus="this.placeholder = ''" onblur="this.placeholder = 'název závodu'" value="<?php echo $match_configuration['Zavod']; ?>" required>
 				<div class="invalid-feedback">Nevyplnili jste název závodu</div>
 			  </div>
 		  
@@ -350,10 +350,7 @@
 	<!--/.Content-->
   </div>
   </div>
-</div>
-	<a href="" class="btn btn-success btn-rounded float-right mr-2" data-toggle="modal" data-target="#match_configuration">Konfigurace závodu</a>
-</div>
-</div>
+	<!--a href="" class="nav-link" data-toggle="modal" data-target="#match_configuration">Konfigurace závodu</a-->
 
 
 <script>

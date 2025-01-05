@@ -1,5 +1,5 @@
 <!-- UPRAVA ZAVODNIKA -->
-<div class="modal fade" id="edit_shooter" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel"  aria-hidden="true">
+<div class="modal fade" id="edit_shooter" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel"  aria-hidden="true">
         <div class="modal-dialog modal-notify modal-warning" role="document">
         <div class="modal-content">
 		<!-- ZDE SE VKLADA OBSAH edit.php-->
@@ -15,6 +15,25 @@
     });
 </script>
 <!-- UPRAVA ZAVODNIKA -->
+
+
+<!-- INFORMACE ZAVODNIKA -->
+<div class="modal fade" id="info_shooter" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel"  aria-hidden="true">
+        <div class="modal-dialog modal-notify modal-warning" role="document">
+        <div class="modal-content">
+		<!-- ZDE SE VKLADA OBSAH info.php-->
+		</div>
+        </div>
+</div>
+<script>
+    $('.modal_info_shooter').click(function(){
+        var ID=$(this).attr('data-id');
+        $.ajax({url:"information.php?ID="+ID,cache:false,success:function(result){
+            $(".modal-content").html(result);
+        }});
+    });
+</script>
+<!-- INFORMACE ZAVODNIKA -->
 
 
 <!-- MAZANI ZAVODNIKA -->

@@ -127,10 +127,9 @@ else {
 // PRIDANI NOVEHO ZAVODNIKA
 if (isset($_GET[new_shooter])) {
   $varsymbol=substr(rand(),0,4);
-  $alias=trim(mb_convert_case($_POST[Alias], MB_CASE_UPPER, "UTF-8"));
+  $alias=trim(mb_convert_case($_POST[Alias], MB_CASE_UPPER, "UTF-8")).mb_convert_case($_POST[Pidiv_dalsi], MB_CASE_UPPER);
   $jmeno=trim(mb_convert_case($_POST[Jmeno], MB_CASE_TITLE, "UTF-8"));
-  $prijmeni=trim(mb_convert_case($_POST[Prijmeni], MB_CASE_TITLE, "UTF-8")).$_POST[Prijmeni_stav].'';
-  $prijmeni=ucfirst(strtolower($prijmeni));
+  $prijmeni=trim(mb_convert_case($_POST[Prijmeni], MB_CASE_TITLE, "UTF-8")).mb_convert_case($_POST[Pidiv_dalsi], MB_CASE_UPPER).$_POST[Prijmeni_stav].'';
   $ip=($_SERVER["REMOTE_ADDR"]." - admin");
 
   //kontrola, zda je závodnik s aliasem nebo jmenem a primenim uz zaregistrovan (bez vyřazených)
@@ -263,7 +262,8 @@ else {
   $query="select * from $table where Prijmeni='$prijmeni' and Jmeno='$jmeno' and VarSym='$varsymbol' and Mail='$_POST[Mail]';";
   $strelec=mysql_query($query);
   $z=mysql_fetch_array($strelec);
-  $squad=$nazvy_squadu[$z[Squad]];
+//  $squad=$nazvy_squadu[$z[Squad]]; //TO-DO získání squadůz databáze
+  $squad=$z[Squad]; 
 
   $tyden=intval(date("W",strtotime($zavod_datum)));
   $varsymbol_new="$tyden".($z[Cislo]); //prefix "18" pro var.symbol pistole.  
@@ -340,10 +340,9 @@ else
 
 // EDITACE ZAVODNIKA
 if (isset($_GET[edit_shooter])) {
-  $alias=trim(mb_convert_case($_POST[Alias], MB_CASE_UPPER, "UTF-8"));
+  $alias=trim(mb_convert_case($_POST[Alias], MB_CASE_UPPER, "UTF-8")).mb_convert_case($_POST[Pidiv_dalsi], MB_CASE_UPPER);
   $jmeno=trim(mb_convert_case($_POST[Jmeno], MB_CASE_TITLE, "UTF-8"));
-  $prijmeni=trim(mb_convert_case($_POST[Prijmeni], MB_CASE_TITLE, "UTF-8")).$_POST[Prijmeni_stav].'';
-  $prijmeni=ucfirst(strtolower($prijmeni));
+  $prijmeni=trim(mb_convert_case($_POST[Prijmeni], MB_CASE_TITLE, "UTF-8")).mb_convert_case($_POST[Pidiv_dalsi], MB_CASE_UPPER).$_POST[Prijmeni_stav].'';
   $dnes=date_format(new DateTime(),"Y-m-d");
   $mena=$match_data[Banka_ucet_MENA];
 
@@ -380,7 +379,7 @@ $query="UPDATE ".$table." SET
   Region='$_POST[Region]',
   Squad='$_POST[Squad]',
   Staff='$_POST[Staff]',
-  Zaplaceno=NULLIF('$_POST[Staff]',''),
+  Zaplaceno=NULLIF('$_POST[Zaplaceno]',''),
   Mena='$mena',
   ZaplatiNaMiste=NULLIF('$_POST[ZaplatiNaMiste]',''),
   Poznamka='$_POST[Poznamka]'
@@ -432,7 +431,8 @@ if (($_POST[Squad_old]=="-2") AND ($_POST[Squad_old]!=$_POST[Squad])){
   $query="select * from $table where Prijmeni='$prijmeni' and Jmeno='$jmeno' and Mail='$_POST[Mail]';";
   $strelec=mysql_query($query);
   $z=mysql_fetch_array($strelec);
-  $squad=$nazvy_squadu[$z[Squad]];
+//  $squad=$nazvy_squadu[$z[Squad]];
+  $squad=$z[Squad];
 
   $prematch_datum=date('Y-m-d', strtotime("-1 day", strtotime($match_data[Zavod_datum])));
   $DatReg=date('d.m.Y', $z[DatReg]);
@@ -722,7 +722,8 @@ $query="select * from $table where Cislo='$_POST[shooterID]' and klic='$_POST[sh
 $strelci=mysql_query($query);
 $z=mysql_fetch_array($strelci);
 
-   $squad=$nazvy_squadu[$z[Squad]];
+//   $squad=$nazvy_squadu[$z[Squad]];
+   $squad=$z[Squad];
    $STRELEC="<b>Alias: $z[Alias]</b>"."\r\n";
    $STRELEC.="Střelec: #$z[Cislo] $z[Prijmeni] $z[Jmeno]"."\r\n";
    $STRELEC.="Kategorie: $z[Kategorie]"."\r\n";
@@ -896,19 +897,14 @@ else {
  // KONEC MAZANI DIVIZE
 
 
-
-
-
-
-
 // SPRÁVA KATEGORIE
 
 // NOVA KATEGORIE
 if (isset($_GET[new_category])) {
 	 $name = $_POST['Name'];
 	 $value = $_POST['Value'];
-	 $query = "INSERT INTO $table_categories (Name,Value)
-	 VALUES ('$name','$value')";
+	 $query = "INSERT INTO $table_categories (Name)
+	 VALUES ('$name')";
 	 $result = mysql_query($query);
 
 if ($result) {

@@ -1,4 +1,4 @@
-<div class="modal fade" id="manage_squads" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel"  aria-hidden="true">
+<div class="modal fade" id="manage_squads" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel"  aria-hidden="true">
   <div class="modal-dialog modal-notify modal-warning" role="document">
     <!--Content-->
     <div class="modal-content">
@@ -86,7 +86,4 @@
     <!--/.Content-->
   </div>
 </div>
-	<a href="" class="btn btn-success btn-rounded mr-3" data-toggle="modal" data-target="#manage_squads">Správa squadů</a>
-</div>
-</div>
-<br>
+	<!--a href="" class="nav-link" data-toggle="modal" data-target="#manage_squads">Squady</a-->

@@ -31,6 +31,9 @@ if ($match_data[Payment_before]=="") {
 	  <!-- ID závodníka -->
 		<INPUT type="hidden" id="shooterID" name="shooterID" value="<?php echo "$ID";?>" required>
 	  <!-- ID závodníka -->
+	  <!-- stav platby -->
+		<INPUT type="hidden" id="Zaplaceno" name="Zaplaceno" value="<?php echo "$line[Zaplaceno]";?>">
+	  <!-- stav platby -->
 		<div class="col-md-10 font-weight-bolder">Osobní informace</div>
 			<div class="col-md-6">
 				<label for="Alias" class="form-label pt-2">Alias</label>
@@ -102,7 +105,8 @@ if ($match_data[Payment_before]=="") {
 					$query = mysql_query("SELECT * from $table_categories");
 						while($category = mysql_fetch_array($query))
 						{
-							echo "<option value=".$category['Name'].">". $category['Value']."</option>";
+							//echo "<option value=".$category['Name'].">". $category['Value']."</option>";
+							echo "<option value=".$category['id'].">". $category['Name']."</option>";
 						}
 					?>
 				  </select>
@@ -119,11 +123,13 @@ if ($match_data[Payment_before]=="") {
 				<label for="Squad" class="form-label pt-2">Squad</label>
 				  <select class="form-control" name=Squad required>
 					<option value="<?php echo "$line[Squad]";?>"><?php echo "$line[Squad]";?></option>
-					<?php
-						foreach( $nazvy_squadu as $squad => $popis ){
-						echo "<option value='$squad'>$popis</option>"; 
-					}
-					?>
+						<?php
+						$query = mysql_query("SELECT * from $table_squads ORDER BY Number");
+							while($squad = mysql_fetch_array($query))
+							{
+								echo "<option value=".$squad['Number'].">". $squad['Name']."</option>";
+							}
+						?>
 				  </select>
 			</div>
 			<div class="col-md-6"></div>

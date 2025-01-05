@@ -4,10 +4,13 @@ $(document).ready(function() {
 		responsive: false,
 		colReorder: true,
 		deferRender: true,
-	language: {
+		columnDefs: [ 
+                    { targets: [0,1,2,3,5,6,7,8,10,12,15], visible: true }, 
+                    { targets: '_all', visible: false } 
+                ],
+		language: {
 			url: '../lang/cs.json'
         },
-
 		dom: 'QBfrtip',
 		stateSave: false,
         searchBuilder: {
