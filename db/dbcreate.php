@@ -36,6 +36,10 @@ switch ($dbcreateParam) {
     Zavod_id varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Zavod varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Zavod_datum varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    Zavod_cas_registrace varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '18:00:00',
+    Zavod_zacatek_registrace int(3) DEFAULT '10',
+    Zavod_konec_registrace int(3) DEFAULT '10',
+    Zavod_registrace_pozastaveno varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Zavod_cas_prematch varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '13:00 - 17:00',
     Zavod_cas_prezence varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '8:00 - 9:00',
     Zavod_cas_main varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '9:00 - 14:00',
@@ -43,6 +47,7 @@ switch ($dbcreateParam) {
     Zavod_cas_main_odpoledne varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Zavod_misto varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'střelnice Opařany',
     Zavod_poradatel varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Klub praktické střelby EGGENBERG',
+    Zavod_poradatel_adresa varchar(255) NULL [Heydukova 514/23, České Budějovice 7, 370 01 České Budějovice] 
     Zavod_match_director varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Jan Hátle',
     Zavod_email_poradatel varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'jan.hatle1@gmail.com',
     Zavod_telefon_poradatel varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '+420 724 521 364',
@@ -52,14 +57,13 @@ switch ($dbcreateParam) {
     Zavod_stats varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Milan Žídek',
     Zavod_email_stats varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Zavod_telefon_stats varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci,
-    Zavod_match_hospodar varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Antonín Liška',
+    Zavod_hospodar varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Antonín Liška',
     Zavod_email_hospodar varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'antoni.liska@seznam.cz',
     Zavod_telefon_hospodar varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '+420 777 286 040',
     Zavod_email_from varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'registrace@kps-eggenberg.cz',
     Zavod_stages int(2) DEFAULT '8',
     Zavod_min_pocet_ran int(3) DEFAULT '135',
     Zavod_pocet_dni_na_platbu int(2) DEFAULT '10',
-    Zavod_pocet_dni_do_vyrazeni int(2) DEFAULT '13',
     Zavod_vysledky varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'https://ipsc.zone/results',
     Squad_prem_max int(3) DEFAULT '30',
     Squad_main_max int(3) DEFAULT '10',
@@ -67,6 +71,8 @@ switch ($dbcreateParam) {
     Banka_ucet_MENA varchar(3) DEFAULT 'CZK',
     Banka_ucet_cislo varchar(20) DEFAULT '296257146',
     Banka_ucet_kod varchar(4) DEFAULT '0300',
+    Banka_nazev varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Československá obchodní banka, a. s.',
+    Banka_adresa varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Praha 5, Radlická 333/150, PSČ 150 57',
     Klub_web varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'https://www.kps-eggenberg.cz',
     GDPR_spravce varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Klub praktické střelby EGGENBERG, IČ 26524597',
     Payment_before varchar(2) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'on',
@@ -78,6 +84,7 @@ switch ($dbcreateParam) {
     };
     echo "OK - pokracujte klavesou F5<br/>";
   break;
+
 
   case "site_admins":
     echo "Vytvarim tabulku [site_admins] ...";
@@ -118,6 +125,37 @@ switch ($dbcreateParam) {
     };
     echo "OK - pokracujte klavesou F5<br/>";
   break;
+
+  case "divisions":
+    echo "Vytvarim tabulku [$dbcreateTable] ...";
+    $query="CREATE TABLE ".$dbcreateTable." (
+    Id int(4)AUTO_INCREMENT PRIMARY KEY,
+    Name varchar(3) UNIQUE not null,
+    Value varchar(50)
+    )";
+    $result = mysql_query($query);
+    if (!$result) {
+       die('Invalid query: ' . mysql_error());
+    };
+    echo "OK <br/>";
+    $query="insert into $dbcreateTable (Name,Value) values
+		('PRD', 'Production'),
+		('STD', 'Standard'),
+		('OPN', 'Open'),
+		('CLA', 'Classic'),
+		('REV', 'Revolver'),
+		('RE6', 'Revolver šestiraňák'),
+		('PDO', 'Production Optics'),
+		('PCC', 'Pistol Caliber Carbines');
+		";
+    echo "Plním data do tabulky [$dbcreateTable] ...";
+    $result = mysql_query($query);
+    if (!$result) {
+       die('chyba vlozeni vychozich hodnot: ' . mysql_error());
+    };
+    echo "OK - pokracujte klavesou F5<br/>";
+  break;
+
 }
 
 ?>

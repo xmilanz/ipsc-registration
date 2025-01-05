@@ -35,6 +35,7 @@
      <div id="collapseOne" class="collapse show" data-parent="#accordion">
         <div class="card-body">
 			<div class="row">
+
  			<div class="col-md-6">
 				<label for="Zavod" class="form-label pt-1">Název závodu</label>
 				<input class="form-control" type="text" name="Zavod" id="Zavod" onkeypress="return avoidspace(event)" placeholder="název závodu" onfocus="this.placeholder = ''" onblur="this.placeholder = 'název závodu'" value="<?php echo $match_configuration['Zavod']; ?>" required>
@@ -48,26 +49,51 @@
 			</div>
 
 			<div class="col-md-12 py-2"></div>
+			
+ 			<div class="col-md-4">
+				<label for="Zavod_cas_registrace" class="form-label pt-1">Čas registrace</label>
+				<input class="form-control" type="text" name="Zavod_cas_registrace" id="Zavod_cas_registrace" onkeypress="return avoidspace(event)" placeholder="formát 18:00:00" onfocus="this.placeholder = ''" onblur="this.placeholder = 'formát 17:00:00'" value="<?php echo $match_configuration['Zavod_cas_registrace']; ?>">
+			  </div>
+		  
+ 			<div class="col-md-4">
+				<label for="Zavod_zacatek_registrace" class="form-label pt-1">Začátek registrace</label>
+				<input class="form-control" type="text" name="Zavod_zacatek_registrace" id="Zavod_zacatek_registrace" onkeypress="return avoidspace(event)" placeholder="30 dní před závodem" onfocus="this.placeholder = ''" onblur="this.placeholder = '30 dní před závodem'" value="<?php echo $match_configuration['Zavod_zacatek_registrace']; ?>">
+			  </div>
+		  
+ 			<div class="col-md-4">
+				<label for="Zavod_konec_registrace" class="form-label pt-1">Konec registrace</label>
+				<input class="form-control" type="text" name="Zavod_konec_registrace" id="Zavod_konec_registrace" onkeypress="return avoidspace(event)" placeholder="3 dny před prematchem" onfocus="this.placeholder = ''" onblur="this.placeholder = '3 dny před prematchem'" value="<?php echo $match_configuration['Zavod_konec_registrace']; ?>">
+			  </div>
+			  <div class="col-md-12 ml-4 mt-2 ">
+					<label class="form-check-label" for="Zavod_registrace_pozastaveno">
+						<input type="checkbox" class="form-check-input" id="Zavod_registrace_pozastaveno" name="Zavod_registrace_pozastaveno" <?php if ( $match_configuration['Zavod_registrace_pozastaveno']=="on"){ echo "CHECKED";}; ?>><span class="font-weight-bold text-danger">Pozastavit registraci</span>
+					</label>
+			  </div>
+
+			<div class="col-md-12 py-2"></div>
 
 			<div class="col-md-4">
 				<label for="Zavod_cas_prematch" class="form-label pt-1">Prematch</label>
-				<input class="form-control" type="text" name="Zavod_cas_prematch" id="Zavod_cas_prematch" onkeypress="return avoidspace(event)" placeholder="12:00 - 16:00" onfocus="this.placeholder = ''" onblur="this.placeholder = '12:00 - 16:00'" value="<?php echo $match_configuration['Zavod_cas_prematch']; ?>">
+				<input class="form-control" type="text" name="Zavod_cas_prematch" id="Zavod_cas_prematch" onfocus="this.placeholder = ''" onblur="this.placeholder = '12:00 - 16:00'" value="<?php echo $match_configuration['Zavod_cas_prematch']; ?>">
 			  </div>
 			<div class="col-md-4">
 				<label for="Zavod_cas_prezence" class="form-label pt-1">Prezence</label>
-				<input class="form-control" type="text" name="Zavod_cas_prezence" id="Zavod_cas_prezence" onkeypress="return avoidspace(event)" placeholder="8:00 - 9:00" onfocus="this.placeholder = ''" onblur="this.placeholder = '8:00 - 9:00'" value="<?php echo $match_configuration['Zavod_cas_prezence']; ?>">
+				<input class="form-control" type="text" name="Zavod_cas_prezence" id="Zavod_cas_prezence" onfocus="this.placeholder = ''" onblur="this.placeholder = '8:00 - 9:00'" value="<?php echo $match_configuration['Zavod_cas_prezence']; ?>">
 			  </div>
 			<div class="col-md-4">
 				<label for="Zavod_cas_main" class="form-label pt-1">Hlavní závod</label>
-				<input class="form-control" type="text" name="Zavod_cas_main" id="Zavod_cas_main" onkeypress="return avoidspace(event)" placeholder="9:00 - 14:00" onfocus="this.placeholder = ''" onblur="this.placeholder = '13:00 - 17:00'" value="<?php echo $match_configuration['Zavod_cas_main']; ?>">
+				<input class="form-control" type="text" name="Zavod_cas_main" id="Zavod_cas_main" onfocus="this.placeholder = ''" onblur="this.placeholder = '13:00 - 17:00'" value="<?php echo $match_configuration['Zavod_cas_main']; ?>">
 			  </div>
+
+			<div class="col-md-12 py-2"></div>
+
 			<div class="col-md-4">
 				<label for="Zavod_cas_main_dopoledne" class="form-label pt-1">Dopolední směna</label>
-				<input class="form-control" type="text" name="Zavod_cas_main_dopoledne" id="Zavod_cas_prezence" onkeypress="return avoidspace(event)" placeholder="9:00 - 12:00" onfocus="this.placeholder = ''" onblur="this.placeholder = '9:00 - 12:00'" value="<?php echo $match_configuration['Zavod_cas_main_dopoledne']; ?>">
+				<input class="form-control" type="text" name="Zavod_cas_main_dopoledne" id="Zavod_cas_prezence" onfocus="this.placeholder = ''" onblur="this.placeholder = '9:00 - 12:00'" value="<?php echo $match_configuration['Zavod_cas_main_dopoledne']; ?>">
 			  </div>
 			<div class="col-md-4">
 				<label for="Zavod_cas_main_odpoledne" class="form-label pt-1">Odpolední směna</label>
-				<input class="form-control" type="text" name="Zavod_cas_main_odpoledne" id="Zavod_cas_main_odpoledne" onkeypress="return avoidspace(event)" placeholder="13:00 - 16:00" onfocus="this.placeholder = ''" onblur="this.placeholder = '13:00 - 16:00'" value="<?php echo $match_configuration['Zavod_cas_main_odpoledne']; ?>">
+				<input class="form-control" type="text" name="Zavod_cas_main_odpoledne" id="Zavod_cas_main_odpoledne" onfocus="this.placeholder = ''" onblur="this.placeholder = '13:00 - 16:00'" value="<?php echo $match_configuration['Zavod_cas_main_odpoledne']; ?>">
 			  </div>
 			<div class="col-md-4">
 				<label for="Zavod_cas_prematch" class="form-label pt-1"></label>
@@ -99,12 +125,12 @@
 
 			<div class="col-md-5">
 				<label for="Zavod_misto" class="form-label pt-1">Místo</label>
-				<input class="form-control" type="text" name="Zavod_misto" id="Zavod_misto" onkeypress="return avoidspace(event)" placeholder="místo" onfocus="this.placeholder = ''" onblur="this.placeholder = 'místo'" value="<?php echo $match_configuration['Zavod_misto']; ?>" required>
+				<input class="form-control" type="text" name="Zavod_misto" id="Zavod_misto" onfocus="this.placeholder = ''" onblur="this.placeholder = 'místo'" value="<?php echo $match_configuration['Zavod_misto']; ?>" required>
 				<div class="invalid-feedback">Nevyplnili jste místo</div>
 			  </div>
 			<div class="col-md-7">
 				<label for="Zavod_poradatel" class="form-label pt-1">Pořadatel</label>
-				<input class="form-control" type="text" name="Zavod_poradatel" id="Zavod_poradatel" onkeypress="return avoidspace(event)" placeholder="pořadatel závodu" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Klub praktické střelby EGGENBERG'" value="<?php echo $match_configuration['Zavod_poradatel']; ?>" required>
+				<input class="form-control" type="text" name="Zavod_poradatel" id="Zavod_poradatel" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Klub praktické střelby EGGENBERG'" value="<?php echo $match_configuration['Zavod_poradatel']; ?>" required>
 				<div class="invalid-feedback">Nevyplnili jste pořadatele</div>
 			  </div>
         </div>
@@ -122,22 +148,22 @@
 			<div class="row">
 			<div class="col-md-6">
 				<label for="Zavod_match_director" class="form-label pt-1">Match director</label>
-				<input class="form-control" type="text" name="Zavod_match_director" id="Zavod_match_director" onkeypress="return avoidspace(event)" placeholder="match director" onfocus="this.placeholder = ''" onblur="this.placeholder = 'match director'" value="<?php echo $match_configuration['Zavod_match_director']; ?>" required>
+				<input class="form-control" type="text" name="Zavod_match_director" id="Zavod_match_director" onfocus="this.placeholder = ''" onblur="this.placeholder = 'match director'" value="<?php echo $match_configuration['Zavod_match_director']; ?>" required>
 				<div class="invalid-feedback">Nevyplnili jste match directora</div>
 			  </div>
 			<div class="col-md-6">
 				<label for="Zavod_range_master" class="form-label pt-1">Range master</label>
-				<input class="form-control" type="text" name="Zavod_range_master" id="Zavod_misto" onkeypress="return avoidspace(event)" placeholder="range master" onfocus="this.placeholder = ''" onblur="this.placeholder = 'range master'" value="<?php echo $match_configuration['Zavod_range_master']; ?>" required>
+				<input class="form-control" type="text" name="Zavod_range_master" id="Zavod_misto" onfocus="this.placeholder = ''" onblur="this.placeholder = 'range master'" value="<?php echo $match_configuration['Zavod_range_master']; ?>" required>
 				<div class="invalid-feedback">Nevyplnili jste range mastera</div>
 			  </div>
 			<div class="col-md-6">
 				<label for="Zavod_stats" class="form-label pt-1">Statistik</label>
-				<input class="form-control" type="text" name="Zavod_stats" id="Zavod_misto" onkeypress="return avoidspace(event)" placeholder="místo" onfocus="this.placeholder = ''" onblur="this.placeholder = 'místo'" value="<?php echo $match_configuration['Zavod_stats']; ?>" required>
+				<input class="form-control" type="text" name="Zavod_stats" id="Zavod_misto" onfocus="this.placeholder = ''" onblur="this.placeholder = 'místo'" value="<?php echo $match_configuration['Zavod_stats']; ?>" required>
 				<div class="invalid-feedback">Nevyplnili jste statistika</div>
 			  </div>
 			<div class="col-md-6">
 				<label for="Zavod_hospodar" class="form-label pt-1">Hospodář</label>
-				<input class="form-control" type="text" name="Zavod_hospodar" id="Zavod_hospodar" onkeypress="return avoidspace(event)" value="<?php echo $match_configuration['Zavod_hospodar']; ?>">
+				<input class="form-control" type="text" name="Zavod_hospodar" id="Zavod_hospodar" value="<?php echo $match_configuration['Zavod_hospodar']; ?>">
 			  </div>
 			</div>
 			</div>
@@ -171,7 +197,7 @@
 					<div class="input-group-prepend">
 					<div class="input-group-text">@</div>
 					</div>
-						<input class="form-control" type="text" id="Zavod_email_poradatel" name="Zavod_email_poradatel" onfocus="this.placeholder = ''"  value="<?php echo $match_configuration['Zavod_email_poradatel']; ?>" required>
+						<input class="form-control" type="text" id="Zavod_email_poradatel" name="Zavod_email_poradatel" onkeypress="return avoidspace(event)" onfocus="this.placeholder = ''"  value="<?php echo $match_configuration['Zavod_email_poradatel']; ?>" required>
 					<div class="invalid-feedback">Nevyplnili jste MD</div>
 				</div>
 			</div>
@@ -181,7 +207,7 @@
 					<div class="input-group-prepend">
 						<div class="input-group-text"><i class="far fa-phone" style="font-size:13px"></i></div>
 					</div>
-				<input class="form-control" type="text" name="Zavod_telefon_poradatel" id="Zavod_telefon_poradatel" onkeypress="return avoidspace(event)" value="<?php echo $match_configuration['Zavod_telefon_poradatel']; ?>" required>
+				<input class="form-control" type="text" name="Zavod_telefon_poradatel" id="Zavod_telefon_poradatel" value="<?php echo $match_configuration['Zavod_telefon_poradatel']; ?>" required>
 				<div class="invalid-feedback">Nevyplnili jste telefon</div>
 				</div>
 			</div>
@@ -191,7 +217,7 @@
 					<div class="input-group-prepend">
 					<div class="input-group-text">@</div>
 					</div>
-						<input class="form-control" type="text" id="Zavod_email_range_master" name="Zavod_email_range_master" onfocus="this.placeholder = ''"  value="<?php echo $match_configuration['Zavod_email_range_master']; ?>">
+						<input class="form-control" type="text" id="Zavod_email_range_master" name="Zavod_email_range_master" onkeypress="return avoidspace(event)" onfocus="this.placeholder = ''"  value="<?php echo $match_configuration['Zavod_email_range_master']; ?>">
 				</div>
 			</div>
 			<div class="col-md-6">
@@ -200,7 +226,7 @@
 					<div class="input-group-prepend">
 						<div class="input-group-text"><i class="far fa-phone" style="font-size:13px"></i></div>
 					</div>
-				<input class="form-control" type="text" name="Zavod_telefon_range_master" id="Zavod_telefon_range_master" onkeypress="return avoidspace(event)" value="<?php echo $match_configuration['Zavod_telefon_range_master']; ?>">
+				<input class="form-control" type="text" name="Zavod_telefon_range_master" id="Zavod_telefon_range_master" value="<?php echo $match_configuration['Zavod_telefon_range_master']; ?>">
 				</div>
 			</div>
 			<div class="col-md-6">
@@ -209,7 +235,7 @@
 					<div class="input-group-prepend">
 					<div class="input-group-text">@</div>
 					</div>
-						<input class="form-control" type="text" id="Zavod_email_stats" name="Zavod_email_stats" onfocus="this.placeholder = ''"  value="<?php echo $match_configuration['Zavod_email_stats']; ?>">
+						<input class="form-control" type="text" id="Zavod_email_stats" name="Zavod_email_stats" onkeypress="return avoidspace(event)" onfocus="this.placeholder = ''"  value="<?php echo $match_configuration['Zavod_email_stats']; ?>">
 				</div>
 			</div>
 			<div class="col-md-6">
@@ -218,7 +244,7 @@
 					<div class="input-group-prepend">
 						<div class="input-group-text"><i class="far fa-phone" style="font-size:13px"></i></div>
 					</div>
-				<input class="form-control" type="text" name="Zavod_telefon_stats" id="Zavod_telefon_stats" onkeypress="return avoidspace(event)" value="<?php echo $match_configuration['Zavod_telefon_stats']; ?>">
+				<input class="form-control" type="text" name="Zavod_telefon_stats" id="Zavod_telefon_stats" value="<?php echo $match_configuration['Zavod_telefon_stats']; ?>">
 				</div>
 			</div>
 			<div class="col-md-6">
@@ -227,7 +253,7 @@
 					<div class="input-group-prepend">
 					<div class="input-group-text">@</div>
 					</div>
-						<input class="form-control" type="text" id="Zavod_email_hospodar" name="Zavod_email_hospodar" value="<?php echo $match_configuration['Zavod_email_hospodar']; ?>">
+						<input class="form-control" type="text" id="Zavod_email_hospodar" name="Zavod_email_hospodar" onkeypress="return avoidspace(event)" value="<?php echo $match_configuration['Zavod_email_hospodar']; ?>">
 				</div>
 			</div>
 
@@ -237,7 +263,7 @@
 					<div class="input-group-prepend">
 						<div class="input-group-text"><i class="far fa-phone" style="font-size:13px"></i></div>
 					</div>
-					<input class="form-control" type="text" name="Zavod_telefon_hospodar" id="Zavod_telefon_hospodar" onkeypress="return avoidspace(event)" value="<?php echo $match_configuration['Zavod_telefon_hospodar']; ?>" >
+					<input class="form-control" type="text" name="Zavod_telefon_hospodar" id="Zavod_telefon_hospodar" value="<?php echo $match_configuration['Zavod_telefon_hospodar']; ?>" >
 				</div>
 			</div>
 
@@ -249,7 +275,7 @@
 					<div class="input-group-prepend">
 					<div class="input-group-text">@</div>
 					</div>
-						<input class="form-control" type="email" id="Zavod_email_from" name="Zavod_email_from" onfocus="this.placeholder = ''"  placeholder="registrace@kps-eggenebrg.cz" value="<?php echo $match_configuration['Zavod_email_from']; ?>" required>
+						<input class="form-control" type="email" id="Zavod_email_from" name="Zavod_email_from" onkeypress="return avoidspace(event)" onfocus="this.placeholder = ''"  placeholder="registrace@kps-eggenebrg.cz" value="<?php echo $match_configuration['Zavod_email_from']; ?>" required>
 					<div class="invalid-feedback">Nevyplnili jste email</div>
 				</div>
 			</div>
@@ -285,18 +311,18 @@
 
 			<div class="col-md-11 pt-2 <?php echo "$paymentBeforeClass"; ?>">
 				<label for="Banka_nazev" class="form-label pt-1">Banka</label>
-				<input class="form-control" type="text" name="Banka_nazev" id="Banka_nazev" onkeypress="return avoidspace(event)" value="<?php echo $match_configuration['Banka_nazev']; ?>" required>
+				<input class="form-control" type="text" name="Banka_nazev" id="Banka_nazev" value="<?php echo $match_configuration['Banka_nazev']; ?>" required>
 				<div class="invalid-feedback">Nevyplnili jste název banky</div>
 			</div>
 
 			<div class="col-md-11 <?php echo "$paymentBeforeClass"; ?>">
 				<label for="Banka_adresa" class="form-label pt-1">Adresa banky</label>
-				<input class="form-control" type="text" name="Banka_adresa" id="Banka_adresa" onkeypress="return avoidspace(event)" value="<?php echo $match_configuration['Banka_adresa']; ?>" required>
+				<input class="form-control" type="text" name="Banka_adresa" id="Banka_adresa" value="<?php echo $match_configuration['Banka_adresa']; ?>" required>
 				<div class="invalid-feedback">Nevyplnili jste adresu banky</div>
 			</div>
 			<div class="col-md-11 pt-1 <?php echo "$paymentBeforeClass"; ?>">
 				<label for="Zavod_poradatel_adresa" class="form-label pt-1">Adresa pořadatele</label>
-				<input class="form-control" type="text" name="Zavod_poradatel_adresa" id="Zavod_poradatel_adresa" onkeypress="return avoidspace(event)" value="<?php echo $match_configuration['Zavod_poradatel_adresa']; ?>" required>
+				<input class="form-control" type="text" name="Zavod_poradatel_adresa" id="Zavod_poradatel_adresa" value="<?php echo $match_configuration['Zavod_poradatel_adresa']; ?>" required>
 				<div class="invalid-feedback">Nevyplnili jste adresu banky</div>
 			</div>
 

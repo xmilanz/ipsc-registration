@@ -13,9 +13,12 @@ $query="SELECT * FROM ".$table." WHERE Cislo=$ID";
 $res=mysql_query($query);
 $line=mysql_fetch_array($res);
 
+$Squad_old=$line[Squad];
+
 if ($match_data[Payment_before]=="") {
    $paymentBeforeClass.=" d-none";
 }
+
 ?>
       <div class="modal-header bg-success text-center">
 		<h4 class="modal-title text-white w-100 font-weight-bold">Úprava závodníka</h4><br>
@@ -31,7 +34,7 @@ if ($match_data[Payment_before]=="") {
 		<div class="col-md-10 font-weight-bolder">Osobní informace</div>
 			<div class="col-md-6">
 				<label for="Alias" class="form-label pt-2">Alias</label>
-				<input class="form-control" type="text" name="Alias" id="Alias" onkeypress="return avoidspace(event)" placeholder="ALIAS" onfocus="this.placeholder = ''" onblur="this.placeholder = 'ALIAS'" value="<?php echo "$line[Alias]";?>" required>
+				<input class="form-control" type="text" name="Alias" id="Alias" onkeypress="return avoidspace(event)" onblur="replaceChars()" value="<?php echo "$line[Alias]";?>" required>
 				<div class="invalid-feedback">Nevyplnili jste alias</div>
 			</div>
 			<div class="col-md-6"></div>
@@ -83,9 +86,11 @@ if ($match_data[Payment_before]=="") {
 				  <select class="form-control" name=Pidiv required>
 					<option value="<?php echo "$line[Pidiv]";?>"><?php echo "$line[Pidiv]";?></option>
 					<?php
-					foreach( $zavod_divize as $divize => $popis ){
-					echo "<option value='$divize'>$popis</option>"; 
-					}
+					$query = mysql_query("SELECT * from $table_divisions");
+						while($division = mysql_fetch_array($query))
+						{
+							echo "<option value=".$division['Name'].">". $division['Value']."</option>";
+						}
 					?>
 				  </select>
 			</div>
@@ -123,8 +128,8 @@ if ($match_data[Payment_before]=="") {
 			<div class="col-md-6">
 				<label for="SquadReg" class="form-label pt-2">Squad před vyřazením</label>
 					<input class="form-control" type="text" readonly class="form-control-plaintext" value="<?php echo "$line[SquadReg]";?>">
+					<input type="hidden" id="Squad_old" name="Squad_old" value="<?php echo "$Squad_old";?>">
 			</div>
-
 
 	<div class="col-md-12 pt-4 font-weight-bolder">Ostatní</div>
 			<div class="col-md-6">
@@ -145,10 +150,9 @@ if ($match_data[Payment_before]=="") {
 			 </div>
 			</div>
 
-
 			<div class="col-md-12">
 				<label for="Poznamka" class="form-label pt-3">Poznámka</label>
-				<input class="form-control" type="text" name="Poznamka" id="Poznamka" onkeypress="return avoidspace(event)" placeholder="Poznámka" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Poznámka'" value="<?php echo "$line[Poznamka]";?>">
+				<input class="form-control" type="text" name="Poznamka" id="Poznamka" placeholder="Poznámka" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Poznámka'" value="<?php echo "$line[Poznamka]";?>">
 			 </div>
 
       <!--Footer-->
@@ -157,9 +161,5 @@ if ($match_data[Payment_before]=="") {
 		<button type="button" class="btn btn-default" onclick="window.location.href = 'index.php';">Zrušit</button>
 	</div>
 	 </form>
-<script>
-function avoidspace(event) {
-    var k = event ? event.which : window.event.keyCode;
-    if (k == 32) return false;
-}
-</script>
+
+	

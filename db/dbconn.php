@@ -39,6 +39,13 @@ if (mysql_num_rows($result)==0) {
   require_once ("dbcreate.php");
 }
 
+$result = mysql_query("SHOW TABLES LIKE '".$table_divisions."'");
+if (mysql_num_rows($result)==0) {
+  $dbcreateParam="divisions";
+  $dbcreateTable=$table."_divisions";
+  require_once ("dbcreate.php");
+}
+
 $result = mysql_query("SHOW TABLES LIKE 'match_config'");
 if (mysql_num_rows($result)==0) {
   $dbcreateParam="match_config";

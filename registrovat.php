@@ -11,12 +11,43 @@ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 $line = mysql_fetch_row($result);
 $squad_pocet=$line[0];
 if ($squad_pocet>=$squad_max) {
-  $chyba=1;
-  echo "<H3>Squad $_POST[squad] je již naplněný.</H3>";
-  echo "<button  onclick=\"window.location.href = 'registrace.php';\">Vyberte jiný squad</A><BR>";
+  echo "
+  <div class='text-center'>
+  	<img src='./images/EC_ASCII.png'>
+  </div>
+  <div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+    <div class='modal-dialog'>
+      <div class='modal-content'>
+        <div class='modal-header'>
+          <h4 class='modal-title text-danger' id='exampleModalLabel'>Neúspěšná registrace</h4>
+        </div>
+        <div class='modal-body'>
+  		<p class='font-weight-bold'>Squad $_POST[squad] je zaplněný</p>
+  		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Po kliknutí na tlačítko <kbd>Zpět</kbd> se vraťte do registrace a zvolte nezaplněný squad.</p>
+        </div>
+        <div class='modal-footer'>
+  		<button class='btn btn-primary waves-effect waves-light' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script  type='text/javascript'>
+  var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
+  	myModal.show();
+      backdrop: 'static',
+      keyboard: false
+  </script>
+  
+  <script  type='text/javascript'>
+  	$('#regInfo').modal({
+  		backdrop: 'static',
+  		keyboard: false
+  	})
+  </script>
+  ";
 }
 
-if ($chyba<>"1") {
+else {
   $varsymbol=substr(rand(),0,4);
   $alias=trim(mb_convert_case($_POST[alias], MB_CASE_UPPER, "UTF-8"));
   $prijmeni=trim(mb_convert_case($_POST[prijmeni], MB_CASE_TITLE, "UTF-8")).$_POST[prijmeni_stav].'';
@@ -45,7 +76,7 @@ echo "
 		<p class='font-weight-bold'>Závodník $jmeno $prijmeni už je zaregistrovaný</p>
 		<p class='font-italic'>Buď vás už někdo zaregistroval nebo máte stejné jméno a příjmení jako jiný závodník :-) V&nbsp;tom případě napište pro odlišení za Vaše příjmení $prijmeni nějaký další znak (např. <b>$prijmeni"."1 nejlépe bez mezery)</b>"." nebo z nabídky zvolte <b>ml./st.</b></p>
 		<p class='text-danger text-center mb-3 font-italic'><i class='far fa-exclamation-circle pr-2' style='font-size:16px'></i>Kombinaci <mark>Jméno Příjmení</mark> byste měli používat v průběhu celé série závodu.</p>
-		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Po kliknutí na tlačítko <kbd>Zpět</kbd> se vrátíte na registraci (údaje zadané do formuláře v příslušném squadu budou stále vyplněné). Zvolte tedy znovu squad $_POST[squad] a upravte příjmení.</p>
+		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Kliknutím na tlačítko <kbd>Zpět</kbd> se vraťte na registraci (údaje zadané do formuláře v příslušném squadu budou stále vyplněné). Zvolte tedy znovu squad $_POST[squad] a upravte příjmení.</p>
       </div>
       <div class='modal-footer'>
 		<button class='btn btn-primary waves-effect waves-light' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
@@ -85,7 +116,7 @@ echo "
 		<p class='font-weight-bold'>Závodník s aliasem $alias už je zaregistrovaný</p>
 		<p class='font-italic mb-3'>V případě, že jste zadali skutečně váš zaregistrovaný alias, zkontaktujte pořadatele.<br>Pokud jste zadali alias <strong>nezaregistrovaný na IPSC-TECH.ORG</strong>, použijte tento <a href='https://www.ipsc-tech.org/ics/hq/embdAliasReg.aspx' target='_new'>odkaz</a> a&nbsp;zaregistrujte se.</p>
 		<p class='text-danger text-center mb-3 font-italic'><i class='far fa-exclamation-circle pr-2' style='font-size:16px'></i>V průběhu celé série závodu byste měli používat stále stejný <mark>alias</mark>.</p>
-		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Po kliknutí na tlačítko <kbd>Zpět</kbd> se vrátíte na registraci (údaje zadané do formuláře v příslušném squadu budou stále vyplněné). Zvolte tedy znovu squad $_POST[squad] a opravte alias.</p>
+		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Kliknutím na tlačítko <kbd>Zpět</kbd> se vraťte na registraci (údaje zadané do formuláře v příslušném squadu budou stále vyplněné). Zvolte tedy znovu squad $_POST[squad] a opravte alias.</p>
       </div>
       <div class='modal-footer'>
 		<button class='btn btn-primary waves-effect waves-light' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
@@ -93,7 +124,6 @@ echo "
     </div>
   </div>
 </div>
-
 
 <script  type='text/javascript'>
 var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
@@ -218,7 +248,8 @@ echo "
 		$STRELEC_SQUAD<br>
 		$STRELEC_RO<br>
 		$STRELEC_POM<br>
-		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Potvrzení registrace bylo odesláno na email $_POST[email] zadaný při registraci.</p>
+		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-1' style='font-size:16px'></i>Potvrzení registrace s podklady pro platbu startovného byly odeslány na adresu $_POST[email].</p>
+		<p class='text-center mb-0 pt-2'>Platbu je nutné provést do $match_data[Zavod_pocet_dni_na_platbu] dnů, jinak bude registrace stornována.</p>
       </div>
       <div class='modal-footer mb-3'>
 		<a href='./registrace.php' rel='modal:close'><button type='button' class='btn btn-primary'>Nová registrace</button></a>&nbsp;&nbsp;
@@ -286,5 +317,5 @@ var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
   $query_odeslano="UPDATE ".$table." SET OdeslanRegMail='1' WHERE Mail='$_POST[email]' AND OdeslanRegMail IS NULL";
   $res3=mysql_query($query_odeslano);
 };
-include "./footer.php"
+
 ?>

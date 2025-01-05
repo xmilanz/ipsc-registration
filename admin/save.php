@@ -2,6 +2,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 <?php 
 session_start();
 // If the user is not logged in redirect to the login page...
@@ -25,6 +26,10 @@ if (isset($_GET[match_config])) {
 		Klub_web='$_POST[Klub_web]',
 		Zavod='$_POST[Zavod]',
 		Zavod_datum='$_POST[Zavod_datum]',
+		Zavod_cas_registrace='$_POST[Zavod_cas_registrace]',
+		Zavod_zacatek_registrace='$_POST[Zavod_zacatek_registrace]',
+		Zavod_konec_registrace='$_POST[Zavod_konec_registrace]',
+		Zavod_registrace_pozastaveno='$_POST[Zavod_registrace_pozastaveno]',
 		Zavod_cas_prematch='$_POST[Zavod_cas_prematch]',
 		Zavod_cas_prezence='$_POST[Zavod_cas_prezence]',
 		Zavod_cas_main='$_POST[Zavod_cas_main]',
@@ -91,18 +96,31 @@ if (isset($_GET[match_config])) {
 }
 
 $result = mysql_query($query);
-if (!$result) {
-	echo "<center>";
-	echo"<p style='color:#ff0000;font-weight:bolder;'>Při vkládání do databáze došlo k chybě. Zkuste to později.</p>";
-	echo "<pre>MySQL Error: ". mysql_error();"</pre>";
-	echo "<br><br><button style=\" padding:3px; cursor:pointer;\" onclick=\"window.location.href = 'index.php';\">Zpět</button>";
-	echo "</center>";
-	exit;
-	}
-else {
+
+if ($result) {
 	header("refresh:0;url=index.php");
-}
-}
+	exit;
+ }
+else {
+ echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+ }
+};
 // KONFIGRACE ZAVODU
 
 
@@ -129,34 +147,19 @@ if (isset($_GET[new_shooter])) {
 			<h4 class='modal-title text-danger' id='exampleModalLabel'>Neúspěšná registrace</h4>
 		</div>
 		<div class='modal-body'>
-			<p class='font-weight-bold'>Závodník $jmeno $prijmeni už je zaregistrovaný. Zkontrolujte seznam závodníků</p>
-			<p class='font-italic'>Pokud nejde o chybu, upravte příjmení $prijmeni např. na <b>$prijmeni"."1</b> nejlépe bez mezery)</b>"." nebo z nabídky zvolte <b>ml./st.</b></p>
-			<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Po kliknutí na tlačítko <kbd>Zpět</kbd> se vrátíte do administrace závodu (údaje zadané do formuláře zůstanou vyplněné - stačí kliknout znovu <kbd>Přidat nového závodníka</kbd>).</p>
+			<p class='font-weight-bold'>Závodník $jmeno $prijmeni už je zaregistrovaný.</p>
+			<p>Pokud nejde o chybu, upravte příjmení $prijmeni např. na <b>$prijmeni"."1</b> nejlépe bez mezery)</b>"." nebo z nabídky zvolte <b>ml./st.</b></p>
+			<p class='small text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:14px'></i>Kliknutím na tlačítko <strong>Zpět</strong> se vrátíte do administrace závodu.<BR>Údaje zadané do formuláře zůstanou vyplněné - stačí znovu použít tlačítko <br><strong>Přidat nového závodníka</strong>).</p>
 		</div>
 		<div class='modal-footer'>
-			<button class='btn btn-primary waves-effect waves-light' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
+			<button class='btn btn-danger waves-effect waves-light' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
 		</div>
 		</div>
 	</div>
 	</div>
-	
-	<script  type='text/javascript'>
-	var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
-		myModal.show();
-		backdrop: 'static',
-		keyboard: false
-	</script>
-	
-	<script  type='text/javascript'>
-		$('#regInfo').modal({
-			backdrop: 'static',
-			keyboard: false
-		})
-	</script>
 	";
-		die();
 	}
-	if ($alias==$zavodnik[Alias]){
+	elseif ($alias==$zavodnik[Alias]){
 	echo "
 	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
 	<div class='modal-dialog'>
@@ -165,41 +168,26 @@ if (isset($_GET[new_shooter])) {
 			<h4 class='modal-title text-danger' id='exampleModalLabel'>Neúspěšná registrace</h4>
 		</div>
 		<div class='modal-body'>
-			<p class='font-weight-bold'>Závodník s aliasem $alias už je zaregistrovaný. Zkontrolujte seznam závodníků</p>
-			<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Po kliknutí na tlačítko <kbd>Zpět</kbd> se vrátíte do administrace závodu (údaje zadané do formuláře zůstanou vyplněné - stačí kliknout znovu <kbd>Přidat nového závodníka</kbd>).</p>
+			<p class='font-weight-bold'>Závodník s aliasem $alias už je zaregistrovaný.</p>
+			<p>Zkontrolujte seznam závodníků</p>
+			<p class='small text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:14px'></i>Kliknutím na tlačítko <strong>Zpět</strong> se vrátíte do administrace závodu.<BR>Údaje zadané do formuláře zůstanou vyplněné - stačí znovu použít tlačítko <br><strong>Přidat nového závodníka</strong>).</p>
 		</div>
 		<div class='modal-footer'>
-			<button class='btn btn-primary waves-effect waves-light' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
+			<button class='btn btn-danger waves-effect waves-light' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
 		</div>
 		</div>
 	</div>
 	</div>
-	
-	
-	<script  type='text/javascript'>
-	var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
-		myModal.show();
-		backdrop: 'static',
-		keyboard: false
-	</script>
-	
-	<script  type='text/javascript'>
-		$('#regInfo').modal({
-			backdrop: 'static',
-			keyboard: false
-		})
-	</script>
 	";
-		die();
 	}
   //konec kontroly, zda je závodnik s aliasem nebo jmenem a primenim uz zaregistrovan (bez vyřazených)
 
-else
-{
+else {
   $query = "SELECT * from match_config where Zavod_id='$table'";
   $result = mysql_query($query) or die('Query failed: ' . mysql_error());
   $match_data = mysql_fetch_array($result);
-   $query="INSERT INTO ".$table." (Alias,Jmeno,Prijmeni,VarSym,Region,Mail,Kategorie,Pidiv,Pifak,Squad,DatReg,RegistraceIP,Staff,ZaplatiNaMiste,Poznamka,Zavod)
+  
+  $query="INSERT INTO ".$table." (Alias,Jmeno,Prijmeni,VarSym,Region,Mail,Kategorie,Pidiv,Pifak,Squad,DatReg,RegistraceIP,Staff,ZaplatiNaMiste,Poznamka,Zavod)
   VALUES (
   '$alias',
   '$jmeno',
@@ -220,17 +208,30 @@ else
   )";
 
 $result = mysql_query($query);
- if (!$result) {
-	echo "<center>";
-	echo"<p style='color:#ff0000;font-weight:bolder;'>Při vkládání do databáze došlo k chybě. Zkuste to později nebo zkontaktujte správce aplikace.</p>";
-	echo "<pre>MySQL Error: ". mysql_error();"</pre>";
-	echo "<br><br><button style=\" padding:3px; cursor:pointer;\" onclick=\"window.location.href = 'index.php';\">Zpět</button>";
-	echo "</center>";
-	exit;
-}
-else {
+
+if ($result) {
 	header("refresh:0;url=index.php");
-};
+//	exit;
+ }
+else {
+ echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+ }
 
 // nastaveni identifikatoru (klice) a datumu zaplaceni
   $query="select * from $table where Prijmeni='$prijmeni' and Jmeno='$jmeno' and VarSym='$varsymbol' and  Mail='$_POST[Mail]';";
@@ -253,8 +254,10 @@ else {
   } else {
   	  $DatPay=date('d.m.Y', strtotime("+$match_data[Zavod_pocet_dni_na_platbu] day", strtotime($DatReg)));
   }
+  
+  $query="update $table set klic= FLOOR(10 + (RAND(Cislo) * 9000)),DatPay='$DatPay' where klic is null or klic=0";
+  $result = mysql_query($query);
 
-  $result = mysql_query("update $table set klic= FLOOR(10 + (RAND(Cislo) * 9000)),DatPay='$DatPay' where klic is null or klic=0;");
 
 // Zaslani potvrzeni registrace a platebnich udaju zavodnihovi s odkazy na spravu ucasti (zruseni)
   $query="select * from $table where Prijmeni='$prijmeni' and Jmeno='$jmeno' and VarSym='$varsymbol' and Mail='$_POST[Mail]';";
@@ -362,8 +365,8 @@ $query="UPDATE ".$table." SET
   ZaplatiNaMiste=NULLIF('$_POST[ZaplatiNaMiste]',''),
   Poznamka='$_POST[Poznamka]'
  WHERE Cislo='$_POST[shooterID]'";
-$result = mysql_query($query);
-	}
+ 
+}
 		
 else  {
 $query="UPDATE ".$table." SET
@@ -382,23 +385,151 @@ $query="UPDATE ".$table." SET
   ZaplatiNaMiste=NULLIF('$_POST[ZaplatiNaMiste]',''),
   Poznamka='$_POST[Poznamka]'
  WHERE Cislo='$_POST[shooterID]'";
+};
+
 $result = mysql_query($query);
-	}
 
 if (!$result) {
-	echo "<center>";
-	echo"<p style='color:#ff0000;font-weight:bolder;'>Při vkládání do databáze došlo k chybě. Zkuste to později nebo zkontaktujte správce aplikace.</p>";
-	echo "<pre>MySQL Error: ". mysql_error();"</pre>";
-	echo "<br><br><button style=\" padding:3px; cursor:pointer;\" onclick=\"window.location.href = 'index.php';\">Zpět</button>";
-	echo "</center>";
+ echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+
+	<script  type='text/javascript'>
+	var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
+		myModal.show();
+		backdrop: 'static',
+		keyboard: false
+	</script>
+	
+	<script  type='text/javascript'>
+		$('#regInfo').modal({
+			backdrop: 'static',
+			keyboard: false
+		})
+	</script>
+  ";
+exit;
+}
+	
+	
+// přesun cekatele do squadu
+
+if (($_POST[Squad_old]=="-2") AND ($_POST[Squad_old]!=$_POST[Squad])){
+	
+  $query="select * from $table where Prijmeni='$prijmeni' and Jmeno='$jmeno' and Mail='$_POST[Mail]';";
+  $strelec=mysql_query($query);
+  $z=mysql_fetch_array($strelec);
+  $squad=$nazvy_squadu[$z[Squad]];
+
+  $prematch_datum=date('Y-m-d', strtotime("-1 day", strtotime($match_data[Zavod_datum])));
+  $DatReg=date('d.m.Y', $z[DatReg]);
+  $payLimit=$match_data[Zavod_pocet_dni_na_platbu];
+
+  // Převod datumů na objekty typu DateTime
+  $prematchDateTime = new DateTime($prematch_datum);
+  $regDateTime = new DateTime($datReg);
+
+  // Odčítání 10 dní od datumu konani prematche
+  $prematchDateTime->modify("-$payLimit days");
+
+  if ($regDateTime >= $prematchDateTime) {
+      $DatPay=date('d.m.Y', strtotime("-2 day", strtotime($match_data[Zavod_datum])));
+  } else {
+  	  $DatPay=date('d.m.Y', strtotime("+$match_data[Zavod_pocet_dni_na_platbu] day", strtotime($DatReg)));
+  }
+
+  $dnes=date_format(new DateTime(),"Y-m-d");
+  $mena=$match_data[Banka_ucet_MENA];
+  $message=$email_registrace_cekatel_presun_platba;
+  $link_cancel="<a href='$web_adresa_admin/zrus_ucast.php?id=$z[Cislo]&klic=$z[klic]'><strong>zrušit účast</strong></a>";
+
+// priprava podkladu pro email zavodnikovi
+  $STRELEC="<b>Alias: $z[Alias]</b>"."\r\n";
+  $STRELEC.="Střelec: #$z[Cislo] $z[Prijmeni] $z[Jmeno] [$link_cancel]"."\r\n";
+  $STRELEC.="Divize: $z[Pidiv] $z[Pifak]"."\r\n";
+  $STRELEC.="Kategorie: $z[Kategorie]"."\r\n";
+  $STRELEC.="Squad: $squad"."\r\n\r\n";
+
+  $qr_link="https://api.paylibo.com/paylibo/generator/czech/image?accountNumber=$match_data[Banka_ucet_cislo]&bankCode=$match_data[Banka_ucet_kod]&amount=$match_data[Banka_ucet_CASTKA]&currency=$match_data[Banka_ucet_MENA]&vs=".$varsymbol."&message=$match_data[Zavod]&size=100";
+
+  $from_text="";
+  $from=$match_data[Zavod_email_from];
+  $to=$_POST[Mail];
+  $subject = "Registrace ".$match_data[Zavod];
+
+  $message=str_replace("##STRELEC##",$STRELEC,$message);
+  $message=str_replace("##VAR_SYMBOL##",$varsymbol,$message);
+  $message=str_replace("##QR_LINK##",$qr_link,$message);
+  $message=str_replace("##Squad##",$squad,$message);
+  $message=str_replace("##DatPay##",$DatPay,$message);
+
+  $send_email = email($from_text,$from,$to,$subject, $message);
+
+  if ($send_email) {
+
+  echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-success text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Přesun závodníka z čekatelů</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-success'>Závodník byl přeřazen do běžného squadu.</p>
+			<p class='text-center small mb-0 mx-3'><i class='fa fa-info-circle pr-1' style='font-size:16px'></i>Registrační email s podklady pro zaplacení byl odeslán na adresu $_POST[Mail] zadanou při registraci.</p>
+		</div>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-success'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+  }
+ else {
+  echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba odeslání emailu</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-2 '>Při odeslání registračního emailu došlo k chybě!</p>
+			<p class='text-center small '>Pošlete email z administrace pomocí tlačítka <i class='fa fa-envelope pr-1' style='font-size:16px; color: #007bff'></i><b>Poslat závodníkovi registrační email</b> nebo kontaktujte správce aplikace</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+  }
+
+}
+
+else {
+	header("refresh:0;url=index.php");
 	exit;
 }
-	else {
-		header("refresh:0;url=index.php");
-		exit;
-	}
-}
-// KONEC EDITACE ZAVODNIKA
+
+};
+// přesun cekatele do squadu
+
+// KONEC editace
 
 
 // MAZANI ZAVODNIKA
@@ -407,21 +538,34 @@ if (isset($_GET[delete_shooter])) {
 	$query="DELETE FROM ".$table." WHERE Cislo=$_POST[shooterID]";
 	$result = mysql_query($query);
 
-if (!$result) {
-	echo "<center>";
-	echo"<p style='color:#ff0000;font-weight:bolder;'>Při vkládání do databáze došlo k chybě. Zkuste to později nebo zkontaktujte správce aplikace.</p>";
-	echo "<pre>MySQL Error: ". mysql_error();"</pre>";
-	echo "<br><br><button style=\" padding:3px; cursor:pointer;\" onclick=\"window.location.href = 'index.php';\">Zpět</button>";
-	echo "</center>";
-	exit;
-}
 if ($result) {
 	header("refresh:0;url=index.php");
 	exit;
-}
+ }
+
+else {
+ echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+ }
 // pri smazani zavodnika se neposila mail
 }
 // KONEC MAZANI ZAVODNIKA
+
 
 // VYRAZENI ZAVODNIKA
 if (isset($_GET[cancel_shooter])) {
@@ -430,25 +574,33 @@ $ip=($_SERVER["REMOTE_ADDR"]." - admin");
 
 $query="select * from $table WHERE Cislo='$_POST[shooterID]' and klic='$_POST[shooterKEY]'";
 $result=mysql_query($query);
-if (!$result) {
-  die('<strong><FONT COLOR=RED>Nelze dohledat závodníka</FONT></strong>');
-}
 
-$line=mysql_fetch_array($result);
-
+if ($result) {
 $query="UPDATE ".$table." SET SquadReg='$line[Squad]',Squad='-9',Vyrazeno='$dnes',VyrazenoIP='$ip' WHERE Cislo='$_POST[shooterID]' and klic='$_POST[shooterKEY]'";
 $result = mysql_query($query);
-if (!$result) {
-	echo "<center>";
-	echo"<p style='color:#ff0000;font-weight:bolder;'>Při vkládání do databáze došlo k chybě. Zkuste to později nebo zkontaktujte správce aplikace.</p>";
-	echo "<pre>MySQL Error: ". mysql_error();"</pre>";
-	echo "<br><br><button style=\" padding:3px; cursor:pointer;\" onclick=\"window.location.href = 'index.php';\">Zpět</button>";
-	echo "</center>";
-	exit;
-}
-if ($result) {
 	header("refresh:0;url=index.php");
 }
+
+else {
+ echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+}
+
 // posilame mail zavodnikovi
 $query="select * from $table where Cislo='$_POST[shooterID]' and klic='$_POST[shooterKEY]'";
 $strelci=mysql_query($query);
@@ -468,11 +620,24 @@ $z=mysql_fetch_array($strelci);
 
 $send_email = email($from_text,$from,$to,$subject, $message);
 if (!$send_email) {
-	echo "<center>";
-	echo"<p style='color:#ff0000;font-weight:bolder;'>Při odeslání emailu došlo k chybě. Zkuste to později.</p>";
-	echo "<button style=\" padding:3px; cursor:pointer;\" onclick=\"window.location.href = 'index.php';\">Zpět</button>";
-	echo "</center>";
-}
+  echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba odeslání emailu</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-2 '>Při odeslání emailu došlo k chybě!</p>
+			<p class='text-center small '>Kontaktujte správce aplikace</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+";
+	}
 }
 // KONEC VYRAZENI ZAVODNIKA
 
@@ -482,8 +647,40 @@ if (isset($_GET[mark_paid])) {
 $dnes=date_format(new DateTime(),"Y-m-d");
 $query="select * from $table WHERE Cislo='$_POST[shooterID]' and klic='$_POST[shooterKEY]'";
 $result=mysql_query($query);
+
 if (!$result) {
-  die('<strong><FONT COLOR=RED>Nelze dohledat střelce</FONT></strong>');
+ echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-3 '>Nebylo možné dohledat střelce!</p>
+			<p class='text-center small'>Vraťte se zpět do administrace a zkontrolujte, zda nebyl mezitím smazán nebo kontaktujte správce aplikace.</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+
+	<script  type='text/javascript'>
+	var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
+		myModal.show();
+		backdrop: 'static',
+		keyboard: false
+	</script>
+	
+	<script  type='text/javascript'>
+		$('#regInfo').modal({
+			backdrop: 'static',
+			keyboard: false
+		})
+	</script>
+  ";
+exit;
 }
 
 $query="UPDATE ".$table." 
@@ -496,17 +693,30 @@ $query="UPDATE ".$table."
     Cislo='$_POST[shooterID]' and klic='$_POST[shooterKEY]'";
 
 $result = mysql_query($query);
-if (!$result) {
-	echo "<center>";
-	echo"<p style='color:#ff0000;font-weight:bolder;'>Při vkládání do databáze došlo k chybě. Zkuste to později nebo zkontaktujte správce aplikace.</p>";
-	echo "<pre>MySQL Error: ". mysql_error();"</pre>";
-	echo "<br><br><button style=\" padding:3px; cursor:pointer;\" onclick=\"window.location.href = 'index.php';\">Zpět</button>";
-	echo "</center>";
-	exit;
-}
 if ($result) {
 	header("refresh:0;url=index.php");
 }
+
+else {
+ echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+}
+
 // posilame mail zavodnikovi
 $query="select * from $table where Cislo='$_POST[shooterID]' and klic='$_POST[shooterKEY]'";
 $strelci=mysql_query($query);
@@ -528,53 +738,176 @@ $z=mysql_fetch_array($strelci);
 
 $send_email = email($from_text,$from,$to,$subject, $message);
 if (!$send_email) {
-	echo "<center>";
-	echo"<p style='color:#ff0000;font-weight:bolder;'>Při odeslání emailu došlo k chybě. Zkuste to později.</p>";
-	echo "<button style=\" padding:3px; cursor:pointer;\" onclick=\"window.location.href = 'index.php';\">Zpět</button>";
-	echo "</center>";
-}
+  echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba odeslání emailu</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-2 '>Při odeslání emailu došlo k chybě!</p>
+			<p class='text-center small '>Kontaktujte správce aplikace</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+ }
 }
 // KONEC EVIDENCE UHRADY PLATBY
 
 
 // PLACENI ZAVODU NA MISTE
 if (isset($_GET[payment_before_off])) {
-	$query="update match_config set Payment_before='', Zavod_pocet_dni_na_platbu='365' where Zavod_id='$table'";
-	$result = mysql_query($query);
+  $query="update match_config set Payment_before='', Zavod_pocet_dni_na_platbu='365' where Zavod_id='$table'";
+  $result = mysql_query($query);
 
-if (!$result) {
-	echo "<center>";
-	echo"<p style='color:#ff0000;font-weight:bolder;'>Při vkládání do databáze došlo k chybě. Zkuste to později nebo zkontaktujte správce aplikace.</p>";
-	echo "<pre>MySQL Error: ". mysql_error();"</pre>";
-	echo "<br><br><button style=\" padding:3px; cursor:pointer;\" onclick=\"window.location.href = 'index.php';\">Zpět</button>";
-	echo "</center>";
-	exit;
-}
 if ($result) {
 	header("refresh:0;url=index.php");
 	exit;
-}
-}
+ }
+
+else {
+ echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+ }
+};
 // PLACENI ZAVODU NA MISTE
 
 // PLACENI ZAVODU do 10 dnu od registrace
 if (isset($_GET[payment_before_on])) {
-	$query="update match_config set Payment_before='on', Zavod_pocet_dni_na_platbu='10' where Zavod_id='$table'";
-	$result = mysql_query($query);
+  $query="update match_config set Payment_before='on', Zavod_pocet_dni_na_platbu='10' where Zavod_id='$table'";
+  $result = mysql_query($query);
 
-if (!$result) {
-	echo "<center>";
-	echo"<p style='color:#ff0000;font-weight:bolder;'>Při vkládání do databáze došlo k chybě. Zkuste to později nebo zkontaktujte správce aplikace.</p>";
-	echo "<pre>MySQL Error: ". mysql_error();"</pre>";
-	echo "<br><br><button style=\" padding:3px; cursor:pointer;\" onclick=\"window.location.href = 'index.php';\">Zpět</button>";
-	echo "</center>";
-	exit;
-}
 if ($result) {
 	header("refresh:0;url=index.php");
 	exit;
-}
+ }
+
+else {
+ echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+ }
 }
 // PLACENI ZAVODU do 10 dnu od registrace
 
+
+// SPRÁVA DIVIZÍ
+
+// NOVA DIVIZE
+if (isset($_GET[new_division])) {
+	 $name = $_POST['Name'];
+	 $value = $_POST['Value'];
+	 $query = "INSERT INTO $table_divisions (Name,Value)
+	 VALUES ('$name','$value')";
+	 $result = mysql_query($query);
+
+if ($result) {
+	header("refresh:0;url=index.php");
+	exit;
+ }
+
+else {
+ echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+ }
+}
+ // KONEC NOVA DIVIZE
+
+// MAZANI DIVIZE
+if (isset($_GET[delete_division])) {
+	$query = "DELETE FROM $table_divisions WHERE Name='" . $_GET["pidiv"] . "'";
+	$result = mysql_query($query);
+
+
+if ($result) {
+	header("refresh:0;url=index.php");
+	exit;
+ }
+
+else {
+ echo "
+	<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+	 <div class='modal-dialog'>
+		<div class='modal-content'>
+		   <div class='modal-header bg-danger text-center'>
+			<h4 class='modal-title text-white w-100 font-weight-bold' id='exampleModalLabel'>Chyba databáze</h4>
+		   </div>
+		<div class='modal-body'>
+			<p class='text-center font-weight-bolder text-danger mb-3 '>Při vkládání do databáze došlo k chybě!</p>
+			<p class='text-center small'>Zkuste to později nebo kontaktujte správce aplikace.</p>
+		<div class='modal-footer border-top-0 mt-2'>
+			<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-danger'>Zpět do administrace</button></a>
+		</div>
+	  </div>
+	 </div>
+	</div>
+	";
+ }
+}
+ // KONEC MAZANI DIVIZE
+
+
 ?>
+
+<script  type='text/javascript'>
+var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
+	myModal.show();
+	backdrop: 'static',
+	keyboard: false
+</script>
+
+<script  type='text/javascript'>
+	$('#regInfo').modal({
+		backdrop: 'static',
+		keyboard: false
+	})
+</script>

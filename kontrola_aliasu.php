@@ -28,10 +28,13 @@ SELECT Prijmeni,Jmeno,Alias,Zavod
    FROM ec2023_1 where squad >=0
   union all
   SELECT Prijmeni,Jmeno,Alias,Zavod
-   FROM ec2023_2 where squad >=0
+   FROM ec2024_1 where squad >=0
+  union all
+  SELECT Prijmeni,Jmeno,Alias,Zavod
+   FROM ec2024_2 where squad >=0
   union all
    SELECT Prijmeni,Jmeno,Alias,Zavod
-  FROM ec2023_3 where squad >=0
+  FROM ec2024_3 where squad >=0
   )
 temp
 group by Prijmeni,Jmeno,Alias

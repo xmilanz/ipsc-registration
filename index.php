@@ -32,6 +32,16 @@ if ($match_data[Payment_before]=="") {
 else {
 	$platba_na_miste="";
 }
+
+// registrace je pozastavena, neni jiste zda se zavod bude konat
+if ($match_data[Zavod_registrace_pozastaveno]=="on") {
+  $match_data[Squad_main_max]="";
+  $match_data[Squad_prem_max]="";
+  $match_data[Zavod_stages]="-";
+  $match_data[Zavod_datum]="-";
+  $match_data[Zavod_min_pocet_ran]="-";
+  $match_data[Banka_ucet_CASTKA]="-";
+}
 ?>
 
 <div class="row">
@@ -44,7 +54,7 @@ else {
 			<dt class="col-4 text-right pr-0">Obtížnost:</dt><dd class="col-8 pl-2">IPSC Level I.</dd>
 			<dt class="col-4 text-right pr-0">Počet situací:</dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_stages]";?></dd>
 			<dt class="col-4 text-right pr-0">Min. počet ran:</dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_min_pocet_ran]";?></dd>
-			<dt class="d-none col-4 text-right pr-0 <?php if ($match_data[Squad_prem_max]=='0') echo "d-none";?>">Prematch:</dt><dd class="d-none col-8 pl-2 <?php if ($match_data[Squad_prem_max]=='0') echo "d-none";?>"><?php echo "$match_data[Squad_prem_max]";?> závodníků</dd>
+			<dt class="col-4 text-right pr-0 <?php if ($match_data[Squad_prem_max]=='0') echo "d-none";?>">Prematch:</dt><dd class="col-8 pl-2 <?php if ($match_data[Squad_prem_max]=='0') echo "d-none";?>"><?php echo "$match_data[Squad_prem_max]";?> závodníků</dd>
 			<dt class="col-4 text-right pr-0">Hlavní závod:</dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_stages]" * "$match_data[Squad_main_max]";?> závodníků</dd>
 			<dt class="col-4 text-right pr-0">Pořadatel:</dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_poradatel]";?></dd>
 			<dt class="col-4 text-right pr-0">Místo: </dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_misto]";?>&nbsp;&nbsp;<a href='https://goo.gl/maps/ehm6pwDKJbPsvSpB6' target='_new'><i class='fas fa-crosshairs text-dark'></i></a>&nbsp;&nbsp;<a href='https://www.google.cz/maps/dir//Shooting+Club+Opa%C5%99any,+Opa%C5%99any+372,+391+61+Opa%C5%99any/@49.4014151,14.4730687,1641m/data=!3m1!1e3!4m8!4m7!1m0!1m5!1m1!1s0x470ca05e2e879acf:0xdfe1c002d0d9509b!2m2!1d14.4692126!2d49.4000376' target='_new'><i class='fas fa-route text-dark'></i></a></dd>
@@ -66,7 +76,7 @@ else {
 				<li>zbraň musí být v pouzdru / v zavazadle / vybitá se spuštěným kohoutem.</li>
 				<li>Střelec smí vyjmout zbraň z pouzdra pouze na stanovišti na na povel rozhodčího nebo na místě k tomu účelu speciálně určeném = BEZPEČNOSTNÍ  ZÓNA. V bezpečnostní zóně je zakázaná manipulace se střelivem.</li>
 			</ol>
-				<p class="text-center font-weight-bold text-danger pb-2">Na základě rozhodnutí předsedy klubu SK OPAŘANY došlo k úpravě závodu.<br />Byly odstraněny 2&nbsp;situace. Tím byl zredukován počet ran.<br />&nbsp;<br />Jakékoliv porušení zásad bezpečnosti znamená okamžitou DISKVALIFIKACI!!!</p>
+				<p class="text-center font-weight-bold text-danger pb-2">Jakékoliv porušení zásad bezpečnosti znamená okamžitou DISKVALIFIKACI!!!</p>
 	</div>
 	</div>
 </div>
@@ -99,7 +109,7 @@ else {
 	<div class="col-md-7">
 	<div class="article">
 	<div class="jumbotron"><H3>Časový plán</H3></div>
-		<table class="table table-borderless m-2">
+		<table class="<?php if ($match_data[Zavod_registrace_pozastaveno]=="on") echo "d-none";?> table table-borderless m-2">
 			<tr class="<?php if ($match_data[Squad_prem_max]=='0') echo "d-none";?>""><td><strong>Prematch</strong></td><td><?php echo "$prematch_den $prematch_datum";?></td><td><?php echo "$match_data[Zavod_cas_prematch]";?></td></tr>
 			<tr><td><strong>Prezence</strong></td><td><?php echo "$zavod_den $match_data[Zavod_datum]";?></td><td><?php echo "$match_data[Zavod_cas_prezence]";?></td></tr>
 			<tr class="<?php if ($match_data[Zavod_cas_main_dopoledne]!=='' AND $match_data[Zavod_cas_main_odpoledne]!=='') echo "d-none";?>"><td><strong>Závod</strong></td><td><?php echo "$zavod_den $match_data[Zavod_datum]";?></td><td><?php echo "$match_data[Zavod_cas_main]";?></td></tr>
@@ -117,9 +127,9 @@ else {
 	<div class="jumbotron"><H3>Další informace</H3></div>
 		<dl class="row  text-left">
 			<dt class="col-2 text-right pr-1">Divize:</dt><dd class="col-9 pl-2"><?php echo implode(', ', $zavod_divize );?>
-			    <span class="d-none text-danger small"><br>V závislosti na počtu závodníků v divizích CLASIC a STANDARD může dojít k jejich sloučení.</span></dd>
+			    <span class="text-danger small"><br>V závislosti na počtu závodníků v divizích CLASIC a STANDARD může dojít k jejich sloučení.</span></dd>
 			<dt class="col-2 text-right pr-1">Kategorie:</dt><dd class="col-9 pl-2"><?php echo implode(', ', $zavod_kategorie );?>
-			    <span class="text-danger small"><br>Ve vyhodnocení poháru je kategorie Grand Senior sloučena s kategorií  Super Senior</span></dd>
+			    <span class="text-danger small"><br>V závislosti na počtu závodníků v jednotlivých kategoriích může dojít k jejich sloučení</span></dd>
 			<dt class="col-2 text-right pr-1">Povinná výbava:</dt><dd class="col-9 pl-2">ochrana sluchu a zraku (sluchátka, brýle)</dd>
 			<dt class="col-2 text-right pr-1">Účast:</dt><dd class="col-9 pl-2">Držitelé zbrojního průkazu</dd>
 			<dt class="col-2 text-right pr-1">Zbraně a střelivo:</dt><dd class="col-9 pl-2">Vlastní, jsou povoleny všechny druhy velkorážních pistolí a revolverů od ráže 9mm Luger (dle pravidel IPSC). Není povoleno používat střelivo s průbojnou a zápalnou střelou.</dd>

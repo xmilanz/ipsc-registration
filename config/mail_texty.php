@@ -209,6 +209,38 @@ S pozdravem
 <strong>$match_data[Zavod_poradatel]</strong>
 ";
 
+$email_registrace_cekatel_presun_platba="Dobrý den,
+
+pořadatel Vás přesunul z čekatelů do ##Squad##. Posíláme Vám registrační email závodu <strong>$match_data[Zavod]</strong> s podklady pro zaplacení startovného.
+Datum závodu: $match_data[Zavod_datum].
+
+##STRELEC##
+
+V souladu s pravidly registrace Vás žádáme o úhradu registračního poplatku (neplatí pro organizátory a RO):
+&nbsp;- účet: ".$match_data[Banka_ucet_cislo]."/".$match_data[Banka_ucet_kod]."
+&nbsp;- variabilní symbol: ##VAR_SYMBOL##
+&nbsp;- částka: ".$match_data[Banka_ucet_CASTKA]." ".$match_data[Banka_ucet_MENA]."  
+
+QR kód pro platbu v Kč:
+<a href='##QR_LINK##'><img src='##QR_LINK##' /></a>
+
+Potvrďte svojí účast v závodu zaplacením startovného. <strong>Registrace bez platby je platná do <span style=\"color:#ff0000;\">##DatPay##</span>.</strong> Po tomto termínu bude vaše registrace automaticky zrušena.
+
+Nemůžete-li se z nějakých důvodů zůčastnit závodu, neprodleně nás informujte v odpovědi na tento email nebo kliněte na odkaz <strong>\"zrušit účast\"</strong> vedle svého jména. Po připsání platby na účet již není možné startovné vrátit, v souladu s pravidly závodu je však možné jej přenést na jiného závodníka.
+
+Další informace o závodu najdete na adrese <a href='$web_adresa_admin'>$web_adresa_admin</a>
+
+S pozdravem
+<strong>$match_data[Zavod_poradatel]</strong>
+<i><small>
+------
+Výpis z pravidel registrace
+Po připsání platby na účet již nelze startovné vrátit, v souladu s pravidly závodu je však možné jej přenést na jiného závodníka, <strong>nejpozději však v den prematche.</strong>
+Přesuny závodníků mezi squady na základě jejich žádosti je možné provádět <strong>nejpozději do 30 minut před oficiálním zahájením hlavního závodu</strong>.
+</i></small>
+";
+
+
 $email_registrace_platba_text_admin="Dobrý den,
 
 znovu Vám posíláme registrační email závodu <strong>$match_data[Zavod]</strong>.

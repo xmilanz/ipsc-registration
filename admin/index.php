@@ -49,15 +49,18 @@ $match_data = mysql_fetch_array($result);
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-colvis-2.2.2/b-html5-2.2.2/b-print-2.2.2/cr-1.5.5/date-1.1.2/fc-4.0.2/fh-3.2.2/r-2.2.9/sc-2.0.5/sb-1.3.2/sp-2.0.0/sr-1.1.0/datatables.min.css"/>
 <!-- dataTable https://datatables.net/download/ -->
 
-	<script type="text/javascript" src="../js/form_validation.js"></script>
+	<script type="text/javascript" src="./js/admin_form_validation.js"></script>
 
 </HEAD>
 <BODY>
 
 <a class="text-decoration-none" href="<?php echo $web_adresa_admin; ?>" target="_blank">
-    <div class="jumbotron p-2 m-0"><h2 class="text-center ">Administrace závodu <?php echo "$match_data[Zavod]"; 
+    <div class="jumbotron p-2 m-0 "><h2 class="text-center ">Administrace závodu <?php echo "$match_data[Zavod]<br>"; 
 
-    if ($match_data[Payment_before]=="on") {echo "<span class='text-danger small'> [<abbr title='Pokud závodník nezaplatí do 10 dnů od provedení registrace, je automaticky vyřazen'>platba startovného 10 dnů od registrace</abbr>]</span>";}
+    if (($match_data[Payment_before]=="on") AND ($match_data['Zavod_registrace_pozastaveno']=="on")) {echo " <span class='text-danger small '> [<abbr title='Pokud závodník nezaplatí do 10 dnů od provedení registrace, je automaticky vyřazen'>platba startovného 10 dnů od registrace</abbr>, </span><span class='small font-weight-bold text-danger'><abbr title='Opětovné spuštění pozastavené registrace se provede v Konfiguraci závodu'>registrace je pozastavená]</abbr></span>";}
+
+    elseif ($match_data[Payment_before]=="on") {echo "<span class='text-danger small'> [<abbr title='Pokud závodník nezaplatí do 10 dnů od provedení registrace, je automaticky vyřazen'>platba startovného 10 dnů od registrace</abbr>]</span>";}
+
     else {echo "<span class='text-danger small'> [<abbr title='Závodník platí až v den závodu pokladníkovi na místě'>platba startovného na místě</abbr>]</span>";}
 ?>
 
@@ -72,12 +75,11 @@ $match_data = mysql_fetch_array($result);
     </li>
     <li class="nav-item">
       <a class="btn btn-primary btn-rounded" onclick="window.location.href='?export=1';" href='export/praktiscore_shooters.csv' download='praktiscore_shooters.csv'>Exportovat závodníky pro PS</a>
-	<?php
-	?>
     </li>
   </ul>
 
 	<?php include ("include/match_config.php"); ?>
+	<?php include ("./include/divisions.php");  ?>
 
 	<?php
 	if ($match_data[Payment_before]=="on") {
@@ -279,8 +281,8 @@ echo "<div class='row $paymentBeforeClass mr-0'>";
 echo "</div>";
 
 include ("./include/pass_values.php");  
-?>
 
+?>
 
 </BODY>
 </HTML>

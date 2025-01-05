@@ -31,12 +31,12 @@
 			<div class="col-md-6"></div>
 			<div class="col-md-3">
 				<label for="Jmeno" class="form-label pt-2">Jméno</label>
-				<input class="form-control" type="text" name="Jmeno" id="Jmeno" placeholder="Jan" onfocus="this.placeholder = ''" onblur="replaceChars()" required>
+				<input class="form-control" type="text" name="Jmeno" id="Jmeno" placeholder="Jan" onfocus="this.placeholder = ''" onblur="Jan" onkeypress="return avoidspace(event)" required>
 				<div class="invalid-feedback">Nevyplnili jste jméno</div>
 			  </div>
 			<div class="col-md-5">
 				<label for="Prijmeni" class="form-label pt-2">Příjmení</label>
-				<input class="form-control" type="text" name="Prijmeni" id="Prijmeni" placeholder="Novák" onfocus="this.placeholder = ''" onblur="replaceChars()" required>
+				<input class="form-control" type="text" name="Prijmeni" id="Prijmeni" placeholder="Novák" onfocus="this.placeholder = ''" onblur="Novák" onkeypress="return avoidspace(event)" required>
 				<div class="invalid-feedback">Nevyplnili jste příjemní</div>
 			  </div>
 			<div class="col-md-4">
@@ -77,9 +77,11 @@
 				  <select class="form-control" name=Pidiv required>
 					<option value="" selected>--- vyberte ---</option>
 					<?php
-					foreach( $zavod_divize as $divize => $popis ){
-					echo "<option value='$divize'>$popis</option>"; 
-					}
+					$query = mysql_query("SELECT * from $table_divisions");
+						while($division = mysql_fetch_array($query))
+						{
+							echo "<option value=".$division['Name'].">". $division['Value']."</option>";
+						}
 					?>
 				  </select>
 			</div>
