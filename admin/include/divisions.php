@@ -36,7 +36,7 @@
 				<div class="invalid-feedback">Nevyplnili jste název</div>
 			  </div>
 			<div class="col-md-7 pl-0">
-				<input class="form-control" type="text" name="Value" id="Value" placeholder="Open, Classic,..." onfocus="this.placeholder = ''" onblur="Open, Classic,..." onkeypress="return avoidspace(event)" required>
+				<input class="form-control" type="text" name="Value" id="Value" placeholder="Open, Classic,..." onfocus="this.placeholder = ''" onblur="Open, Classic,..." required>
 				<div class="invalid-feedback">Nevyplnili jste hodnotu</div>
 			</div>
 			<div class="col-md-2">
@@ -83,4 +83,3 @@
     <!--/.Content-->
   </div>
 </div>
-	<!--a href="" class="nav-link" data-toggle="modal" data-target="#manage_divisions">Divize</a-->

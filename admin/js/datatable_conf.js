@@ -1,11 +1,11 @@
 $(document).ready(function() {
 
     $('#zavodnici').DataTable( {
-		responsive: false,
+		responsive: true,
 		colReorder: true,
 		deferRender: true,
-		columnDefs: [ 
-                    { targets: [0,1,2,3,5,6,7,8,10,12,15], visible: true }, 
+		columnDefs: [
+                    { targets: [0,1,2,3,6,7,8,9,11,13,16], visible: true }, 
                     { targets: '_all', visible: false } 
                 ],
 		language: {
@@ -49,7 +49,7 @@ $(document).ready(function() {
                     columns: ':visible'
                 },
 				autoPrint: false,
-				messageBottom: 'Vytisknuto z administrace závodu Eggenberg CUP [registrace.kps-eggenberg.cz]',
+//				messageBottom: 'Vytisknuto z administrace závodu Eggenberg CUP [registrace.kps-eggenberg.cz]',
 				customize: function ( win ) {
                     $(win.document.body)
                         .css( 'font-size', '10px' )

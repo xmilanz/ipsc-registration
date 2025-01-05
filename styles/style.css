@@ -18,20 +18,6 @@ body, html{
     box-shadow: 0 0 6px #000;
 }
 
-/*
-#header {
-    background-color: #FFF;
-    background-position: center;
-    border-bottom: 1px solid #000;
-    width: 100%;
-}
-
-#header-logo {display: inline-block;}
-#header-logo, #header-logo img {
-    max-width: 100%;
-}
-*/
-
 .header-logo {
     position: relative;
     display: inline-block;
@@ -58,8 +44,8 @@ body, html{
     top: 0;
     left: 0;
     width: 100%;
-	background-image: url(../images/logo-blank-eggenberg.png) ;
-//	background-image: url(../images/logo-blank-pelhrimov.png) ;
+//	background-image: url(../images/logo-header-eggenberg.png) ;
+//	background-image: url(../images/logo-header-pelhrimov.png) ;
 	background-repeat: no-repeat;
 	text-align: center;
     padding-top: 30px;
@@ -249,7 +235,21 @@ label.alias_validation {padding-bottom: 1rem;}
 @media screen and (max-width: 1200px)
 {
 	.banner {display:none;}
+	.text-over-image {
+		font-size: 1em;
+		background-size: 12%;
+	}
 }
+
+@media screen and (max-width: 991px)
+{
+	.banner {display:none;}
+	.text-over-image {
+		font-size: 0.7em;
+		padding-top: 20px;
+	}
+}
+
 
 @media screen and (max-width: 767px) {
 
@@ -296,4 +296,47 @@ div.dtsb-searchBuilder div.dtsb-group {width: 600px;}
     max-height: 75vh;.
     overflow-y: auto;.
     overflow-x: hidden;
+}
+
+
+/*----------------------------------------------
+	Tooltip
+-----------------------------------------------*/
+
+.tooltip {
+  cursor: help;
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+  opacity: 1;
+  font-size: inherit  !important;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 400px;
+  background-color: #F5F5F5;
+  border: 1px solid darkgrey;
+  color: black;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 11px;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: -10px;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.tooltiptext ul { 
+	padding-left: 20px;
+	font-weight: normal;
+}
+
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
 }

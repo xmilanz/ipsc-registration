@@ -1,6 +1,12 @@
 <?php
-include "./db/dbconn.php";
 include "./header.php";
+
+
+if (file_exists('./db/dbconn.php')) {
+    require_once './db/dbconn.php';
+} elseif (file_exists('../db/dbconn.php')) {
+    require_once '../db/dbconn.php';
+}
 
 $result = mysql_query("
 CREATE VIEW ec_uniq_alias AS
@@ -55,7 +61,7 @@ if (!$result) {
 
 <H2>Kontrola alisů zadaných při registraci od roku 2021</H2>
 <p>Tabulka obsahuje aliasy použité při registraci do <strong>jednotlivých kol</strong> Eggenberg CUPu od roku 2021.<br>
-<h6><span class='text-danger'> Nejdůležitější je sice použít stejný alias v rámci jedné série, ale stejně je v zájmu každého závodníka používat stále stejný alias ;).</span> <br><br>Po kontrole prosím pošlete <u><a style="color:#2a5a8e;" href="mailto:milan&#064;g17.cz?subject=Oprava registracnich udaju Eggenberg CUP">statistikovi email</a></u> s informací, <span class='text-danger'>který alias je správný (= zaregistrovaný)</span>.</h6/>
+<h6><span class='text-danger'> Nejdůležitější je sice použít stejný alias v rámci jedné série, ale stejně je v zájmu každého závodníka používat stále stejný alias ;).</span> <br><br>Po kontrole prosím pošlete <u><a style="color:#2a5a8e;" href="mailto:<?php echo "$match_data[Zavod_email_stats]"; ?>?subject=Oprava registracnich udaju Eggenberg CUP">statistikovi</a></u> email s informací, <span class='text-danger'>který alias je správný (= zaregistrovaný)</span>.</h6/>
 <br>
 <div class="row">
 	<div class="col-md-8">

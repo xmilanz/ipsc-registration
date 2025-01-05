@@ -13,21 +13,9 @@ $query="SELECT * FROM ".$table." WHERE Cislo=$ID";
 $res=mysql_query($query);
 $line=mysql_fetch_array($res);
 
-?>
-<?php
-session_start();
-// If the user is not logged in redirect to the login page...
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: ../index.php');
-    exit;
+if ($match_data[Zavod_zbrojni_prukaz]=="") {
+   $zavodZbrojniPrukazClass=" d-none";
 }
-
-require_once ("../config/data.php");
-
-$ID=$_GET['ID'];
-$query="SELECT * FROM ".$table." WHERE Cislo=$ID";
-$res=mysql_query($query);
-$line=mysql_fetch_array($res);
 ?>
       <div class="modal-header bg-warning text-center">
 		<h4 class="modal-title text-white w-100 font-weight-bold">Informace o závodníkovi</h4><br>
@@ -65,15 +53,22 @@ $line=mysql_fetch_array($res);
 				<label class="form-label pt-1">IPSC alias</label>
 				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Alias']; ?>">
 			  </div>
+
+
+ 			<div class="col-md-6">
+				<label class="form-label pt-1">Zbrojní průkaz</label>
+				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['ZP']; ?>">
+			  </div>
 		  
+			<div class="col-md-12 py-2"></div>
+			<!--div class="<?php if ($match_data[Zavod_zbrojni_prukaz]=="on") {echo "col-md-0";} else {echo "col-md-12";}; ?>"></div-->
+
 			<div class="col-md-6">
 				<label class="form-label pt-1">E-mail</label>
 				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Mail']; ?>">
 			</div>
 
-			<div class="col-md-12 py-2"></div>
-
-			<div class="col-md-12">
+			<div class="col-md-6">
 				<label class="form-label pt-1">Poznámka</label>
 				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Poznamka']; ?>">
 			</div>

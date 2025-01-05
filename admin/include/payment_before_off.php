@@ -40,5 +40,4 @@
 	<!--Content-->
   </div>
   </div>
-
 	<a href="" class="btn btn-info btn-rounded" data-toggle="modal" data-target="#payment_before_off">Zapnout placení na místě</a>

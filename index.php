@@ -58,19 +58,20 @@ if ($match_data[Zavod_registrace_pozastaveno]=="on") {
 			<dt class="col-4 text-right pr-0 <?php if ($match_data[Squad_prem_max]=='0') echo "d-none";?>">Prematch:</dt><dd class="col-8 pl-2 <?php if ($match_data[Squad_prem_max]=='0') echo "d-none";?>"><?php echo "$match_data[Squad_prem_max]";?> závodníků</dd>
 			<dt class="col-4 text-right pr-0">Hlavní závod:</dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_stages]" * "$match_data[Squad_main_max]";?> závodníků</dd>
 			<dt class="col-4 text-right pr-0">Pořadatel:</dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_poradatel]";?></dd>
-			<dt class="col-4 text-right pr-0">Místo: </dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_misto]";?>&nbsp;&nbsp;<a href='https://goo.gl/maps/ehm6pwDKJbPsvSpB6' target='_new'><i class='fas fa-crosshairs text-dark'></i></a>&nbsp;&nbsp;<a href='https://www.google.cz/maps/dir//Shooting+Club+Opa%C5%99any,+Opa%C5%99any+372,+391+61+Opa%C5%99any/@49.4014151,14.4730687,1641m/data=!3m1!1e3!4m8!4m7!1m0!1m5!1m1!1s0x470ca05e2e879acf:0xdfe1c002d0d9509b!2m2!1d14.4692126!2d49.4000376' target='_new'><i class='fas fa-route text-dark'></i></a></dd>
+			<dt class="col-4 text-right pr-0">Místo: </dt><dd class="col-8 pl-2"><?php echo "$match_data[Zavod_misto]";?>&nbsp;&nbsp;<a href='<?php echo "$match_data[Zavod_misto_mapa]";?>' target='_new'><i class='fas fa-crosshairs text-dark'></i></a></dd>
 			<dt class="col-4 text-right pr-0">Startovné:</dt><dd class="col-8 pl-2"><?php echo "$match_data[Banka_ucet_CASTKA] $match_data[Banka_ucet_MENA] $platba_na_miste";?></dd>
 		</dl>
 	</div>
 	</div>
 
 	<div class="col-md-7">
-	<div class="article">
+	<div class="article <?php if ($match_data[Zavod_zobrazovat_sponzory]=="") echo "d-none";?>">
 		<div class="jumbotron "><H3>Sponzoři závodu</H3></div>
-		<a href="https://www.mujnuz.cz/" target="_blank"><img src="./images/mujnuz.png" class="img-thumbnail mb-3 mx-auto d-block" alt="Můj nůž.cz"></a>
-		<a class="d-none" href="http://www.jankruta.cz/" target="_blank"><img src="./images/jan_kruta.gif" width="30%" class="img-thumbnail mb-3 mx-auto d-block" alt="Jan Krůta"></a>
+		<?php echo "$sponzor" ?>
 		<div class="border border-left-0 border-right-0 border-bottom-0 border-info"></div>
+	</div>
 
+	<div class="article">
 		<div class="jumbotron"><H3>Bezpečnost</H3></div>
 			<ol class="text-danger pr-2 text-left">
 				<li>Jakákoliv manipulace se zbraní mimo stanoviště je zakázaná.</li>
@@ -175,8 +176,9 @@ while ($row = mysql_fetch_assoc($result)) {
 			<li>Registrace se uzavírá 3 dny před konáním hlavního závodu.</li>
 			<li>Pořadatelé si vyhrazují právo dodatečně měnit zařazení závodníků do squadů za účelem zajištění hladkého průběhu závodu.</li>
 			<li>Změny v registraci (např. náhrada závodníka při přenosu startovného) lze provést nejpozději v den prematche.</li>
-			<li>Přesuny závodníků mezi squady na základě jejich žádosti lze provést <b>nejpozději do 30 minut před oficiálním zahájením hlavního závodu</b>.</li>
-			<li class="text-danger">Protože jsou podklady pro zaplacení startovaného posílány emailem, zbavujete se při zadání neplatné emailové adresy možnosti zúčastnit se závodu. Rovněž nebudete moci být informováni o případných změnách.</li>
+			<li>Přesuny závodníků mezi squady na základě jejich žádosti lze provést nejpozději do 30 minut před oficiálním zahájením hlavního závodu.</li>
+			<li>Změny v průběhu závodu (např. divize, power faktor, kategorie,...) jsou zpoplatněné částkou 100 Kč.</li>
+			<li>Protože jsou podklady pro zaplacení startovaného posílány emailem, zbavuje se závodník při zadání neplatné emailové adresy možnosti zúčastnit se závodu.</li>
 		</ul>
 	</div>
 	</div>
@@ -189,11 +191,11 @@ while ($row = mysql_fetch_assoc($result)) {
 		<ul class="pb-3 text-left">
 			<li>Startovné uhraďte tak, aby platba proběhla do <?php echo $match_data['Zavod_pocet_dni_na_platbu']; ?> dnů od registrace.<br>
 			- <span class="text-danger">u závodníků zaregistrovaných méně jak <?php echo $match_data['Zavod_pocet_dni_na_platbu']; ?> dní před závodem je třeba startovné zaplatit <b>nejpozději jeden den před prematchem</b></span>
-			<li>V případě neuhrazení startovného v řádném termínu bude Vaše registrace zrušena.<br>
+			<li>V případě neuhrazení startovného v řádném termínu je registrace zrušena.<br>
 			<i>- neplatí pro organizátory, pomocníky a rozhodčí</i>
-			<li><b>Startovné je nevratné, ale lze přenést na jiného závodníka.
+			<li><b>Startovné je nevratné, lze jej přenést na jiného závodníka.
 			<li>Platíte-li za více závodníků, uveďte pouze jedno číslo a o platbě informujte pořadatele <a href='mailto:<?php echo $match_data[Zavod_email_from] ?>'>e-mailem</A>.</b></i>
-			<li>Při platbě startovaného předem <b>není registrace na místě možná.</b></li>
+			<li><strong>Při platbě startovaného předem není registrace na místě možná.</strong></li>
 		</ul>
 	</div>
 	</div>

@@ -86,4 +86,3 @@
     <!--/.Content-->
   </div>
 </div>
-	<!--a href="" class="nav-link" data-toggle="modal" data-target="#manage_squads">Squady</a-->

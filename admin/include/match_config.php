@@ -1,4 +1,4 @@
-	<?php 
+<?php 
 	$query = "SELECT * from match_config where Zavod_id='$table'";
 	$result = mysql_query($query) or die('Query failed: ' . mysql_error());
 	$match_configuration = mysql_fetch_array($result);
@@ -35,20 +35,77 @@
         <div class="card-body">
 			<div class="row">
 
- 			<div class="col-md-6">
+ 			<div class="col-md-8">
 				<label for="Zavod" class="form-label pt-1">Název závodu</label>
 				<input class="form-control" type="text" name="Zavod" id="Zavod" placeholder="název závodu" onfocus="this.placeholder = ''" onblur="this.placeholder = 'název závodu'" value="<?php echo $match_configuration['Zavod']; ?>" required>
 				<div class="invalid-feedback">Nevyplnili jste název závodu</div>
 			  </div>
 		  
-			<div class="col-md-6">
+			<div class="col-md-4">
 				<label for="Zavod_datum" class="form-label pt-1">Datum závodu</label>
 				<input class="form-control" type="text" name="Zavod_datum" id="Zavod_datum" onkeypress="return avoidspace(event)" placeholder="datum závodu" onfocus="this.placeholder = ''" onblur="this.placeholder = '1.1.1970'" value="<?php echo $match_configuration['Zavod_datum']; ?>" required>
 				<div class="invalid-feedback">Nevyplnili jste datum závodu</div>
 			</div>
 
+			<div class="col-md-12 ml-4 mt-2 ">
+				<label class="form-check-label" for="Zavod_registrace_pozastaveno">
+					<input type="checkbox" class="form-check-input" id="Zavod_registrace_pozastaveno" name="Zavod_registrace_pozastaveno" <?php if ( $match_configuration['Zavod_registrace_pozastaveno']=="on"){ echo "CHECKED";};?> ><span class="font-weight-bold text-danger">Pozastavit registraci</span>
+				</label>
+		  </div>
+
+			<div class="col-md-12 ml-4 mt-2 ">
+				<label class="form-check-label" for="Zavod_zobrazovat_sponzory">
+					<input type="checkbox" class="form-check-input" id="Zavod_zobrazovat_sponzory" name="Zavod_zobrazovat_sponzory" <?php if ( $match_configuration['Zavod_zobrazovat_sponzory']=="on"){ echo "CHECKED";};?> >Zobrazovat sponzory</span>
+				</label>
+		  </div>
+
 			<div class="col-md-12 py-2"></div>
 			
+			<div class="col-md-12">
+				<label for="Zavod_poradatel" class="form-label pt-1">Pořadatel</label>
+				<input class="form-control" type="text" name="Zavod_poradatel" id="Zavod_poradatel" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Klub praktické střelby EGGENBERG'" value="<?php echo $match_configuration['Zavod_poradatel']; ?>" required>
+				<div class="invalid-feedback">Nevyplnili jste pořadatele</div>
+			  </div>
+
+			<div class="col-md-12 py-2"></div>
+
+			<div class="col-md-5">
+				<label for="Zavod_misto" class="form-label pt-1">Místo</label>
+				<input class="form-control" type="text" name="Zavod_misto" id="Zavod_misto" onfocus="this.placeholder = ''" onblur="this.placeholder = 'místo'" value="<?php echo $match_configuration['Zavod_misto']; ?>" required>
+				<div class="invalid-feedback">Nevyplnili jste místo</div>
+			  </div>
+			<div class="col-md-7">
+				<label for="Zavod_misto_mapa" class="form-label pt-1">Odkaz na mapy</label>
+				<input class="form-control" type="text" name="Zavod_misto_mapa" id="Zavod_misto_mapa" onfocus="this.placeholder = ''" onblur="this.placeholder = 'odkaz na Google mapy nebo mapy.cz'" value="<?php echo $match_configuration['Zavod_misto_mapa']; ?>">
+			</div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+   <!-- accordion 2 Organizace závodu  -->
+    <div class="card">
+    <a class="card-link" data-toggle="collapse" href="#collapseTwo">
+	  <div class="card-header font-weight-bolder ">Organizace závodu</div>
+      </a>
+     <div id="collapseTwo" class="collapse" data-parent="#accordion">
+        <div class="card-body">
+			<div class="row">
+
+			  <div class="col-md-12 ml-4 mt-2 ">
+					<label class="form-check-label" for="Zavod_more_divisions">
+						<input type="checkbox" class="form-check-input" id="Zavod_more_divisions" name="Zavod_more_divisions" <?php if ( $match_configuration['Zavod_more_divisions']=="on"){ echo "CHECKED";};?> ><span class="tooltip">Umožnit závodníkovi zaregistrovat se do více divizí<span class="tooltiptext">Závodník se může zaregistrovat vícekrát bez nutnosti zadat jiné registrační údaje (alias, jméno a příjmení).<br><br>Do aliasu a příjmení se doplní zkratka divize (např. ALIAS-MR, PŘÍJMENÍ-MR</span></span>
+					</label>
+			  </div>
+
+			  <div class="col-md-12 ml-4 mt-2 ">
+					<label class="form-check-label" for="Zavod_zbrojni_prukaz">
+						<input type="checkbox" class="form-check-input" id="Zavod_zbrojni_prukaz" name="Zavod_zbrojni_prukaz" <?php if ( $match_configuration['Zavod_zbrojni_prukaz']=="on"){ echo "CHECKED";};?> >Evidovat zbrojní průkazy
+					</label>
+			  </div>
+
+			<div class="col-md-12 py-2"></div>
+
  			<div class="col-md-4">
 				<label for="Zavod_cas_registrace" class="form-label pt-1">Čas registrace</label>
 				<input class="form-control" type="text" name="Zavod_cas_registrace" id="Zavod_cas_registrace" onkeypress="return avoidspace(event)" placeholder="formát 18:00:00" onfocus="this.placeholder = ''" onblur="this.placeholder = 'formát 17:00:00'" value="<?php echo $match_configuration['Zavod_cas_registrace']; ?>">
@@ -62,11 +119,6 @@
  			<div class="col-md-4">
 				<label for="Zavod_konec_registrace" class="form-label pt-1">Konec registrace</label>
 				<input class="form-control" type="text" name="Zavod_konec_registrace" id="Zavod_konec_registrace" onkeypress="return avoidspace(event)" placeholder="3 dny před prematchem" onfocus="this.placeholder = ''" onblur="this.placeholder = '3 dny před prematchem'" value="<?php echo $match_configuration['Zavod_konec_registrace']; ?>">
-			  </div>
-			  <div class="col-md-12 ml-4 mt-2 ">
-					<label class="form-check-label" for="Zavod_registrace_pozastaveno">
-						<input type="checkbox" class="form-check-input" id="Zavod_registrace_pozastaveno" name="Zavod_registrace_pozastaveno" <?php if ( $match_configuration['Zavod_registrace_pozastaveno']=="on"){ echo "CHECKED";}; ?>><span class="font-weight-bold text-danger">Registrace je pozastavena</span>
-					</label>
 			  </div>
 
 			<div class="col-md-12 py-2"></div>
@@ -120,18 +172,6 @@
 					<div class="invalid-feedback">Nevyplnili jste počet závodníků ve squadu</div>
 			</div>
 
-			<div class="col-md-12 py-2"></div>			  
-
-			<div class="col-md-5">
-				<label for="Zavod_misto" class="form-label pt-1">Místo</label>
-				<input class="form-control" type="text" name="Zavod_misto" id="Zavod_misto" onfocus="this.placeholder = ''" onblur="this.placeholder = 'místo'" value="<?php echo $match_configuration['Zavod_misto']; ?>" required>
-				<div class="invalid-feedback">Nevyplnili jste místo</div>
-			  </div>
-			<div class="col-md-7">
-				<label for="Zavod_poradatel" class="form-label pt-1">Pořadatel</label>
-				<input class="form-control" type="text" name="Zavod_poradatel" id="Zavod_poradatel" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Klub praktické střelby EGGENBERG'" value="<?php echo $match_configuration['Zavod_poradatel']; ?>" required>
-				<div class="invalid-feedback">Nevyplnili jste pořadatele</div>
-			  </div>
         </div>
         </div>
       </div>
@@ -139,10 +179,10 @@
 
 	<!-- accordion 2 Vedení závodu -->
 		<div class="card">
-		<a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo">
+		<a class="collapsed card-link" data-toggle="collapse" href="#collapseThree">
 			<div class="card-header font-weight-bolder ">Vedení závodu</div>
 		</a>
-		<div id="collapseTwo" class="collapse" data-parent="#accordion">
+		<div id="collapseThree" class="collapse" data-parent="#accordion">
 			<div class="card-body">
 			<div class="row">
 			<div class="col-md-6">
@@ -171,10 +211,10 @@
 	
 	<!-- accordion 3 Adresy a telefony -->
 		<div class="card">
-		<a class="collapsed card-link" data-toggle="collapse" href="#collapseThree">
+		<a class="collapsed card-link" data-toggle="collapse" href="#collapseFour">
 			<div class="card-header font-weight-bolder ">Adresy a telefony</div>
 		</a>
-		<div id="collapseThree" class="collapse" data-parent="#accordion">
+		<div id="collapseFour" class="collapse" data-parent="#accordion">
 			<div class="card-body">
 			<div class="row">
 			<div class="col-md-6">
@@ -285,10 +325,10 @@
 	
 	<!-- accordion 4 placení závodu -->
 		<div class="card ">
-		<a class="collapsed card-link" data-toggle="collapse" href="#collapseFour">
+		<a class="collapsed card-link" data-toggle="collapse" href="#collapseFive">
 			<div class="card-header font-weight-bolder ">Placení závodu</div>
 		</a>
-		<div id="collapseFour" class="collapse" data-parent="#accordion">
+		<div id="collapseFive" class="collapse" data-parent="#accordion">
 			<div class="card-body">
 			<div class="row">
 
@@ -350,8 +390,6 @@
 	<!--/.Content-->
   </div>
   </div>
-	<!--a href="" class="nav-link" data-toggle="modal" data-target="#match_configuration">Konfigurace závodu</a-->
-
 
 <script>
 // Disable form submissions if there are invalid fields

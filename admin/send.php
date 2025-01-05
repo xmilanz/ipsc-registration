@@ -2,12 +2,19 @@
 session_start();
 // If the user is not logged in redirect to the login page...
 if (!isset($_SESSION['loggedin'])) {
-	header('Location: ../index.php');
-	exit;
+    header('Location: ../index.php');
+    exit;
 }
 
-require_once ("../db/dbconn.php");
-require_once ("functions.php");
+if (file_exists('./db/dbconn.php')) {
+    include './db/dbconn.php';
+} elseif (file_exists('../db/dbconn.php')) {
+    include '../db/dbconn.php';
+}
+
+
+//require_once ("../db/dbconn.php");
+//require_once ("../functions.php");
 
 $query = "SELECT * from match_config where Zavod_id='$table'";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
@@ -18,7 +25,8 @@ if (isset($_GET[regmail])) {
 $query="select * from $table where Cislo=$_POST[shooterID]";
 $strelec=mysql_query($query);
 $z=mysql_fetch_array($strelec);
-$squad=$nazvy_squadu[$z[Squad]];
+$squad=$z[Squad];
+
 $varsymbol=$z[VarSym];
 $link_cancel="<a href='$web_adresa_admin/zrus_ucast.php?id=$z[Cislo]&klic=$z[klic]'><strong>zrušit účast</strong></a>";
 
@@ -116,7 +124,10 @@ if (isset($_GET[paymail])) {
 $query="select * from $table where Cislo=$_POST[shooterID]";
 $strelec=mysql_query($query);
 $z=mysql_fetch_array($strelec);
-$squad=$nazvy_squadu[$z[Squad]];
+//$squad=$nazvy_squadu[$z[Squad]];
+$squad=$z[Squad];
+
+
 $varsymbol=$z[VarSym];
 $link_cancel="<a href='$web_adresa_admin/zrus_ucast.php?id=$z[Cislo]&klic=$z[klic]'><strong>zrušit účast</strong></a>";
 

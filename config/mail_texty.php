@@ -1,6 +1,9 @@
 <?php
-
-include "db/dbconn.php";
+if (file_exists('./db/dbconn.php')) {
+    require './db/dbconn.php';
+} elseif (file_exists('../db/dbconn.php')) {
+    require '../db/dbconn.php';
+}
 
 $query = "SELECT * from match_config where Zavod_id='$table'";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
@@ -33,10 +36,10 @@ S pozdravem
 ------
 Výpis z pravidel registrace
 Po připsání platby na účet již nelze startovné vrátit, v souladu s pravidly závodu je však možné jej přenést na jiného závodníka, <strong>nejpozději však v den prematche.</strong>
-Přesuny závodníků mezi squady na základě jejich žádosti je možné provádět <strong>nejpozději do 30 minut před oficiálním zahájením hlavního závodu</strong>.
+Přesuny závodníků mezi squady na základě jejich žádosti lze provést nejpozději <strong>do 30 minut před oficiálním zahájením hlavního závodu</strong>.
+Změny v průběhu závodu</strong> (např. divize, power faktor, kategorie,...) jsou zpoplatněné částkou 100 Kč.
 </i></small>
 ";
-
 
 // reg mail v zavodu bez placeni predem
 $email_registrace_zavod_bez_platby_predem="Dobrý den,
@@ -57,7 +60,9 @@ S pozdravem
 <i><small>
 ------
 Výpis z pravidel registrace
-Přesuny závodníků mezi squady na základě jejich žádosti je možné provádět <strong>nejpozději do 30 minut před oficiálním zahájením hlavního závodu</strong>.
+Přesuny závodníků mezi squady na základě jejich žádosti lze provést nejpozději <strong>do 30 minut před oficiálním zahájením hlavního závodu</strong>.
+Změny v průběhu závodu</strong> (např. divize, power faktor, kategorie,...) jsou zpoplatněné částkou 100 Kč.
+
 </i></small>
 ";
 // reg mail v zavodu bez placeni predem
@@ -80,7 +85,8 @@ S pozdravem
 <i><small>
 ------
 Výpis z pravidel registrace
-Přesuny závodníků mezi squady na základě jejich žádosti je možné provádět <strong>nejpozději do 30 minut před oficiálním zahájením hlavního závodu</strong>.
+Přesuny závodníků mezi squady na základě jejich žádosti lze provést nejpozději <strong>do 30 minut před oficiálním zahájením hlavního závodu</strong>.
+Změny v průběhu závodu</strong> (např. divize, power faktor, kategorie,...) jsou zpoplatněné částkou 100 Kč.
 </i></small>
 ";
 
@@ -143,7 +149,8 @@ S pozdravem
 ------
 Výpis z pravidel registrace
 Po připsání platby na účet již nelze startovné vrátit, v souladu s pravidly závodu je však možné jej přenést na jiného závodníka, <strong>nejpozději však v den prematche.</strong>
-Přesuny závodníků mezi squady na základě jejich žádosti je možné provádět <strong>nejpozději do 30 minut před oficiálním zahájením hlavního závodu</strong>.
+Přesuny závodníků mezi squady na základě jejich žádosti lze provést nejpozději <strong>do 30 minut před oficiálním zahájením hlavního závodu</strong>.
+Změny v průběhu závodu</strong> (např. divize, power faktor, kategorie,...) jsou zpoplatněné částkou 100 Kč.
 </i></small>
 ";
 
@@ -165,7 +172,8 @@ S pozdravem
 <i><small>
 ------
 Výpis z pravidel registrace
-Přesuny závodníků mezi squady na základě jejich žádosti je možné provádět <strong>nejpozději do 30 minut před oficiálním zahájením hlavního závodu</strong>.
+Přesuny závodníků mezi squady na základě jejich žádosti lze provést nejpozději <strong>do 30 minut před oficiálním zahájením hlavního závodu</strong>.
+Změny v průběhu závodu</strong> (např. divize, power faktor, kategorie,...) jsou zpoplatněné částkou 100 Kč.
 </i></small>
 ";
 
@@ -211,7 +219,7 @@ S pozdravem
 
 $email_registrace_cekatel_presun_platba="Dobrý den,
 
-pořadatel Vás přesunul z čekatelů do ##Squad##. Posíláme Vám registrační email závodu <strong>$match_data[Zavod]</strong> s podklady pro zaplacení startovného.
+pořadatel Vás přesunul z čekatelů do squadu ##Squad##. Posíláme Vám registrační email závodu <strong>$match_data[Zavod]</strong> s podklady pro zaplacení startovného.
 Datum závodu: $match_data[Zavod_datum].
 
 ##STRELEC##

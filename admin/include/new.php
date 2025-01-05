@@ -2,6 +2,16 @@
  if ($match_data[Payment_before]=="") {
    $paymentBeforeClass.=" d-none";
  }
+
+ if ($match_configuration[Zavod_more_divisions]=="") {
+   $zavodMoreDivisionsClass=" d-none";
+ }
+
+ if ($match_data[Zavod_zbrojni_prukaz]=="") {
+   $zavodZbrojniPrukazClass=" d-none";
+ }
+
+
 ?>
 <div class="modal fade" id="new_shooter" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel"  aria-hidden="true">
   <div class="modal-dialog modal-notify modal-warning" role="document">
@@ -22,38 +32,35 @@
 				echo "<INPUT TYPE=HIDDEN NAME=datreg VALUE=".$sec.">";
 			?>
 			<div class="col-md-8 font-weight-bolder">Osobní informace</div>
-			<div class="col-md-8">
-				<label for="Alias" class="form-label pt-2">Alias</label>
+
+
+			<div class="col-md-6">
+				<label for="Alias" class="form-label mt-2">Alias</label>
 				<input pattern=".{3,16}" class="form-control" type="text" name="Alias" id="Alias" placeholder="3-16 znaků, bez diakritiky a spec. znaků" onfocus="this.placeholder = ''" onblur="replaceChars()" required>
 				<label class="alias_validation" data-error="Použili jste písmena s diakritikou nebo speciální znaky"></label>
 				<div class="invalid-feedback">Nevyplnili jste alias nebo má neplatnou délku</div>
 			</div>
-			<div class="col-md-4">
-				<label for="Pidiv_dalsi" class="form-label pt-2">Další divize</label>
-				  <select class="form-control" name=Pidiv_dalsi>
-					<option value="" selected>--- vyberte ---</option>
-					<?php
-					$query = mysql_query("SELECT * from $table_divisions");
-						while($division = mysql_fetch_array($query))
-						{
-							echo "<option value=".'-'.$division['Name'].">". $division['Name']."</option>";
-						}
-					?>
-				  </select>
-			</div>
-			<div class="col-md-12"></div>
+
+			<div class="col-md-6 <?php echo "$zavodZbrojniPrukazClass"; ?>">
+				<label for="ZP" class="form-label mt-2">Zbrojní průkaz</label>
+				<input class="form-control" type="text" name="ZP" id="ZP<?php echo"$i";?>" placeholder="číslo zbrojního průkazu" onfocus="this.placeholder = ''" onblur="this.placeholder = 'číslo zbrojního průkazu'" >
+				<div class="invalid-feedback">Nevyplnili jste číslo zbrojního průkazu</div>
+			  </div>
+
+			<div class="<?php if ($match_data[Zavod_zbrojni_prukaz]=="on") {echo "col-md-0";} else {echo "col-md-12";}; ?>"></div>
+
 			<div class="col-md-3">
-				<label for="Jmeno" class="form-label pt-2">Jméno</label>
+				<label for="Jmeno" class="form-label mt-2">Jméno</label>
 				<input class="form-control" type="text" name="Jmeno" id="Jmeno" placeholder="Jan" onfocus="this.placeholder = ''" onblur="Jan" onkeypress="return avoidspace(event)" required>
 				<div class="invalid-feedback">Nevyplnili jste jméno</div>
 			  </div>
 			<div class="col-md-5">
-				<label for="Prijmeni" class="form-label pt-2">Příjmení</label>
+				<label for="Prijmeni" class="form-label mt-2">Příjmení</label>
 				<input class="form-control" type="text" name="Prijmeni" id="Prijmeni" placeholder="Novák" onfocus="this.placeholder = ''" onblur="Novák" onkeypress="return avoidspace(event)" required>
 				<div class="invalid-feedback">Nevyplnili jste příjemní</div>
 			  </div>
 			<div class="col-md-4">
-				<label for="Prijmeni_stav" class="form-label pt-2">Doplnění jména</label>
+				<label for="Prijmeni_stav" class="form-label mt-2">Doplnění jména</label>
 					<select class="form-control" name=Prijmeni_stav>
 						<option value="" selected>--- vyberte ---</option>
 						<option value=" ml.">ml.</option>
@@ -61,7 +68,7 @@
 					</select>
 			</div>
 			<div class="col-md-8">
-				<label for="Mail" class="form-label pt-3">Email</label>
+				<label for="Mail" class="form-label mt-3">Email</label>
 				<div class="input-group">
 					<div class="input-group-prepend">
 					<div class="input-group-text">@</div>
@@ -70,7 +77,7 @@
 				</div>
 			</div>
 			<div class="col-md-4">
-				<label for="region" class="form-label pt-3">Region</label>
+				<label for="region" class="form-label mt-3">Region</label>
 				<select name="Region" id="Region" class="custom-select" required>
 					  <option value="AUT">Austria</option>
 					  <option value="CZE" selected>Czech Republic</option>
@@ -83,10 +90,25 @@
 				<div class="invalid-feedback">Nevybrali jste region</div>
 			</div>
 
-			<div class="col-md-10 pt-4 font-weight-bolder">Závod</div>
-			<div class="col-md-6">
-				<label for="Pidiv" class="form-label pt-2">Divize</label>
-				  <select class="form-control" name=Pidiv required>
+			<div class="col-md-10 mt-4 font-weight-bolder">Závod</div>
+
+			<div class="col-md-4">
+				<label for="Squad" class="form-label mt-2">Squad</label>
+				  <select class="form-control" name=Squad required>
+					<option value="" selected>--- vyberte ---</option>
+					<?php
+					$query = mysql_query("SELECT * from $table_squads ORDER BY Number");
+						while($squad = mysql_fetch_array($query))
+						{
+							echo "<option value=".$squad['Number'].">". $squad['Name']."</option>";
+						}
+					?>
+				  </select>
+			</div>
+
+			<div class="col-md-4">
+				<label for="Pidiv" class="form-label mt-2">Divize</label>
+				  <select class="form-control" name="Pidiv" id="Pidiv" onchange="togglePidivMain()" required>
 					<option value="" selected>--- vyberte ---</option>
 					<?php
 					$query = mysql_query("SELECT * from $table_divisions");
@@ -97,8 +119,34 @@
 					?>
 				  </select>
 			</div>
+
+			<div class="col-md-4 <?php echo "$zavodMoreDivisionsClass"; ?>">
+				<label for="Pidiv_dalsi" class="form-label mt-2 mb-1 text-danger tooltip">Další divize
+						<span class="tooltiptext">
+						<span>Při registraci závodníka ve více divizích se postupuje tímto způsobem:
+							<ul>
+								<li>při první registaci použijte seznam divizí, který je pod řádkem Jméno, Příjmení ....</li>
+								<li>po dokončení registrace vyberte požadovaný squad a vyplňte stejné údaje (Alias, Jméno, Příjmení, Email, Kategorie, Region)</li>
+								<li>další DIVIZI vyberte ze seznamu "Registrace ve více divizích"</li>
+							</ul>
+						</span>
+					</span>
+				</label>
+
+					<select class="form-control" name="Pidiv_dalsi" id="Pidiv_dalsi" onchange="togglePidiv()">	
+					<option value="" selected>--- vyberte ---</option>
+					<?php
+					$query = mysql_query("SELECT * from $table_divisions");
+						while($division = mysql_fetch_array($query))
+						{
+							echo "<option value=".'-'.$division['Name'].">". $division['Value']."</option>";
+						}
+					?>
+				  </select>
+			</div>
+
 			<div class="col-md-6">
-				<label for="Kategorie" class="form-label pt-2">Kategorie</label>
+				<label for="Kategorie" class="form-label mt-2">Kategorie</label>
 				  <select class="form-control" name=Kategorie required>
 					<option value="" selected>--- vyberte ---</option>
 					<?php
@@ -111,29 +159,16 @@
 				  </select>
 			</div>
 			<div class="col-md-6">
-				<label for="Pifak" class="form-label pt-2">Faktor</label>
+				<label for="Pifak" class="form-label mt-2">Faktor</label>
 					<select class="form-control" name=Pifak required>
 						<option value="" selected>--- vyberte ---</option>
-						<option value="MIN">Minor - MIN</option>
-						<option value="MAJ">Major - MAJ</option>
+						<option value="MIN">Minor</option>
+						<option value="MAJ">Major</option>
 					</select>
 			</div>
+			<div class="col-md-12 mt-4 font-weight-bolder">Ostatní</div>
 			<div class="col-md-6">
-				<label for="Squad" class="form-label pt-2">Squad</label>
-				  <select class="form-control" name=Squad required>
-					<option value="" selected>--- vyberte ---</option>
-					<?php
-					$query = mysql_query("SELECT * from $table_squads ORDER BY Number");
-						while($squad = mysql_fetch_array($query))
-						{
-							echo "<option value=".$squad['Number'].">". $squad['Name']."</option>";
-						}
-					?>
-				  </select>
-			</div>
-			<div class="col-md-12 pt-4 font-weight-bolder">Ostatní</div>
-			<div class="col-md-6">
-				<label for="Staff" class="form-label pt-2">Staff</label>
+				<label for="Staff" class="form-label mt-2">Staff</label>
 					<select class="form-control" name=Staff>
 						<option value="" selected>--- vyberte ---</option>
 						<option value="" >Platící závodník</option>
@@ -144,14 +179,14 @@
 			</div>
 
 			<div class="col-md-6">
-			 <div class=" <?php echo $paymentBeforeClass; ?>form-check form-check pt-5">
+			 <div class=" <?php echo $paymentBeforeClass; ?>form-check form-check mt-5">
 			   <input class="form-check-input" type="checkbox" id="ZaplatiNaMiste" name="ZaplatiNaMiste">
 			   <label class="form-check-label" for="ZaplatiNaMiste">Zaplatí na místě</label>
 			 </div>
 			</div>
 
 			<div class="col-md-12">
-				<label for="Poznamka" class="form-label pt-3">Poznámka</label>
+				<label for="Poznamka" class="form-label mt-3">Poznámka</label>
 				<input class="form-control" type="text" name="Poznamka" id="Poznamka" placeholder="Poznámka" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Poznámka'" value="">
 			  </div>
 			</div>

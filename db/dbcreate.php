@@ -27,7 +27,7 @@ switch ($dbcreateParam) {
     if (!$result) {
        die('Invalid query: ' . mysql_error());
     };
-    echo "OK - pokracujte klavesou F5<br/>";  
+    echo "<strong>OK - pokracujte klavesou F5</strong><br/>";  
   break;
 
   case "match_config":
@@ -40,12 +40,14 @@ switch ($dbcreateParam) {
     Zavod_zacatek_registrace int(3) DEFAULT '10',
     Zavod_konec_registrace int(3) DEFAULT '10',
     Zavod_registrace_pozastaveno varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    Zavod_divisions_more varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Zavod_cas_prematch varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '13:00 - 17:00',
     Zavod_cas_prezence varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '8:00 - 9:00',
     Zavod_cas_main varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '9:00 - 14:00',
     Zavod_cas_main_dopoledne varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Zavod_cas_main_odpoledne varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Zavod_misto varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'střelnice Opařany',
+    Zavod_misto_mapa varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'https://goo.gl/maps/ehm6pwDKJbPsvSpB6',
     Zavod_poradatel varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Klub praktické střelby EGGENBERG',
     Zavod_poradatel_adresa varchar(255) NULL [Heydukova 514/23, České Budějovice 7, 370 01 České Budějovice] 
     Zavod_match_director varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Jan Hátle',
@@ -82,7 +84,7 @@ switch ($dbcreateParam) {
     if (!$result) {
        die('Invalid query: ' . mysql_error());
     };
-    echo "OK - pokracujte klavesou F5<br/>";
+    echo "<strong>OK - pokracujte klavesou F5</strong><br/>";
   break;
 
 
@@ -101,7 +103,7 @@ switch ($dbcreateParam) {
     if (!$result) {
        die('Invalid query: ' . mysql_error());
     };
-    echo "OK - pokracujte klavesou F5<br/>";
+    echo "<strong>OK - pokracujte klavesou F5</strong><br/>";
   break;
 
   case "nastaveni":
@@ -123,7 +125,7 @@ switch ($dbcreateParam) {
     if (!$result) {
        die('chyba vlozeni vychozich hodnot: ' . mysql_error());
     };
-    echo "OK - pokracujte klavesou F5<br/>";
+    echo "<strong>OK - pokracujte klavesou F5</strong><br/>";
   break;
 
   case "divisions":
@@ -139,21 +141,88 @@ switch ($dbcreateParam) {
     };
     echo "OK <br/>";
     $query="insert into $dbcreateTable (Name,Value) values
-		('PRD', 'Production'),
-		('STD', 'Standard'),
-		('OPN', 'Open'),
-		('CLA', 'Classic'),
-		('REV', 'Revolver'),
-		('RE6', 'Revolver šestiraňák'),
-		('PDO', 'Production Optics'),
-		('PCC', 'Pistol Caliber Carbines');
-		";
+	('PRD', 'Production'),
+	('STD', 'Standard'),
+	('OPN', 'Open'),
+	('CLA', 'Classic'),
+	('REV', 'Revolver'),
+	('REV6', 'Revolver šestiraňák'),
+	('PDO', 'Production Optics'),
+	('PCC', 'Pistol Caliber Carbines'),
+	('PCCI', 'PCC Iron'),
+	('PCCO', 'PCC Optics'),
+	('MR', 'Mini Rifle'),
+	('MRS', 'Mini Rifle Standard'),
+	('MRO', 'Mini Rifle Open');
+	";
     echo "Plním data do tabulky [$dbcreateTable] ...";
     $result = mysql_query($query);
     if (!$result) {
        die('chyba vlozeni vychozich hodnot: ' . mysql_error());
     };
-    echo "OK - pokracujte klavesou F5<br/>";
+    echo "<strong>OK - pokracujte klavesou F5</strong><br/>";
+  break;
+
+  case "categories":
+    echo "Vytvarim tabulku [$dbcreateTable] ...";
+    $query="CREATE TABLE ".$dbcreateTable." (
+    Id int(4)AUTO_INCREMENT PRIMARY KEY,
+    Name varchar(16) UNIQUE not null
+    )";
+    $result = mysql_query($query);
+    if (!$result) {
+       die('Invalid query: ' . mysql_error());
+    };
+    echo "OK <br/>";
+    $query="insert into $dbcreateTable (Name) values
+	('REGULAR'),
+	('SENIOR'),
+	('SSENIOR'),
+	('GSENIOR'),
+	('LADY'),
+	('LSENIOR'),
+	('JUNIOR'),
+	('SJUNIOR');
+	";
+    echo "Plním data do tabulky [$dbcreateTable] ...";
+    $result = mysql_query($query);
+    if (!$result) {
+       die('chyba vlozeni vychozich hodnot: ' . mysql_error());
+    };
+    echo "<strong>OK - pokracujte klavesou F5</strong><br/>";
+  break;
+
+  case "squads":
+    echo "Vytvarim tabulku [$dbcreateTable] ...";
+    $query="CREATE TABLE ".$dbcreateTable." (
+    Id int(4)AUTO_INCREMENT PRIMARY KEY,
+    Number varchar(3) UNIQUE not null,
+    Name varchar(50)
+    )";
+    $result = mysql_query($query);
+    if (!$result) {
+       die('Invalid query: ' . mysql_error());
+    };
+    echo "OK <br/>";
+    $query="insert into $dbcreateTable (Number,Name) values
+	('-9', 'VYŘAZENO'),
+	('-2', 'Čekatelé'),
+	('100', 'Prematch'),
+	('101', 'Squad 101'),
+	('102', 'Squad 102'),
+	('103', 'Squad 103'),
+	('104', 'Squad 104'),
+	('105', 'Squad 105'),
+	('106', 'Squad 106'),
+	('107', 'Squad 107'),
+	('108', 'Squad 108');
+	";
+    echo "Plním data do tabulky [$dbcreateTable] ...";
+    $result = mysql_query($query);
+    if (!$result) {
+       die('chyba vlozeni vychozich hodnot: ' . mysql_error());
+    };
+    echo "<strong>OK - pokracujte klavesou F5</strong><br/>";
   break;
 
 }

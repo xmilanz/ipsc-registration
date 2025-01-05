@@ -1,6 +1,11 @@
 <?php
-include "./db/dbconn.php";
 include "./header.php";
+
+if (file_exists('./db/dbconn.php')) {
+    require_once './db/dbconn.php';
+} elseif (file_exists('../db/dbconn.php')) {
+    require_once '../db/dbconn.php';
+}
 
 $current_year = date_format(new DateTime(),"Y");
 
@@ -46,7 +51,7 @@ if (!$result) {
 <p>Tabulka obsahuje aliasy použité při registraci do <strong>jednotlivých kol</strong> Eggenberg CUPu tohoto ročníku</p>
 <p>Pokud je vše v pořádku, můžete také prověřit, zda jste v minulých ročnících nepoužili jiný alias: <u><a href='./kontrola_aliasu_all.php'>Aliasy od počátku věků</a></u>.</p>
 
-<h6><span class='text-danger'>Pro vyhodnocení turnaje je nutné, aby závodník používal stejný alias.</span> Po kontrole prosím pošlete <u><a style="color:#2a5a8e;" href="mailto:milan&#064;g17.cz?subject=Oprava registracnich udaju Eggeneberg CUP <?php echo "$current_year"; ?>">statistikovi email</a></u> s informací, <span class='text-danger'>který alias je správný (= zaregistrovaný na ipsc-tech.org)</span>.</h6/>
+<h6><span class='text-danger'>Pro vyhodnocení turnaje je nutné, aby závodník používal stejný alias.</span> Po kontrole prosím pošlete <u><a style="color:#2a5a8e;" href="mailto:<?php echo "$match_data[Zavod_email_stats]"; ?>?subject=Oprava registracnich udaju Eggeneberg CUP <?php echo "$current_year"; ?>">statistikovi</a></u> email s informací, <span class='text-danger'>který alias je správný (= zaregistrovaný na ipsc-tech.org)</span>.</h6/>
 <br>
 <div class="row">
 	<div class="col-md-8">

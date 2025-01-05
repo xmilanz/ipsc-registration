@@ -1,6 +1,7 @@
-<?
-require_once ("./config/data.php");
+<?php
 require ("./header.php");
+
+require_once ("./config/data.php");
 
 $shooterID=intval($_GET[id]);
 $shooterKEY=intval($_GET[klic]);

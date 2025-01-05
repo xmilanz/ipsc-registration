@@ -3,8 +3,21 @@
 //ini_set('display_errors',1);
 //error_reporting(E_WARNING);
 
-include_once 'config/data.php';
-include_once '../config/data.php';
+//include_once './config/data.php';
+//include_once '../config/data.php';
+
+if (file_exists('./config/data.php')) {
+    require_once './config/data.php';
+} elseif (file_exists('../config/data.php')) {
+    require_once '../config/data.php';
+}
+
+if (file_exists('./functions.php')) {
+    include_once './functions.php';
+} elseif (file_exists('../functions.php')) {
+    include_once '../functions.php';
+}
+
 
 $mysql = mysql_connect($db_host, $db_login, $db_pass) or die('Could not connect: ' . mysql_error());
 mysql_select_db($db_dtb) or die('Could not select database');
@@ -17,9 +30,7 @@ if ($_GET["recreate"]) {
   mysql_query($query);
   $query="drop table $table_nastaveni;";
   mysql_query($query);
-}
-
-require_once 'functions.php';
+	}
 
 
 $result = mysql_query("SHOW TABLES LIKE '".$table."'");
@@ -42,6 +53,21 @@ if (mysql_num_rows($result)==0) {
   $dbcreateTable=$table."_divisions";
   require_once ("dbcreate.php");
 }
+
+$result = mysql_query("SHOW TABLES LIKE '".$table_categories."'");
+if (mysql_num_rows($result)==0) {
+  $dbcreateParam="categories";
+  $dbcreateTable=$table."_categories";
+  require_once ("dbcreate.php");
+}
+
+$result = mysql_query("SHOW TABLES LIKE '".$table_squads."'");
+if (mysql_num_rows($result)==0) {
+  $dbcreateParam="squads";
+  $dbcreateTable=$table."_squads";
+  require_once ("dbcreate.php");
+}
+
 
 $result = mysql_query("SHOW TABLES LIKE 'match_config'");
 if (mysql_num_rows($result)==0) {

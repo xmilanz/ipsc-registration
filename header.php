@@ -1,6 +1,12 @@
 <?php
-include "./config/data.php";
-include "db/dbconn.php";
+
+if (file_exists('../db/dbconn.php')) {
+    require_once './db/dbconn.php';
+} elseif (file_exists('../db/dbconn.php')) {
+    require_once '../db/dbconn.php';
+}
+
+require_once './config/data.php';
 
 $dnes=date_format(new DateTime(),"Y-m-d H:i:s");
 
@@ -14,6 +20,22 @@ if ($match_data[Payment_before]=="") {
 
 if ($match_data[Payment_before]=="on") {
    $paymentMatchClass=" d-none";
+}
+
+// nastaveni poradatele pro soubor stylů
+if ((strpos($match_data[Zavod_poradatel], 'Eggenberg')) !== false) {
+	$poradatel="eggenberg";
+	$sponzor="<a href='https://www.mujnuz.cz/' target='_blank'><img src='./images/mujnuz.png' class='img-thumbnail mb-3 mx-auto d-block' alt='Můj nůž.cz'></a>";
+
+
+}
+elseif ((strpos($match_data[Zavod_poradatel], 'Pelhřimov')) !== false) {
+	$poradatel="pelhrimov";
+	$sponzor="<a href='http://www.jankruta.cz/' target='_blank'><img src='./images/jan_kruta.gif' width='30%' class='img-thumbnail mb-3 mx-auto d-block' alt='Jan Krůta'></a>";
+}
+else {
+	$poradatel="";
+	$sponzor="";
 }
 
 ?>
@@ -42,6 +64,7 @@ if ($match_data[Payment_before]=="on") {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <!-- bootstrap -->
 	<link rel="stylesheet" href="./styles/style.css">
+	<link rel="stylesheet" href="./styles/style_<?php echo "$poradatel" . ".css"; ?>">
 <!-- gallery -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.css" />
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.js"></script>
@@ -51,23 +74,18 @@ if ($match_data[Payment_before]=="on") {
 <body>
 <div class="container">
 
-<!--div id="header">
-	<div id="header-logo"><a href="<?php echo $match_data[Klub_web];?>"><img src="./images/logo.png" alt="<?php echo $match_data[Zavod_poradatel];?>"></a></div>
-</div-->
-
 <div class="header">
 	<div class="header-logo">
-		<img src="./images/logo-blank-dvc.png" alt="Logo">
+		<img src="./images/logo-header-dvc.png" alt="Logo">
 		<div class="text-over-image">
 			<a class="logo-text" href="<?php echo "$match_data[Klub_web]"; ?>" target="_blank">
-				<p class="mt-2"><?php echo "$match_data[Zavod_poradatel]<br>";?></a></p>
+				<p class="mt-2"><?php echo "$match_data[Zavod]<br>";?></a></p>
 		</div>
 	</div>
 </div>
 
 <nav class="navbar navbar-expand-md sticky-top navbar-dark">
     <a href="index.php"><span class="fas fa-home navbar-toggler" style="font-size:20px"></span></a>
-	<a href="#" class="navbar-brand order-md-last order-0"><?php echo $match_data[Zavod];?></a>
 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
 	<span class="navbar-toggler-icon"></span>
   </button>

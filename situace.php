@@ -8,12 +8,11 @@ include "./header.php";
 			<h1 class="p-3">Situace</h1>
 		</div>
 		<div class="portfolio-item row pl-4 pb-4">
-<!--			<div class="item col-lg-3 col-md-4 col-6 col-sm">
+			<div class="item col-lg-3 col-md-4 col-6 col-sm">
 				<a href="./stages/stage1.png" class="fancylight popup-btn" data-fancybox-group="light">
 					<img class="img-fluid img-thumbnail" src="./stages/stage1.png" alt="">
 				</a>
 			</div>
--->
 			<div class="col-lg-3 col-md-4 col-6 col-sm">
 				<a href="./stages/stage2.png" class="fancylight popup-btn" data-fancybox-group="light">
 					<img class="img-fluid img-thumbnail" src="./stages/stage2.png" alt="">
@@ -44,14 +43,13 @@ include "./header.php";
 					<img class="img-fluid img-thumbnail" src="./stages/stage7.png" alt="">
 				</a>
 			</div>
-<!--			<div class="col-lg-3 col-md-4 col-6 col-sm">
+			<div class="col-lg-3 col-md-4 col-6 col-sm">
 				<a href="./stages/stage8.png" class="fancylight popup-btn" data-fancybox-group="light">
 					<img class="img-fluid img-thumbnail" src="./stages/stage8.png" alt="">
 				</a>
 			</div>
--->
 		</div>
-<!--		<div class="p-3"><a href="./stages/stages.pdf"><img src="./images/pdf.png" width="32px">Stáhnout vše</a></div> -->
+		<div class="p-3"><a href="./stages/stages.pdf"><img src="./images/pdf.png" width="32px">Stáhnout vše</a></div>
 	</div>
 </div>
 </div>

@@ -76,5 +76,3 @@
     <!--/.Content-->
   </div>
 </div>
-	<!--a href="" class="nav-link" data-toggle="modal" data-target="#manage_categories">Kategorie</a-->
-	

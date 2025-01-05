@@ -18,16 +18,6 @@
 })();
 
 
-// zobrazit toast
-$(document).ready(function(){
-  // Přidáme click handler pro všechny elementy, jejichž ID začíná na 'pravidla_registrace'
-  $("[id^='pravidla_registrace']").click(function(){
-    $('.toast').toast({autohide: false});
-    $('.toast').toast('show');
-  });
-});
-
-
 function avoidspace(event) {
     var k = event ? event.which : window.event.keyCode;
     if (k == 32) return false;
@@ -68,3 +58,25 @@ function replaceChars() {
     });
 }
 
+function togglePidiv() {
+    var pidivDalsi = document.getElementById("pidiv_dalsi100");
+    var pidiv = document.getElementById("pidiv100");
+
+    if (pidivDalsi.value) {
+        pidiv.disabled = true; // Deaktivuje pole "Pidiv", pokud je vybrána hodnota v "Pidiv_dalsi"
+    } else {
+        pidiv.disabled = false; // Aktivuje pole "Pidiv", pokud je vybrána prázdná hodnota v "Pidiv_dalsi"
+    }
+}
+
+
+function togglePidivMain() {
+    var pidivDalsi = document.getElementById("pidiv_dalsi100");
+    var pidiv = document.getElementById("pidiv100");
+
+    if (pidiv.value) {
+        pidivDalsi.disabled = true;
+    } else {
+        pidivDalsi.disabled = false;
+    }
+}

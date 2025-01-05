@@ -29,8 +29,8 @@ body,html {
     top: 0;
     left: 0;
     width: 100%;
-	background-image: url(../images/logo-blank-eggenberg.png) ;
-//	background-image: url(../images/logo-blank-pelhrimov.png) ;
+//	background-image: url(../images/logo-header-eggenberg.png) ;
+//	background-image: url(../images/logo-header-pelhrimov.png) ;
 	background-repeat: no-repeat;
 	text-align: center;
     padding-top: 30px;
@@ -95,6 +95,28 @@ td.functions {width: 1px; white-space: nowrap; text-align:center;}
 table.print, td.print {border: 1px solid black !important;}
 th.print {background-color: #dee2e6 !important; }
 
+
+
+
+
+
+
+/*----------------------------------------------
+	Responsive
+-----------------------------------------------*/
+
+@media screen and (max-width: 1200px) {
+	
+}
+
+@media screen and (max-width: 991px) {
+	
+}
+
+
+@media screen and (max-width: 767px) {
+	
+}
 
 /*----------------------------------------------
 	DatTable
@@ -169,3 +191,49 @@ th.print {background-color: #dee2e6 !important; }
     .modal {
       z-index: 1050;
     }
+
+
+/*----------------------------------------------
+	Tooltip
+-----------------------------------------------*/
+
+.tooltip {
+  cursor: help;
+  position: relative !important;
+  display: inline-block !important;
+  border-bottom: 1px dotted black  !important;
+  opacity: 1 !important;
+  z-index: 100 !important;
+  font-size: inherit  !important;
+ 
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: #F5F5F5;
+  border: 1px solid darkgrey;
+  color: black;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 11px;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: 30px;
+  right: -30%;
+
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.tooltiptext ul { 
+	padding-left: 20px;
+	font-weight: normal;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}

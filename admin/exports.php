@@ -1,6 +1,15 @@
 <?php
-require_once("db/dbconn.php");
-
+session_start();
+// If the user is not logged in redirect to the login page...
+if (!isset($_SESSION['loggedin'])) {
+    header('Location: ../index.php');
+    exit;
+}
+if (file_exists('./db/dbconn.php')) {
+    include './db/dbconn.php';
+} elseif (file_exists('../db/dbconn.php')) {
+    include '../db/dbconn.php';
+}
 
 header('Content-Type: text/csv');
 header('Content-Disposition: attachment; filename="praktiscore_shooters.csv"');
@@ -18,7 +27,7 @@ while ($z = mysql_fetch_array($strelci)) {
 		case "STD": $z['Pidiv'] = "Standard"; break;
 		case "CLA": $z['Pidiv'] = "Classic"; break;
 		case "REV": $z['Pidiv'] = "Revolver"; break;
-		case "RE6": $z['Pidiv'] = "Revolver"; break;
+		case "REV6": $z['Pidiv'] = "Revolver"; break;
 		case "OPN": $z['Pidiv'] = "Open"; break;
 		case "PCC": $z['Pidiv'] = "PCC"; break;
 		case "PCCI": $z['Pidiv'] = "PCC Iron"; break;

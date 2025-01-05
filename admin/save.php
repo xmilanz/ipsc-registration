@@ -11,7 +11,12 @@ if (!isset($_SESSION['loggedin'])) {
 	exit;
 }
 
-include ("../db/dbconn.php");
+if (file_exists('./db/dbconn.php')) {
+    include './db/dbconn.php';
+} elseif (file_exists('../db/dbconn.php')) {
+    include '../db/dbconn.php';
+}
+//include ("../db/dbconn.php");
 
 // KONFIGRACE ZAVODU
 if (isset($_GET[match_config])) {
@@ -30,12 +35,16 @@ if (isset($_GET[match_config])) {
 		Zavod_zacatek_registrace='$_POST[Zavod_zacatek_registrace]',
 		Zavod_konec_registrace='$_POST[Zavod_konec_registrace]',
 		Zavod_registrace_pozastaveno='$_POST[Zavod_registrace_pozastaveno]',
+		Zavod_zobrazovat_sponzory='$_POST[Zavod_zobrazovat_sponzory]',
+		Zavod_more_divisions='$_POST[Zavod_more_divisions]',
+		Zavod_zbrojni_prukaz='$_POST[Zavod_zbrojni_prukaz]',
 		Zavod_cas_prematch='$_POST[Zavod_cas_prematch]',
 		Zavod_cas_prezence='$_POST[Zavod_cas_prezence]',
 		Zavod_cas_main='$_POST[Zavod_cas_main]',
 		Zavod_cas_main_dopoledne='$_POST[Zavod_cas_main_dopoledne]',
 		Zavod_cas_main_odpoledne='$_POST[Zavod_cas_main_odpoledne]',
 		Zavod_misto='$_POST[Zavod_misto]',
+		Zavod_misto_mapa='$_POST[Zavod_misto_mapa]',
 		Zavod_poradatel='$_POST[Zavod_poradatel]',
 		Zavod_poradatel_adresa='$_POST[Zavod_poradatel_adresa]',
 		Zavod_match_director='$_POST[Zavod_match_director]',
@@ -65,12 +74,17 @@ if (isset($_GET[match_config])) {
 		Klub_web='$_POST[Klub_web]',
 		Zavod='$_POST[Zavod]',
 		Zavod_datum='$_POST[Zavod_datum]',
+		Zavod_registrace_pozastaveno='$_POST[Zavod_registrace_pozastaveno]',
+		Zavod_zobrazovat_sponzory='$_POSTZavod_zobrazovat_sponzory]',
+		Zavod_more_divisions='$_POST[Zavod_more_divisions]',
+		Zavod_zbrojni_prukazy='$_POST[Zavod_zbrojni_prukazy]',
 		Zavod_cas_prematch='$_POST[Zavod_cas_prematch]',
 		Zavod_cas_prezence='$_POST[Zavod_cas_prezence]',
 		Zavod_cas_main='$_POST[Zavod_cas_main]',
 		Zavod_cas_main_dopoledne='$_POST[Zavod_cas_main_dopoledne]',
 		Zavod_cas_main_odpoledne='$_POST[Zavod_cas_main_odpoledne]',
 		Zavod_misto='$_POST[Zavod_misto]',
+		Zavod_misto_mapa='$_POST[Zavod_misto_mapa]',
 		Zavod_poradatel='$_POST[Zavod_poradatel]',
 		Zavod_poradatel_adresa='$_POST[Zavod_poradatel_adresa]',
 		Zavod_match_director='$_POST[Zavod_match_director]',
@@ -131,6 +145,11 @@ if (isset($_GET[new_shooter])) {
   $jmeno=trim(mb_convert_case($_POST[Jmeno], MB_CASE_TITLE, "UTF-8"));
   $prijmeni=trim(mb_convert_case($_POST[Prijmeni], MB_CASE_TITLE, "UTF-8")).mb_convert_case($_POST[Pidiv_dalsi], MB_CASE_UPPER).$_POST[Prijmeni_stav].'';
   $ip=($_SERVER["REMOTE_ADDR"]." - admin");
+  
+  if ($_POST[pidiv]=="") {
+	$pidiv=substr("$_POST[pidiv_dalsi]", 1);
+	} else {
+	$pidiv=$_POST[pidiv];}
 
   //kontrola, zda je závodnik s aliasem nebo jmenem a primenim uz zaregistrovan (bez vyřazených)
   $check="SELECT * FROM $table WHERE ((Alias = '$alias') OR (Jmeno = '$jmeno' AND Prijmeni = '$prijmeni')) AND Squad>=100";
@@ -186,16 +205,17 @@ else {
   $result = mysql_query($query) or die('Query failed: ' . mysql_error());
   $match_data = mysql_fetch_array($result);
   
-  $query="INSERT INTO ".$table." (Alias,Jmeno,Prijmeni,VarSym,Region,Mail,Kategorie,Pidiv,Pifak,Squad,DatReg,RegistraceIP,Staff,ZaplatiNaMiste,Poznamka,Zavod)
+  $query="INSERT INTO ".$table." (Alias,Jmeno,Prijmeni,ZP,VarSym,Region,Mail,Kategorie,Pidiv,Pifak,Squad,DatReg,RegistraceIP,Staff,ZaplatiNaMiste,Poznamka,Zavod)
   VALUES (
   '$alias',
   '$jmeno',
   '$prijmeni',
+  '$_POST[ZP]',
   '$varsymbol',
   '$_POST[Region]',
   '$_POST[Mail]',
   '$_POST[Kategorie]',
-  '$_POST[Pidiv]',
+  '$pidiv',
   '$_POST[Pifak]',
   '$_POST[Squad]',
   '$_POST[datreg]',
@@ -351,6 +371,7 @@ $query="UPDATE ".$table." SET
   Alias='$alias',
   Jmeno='$jmeno',
   Prijmeni='$prijmeni',
+  ZP='$_POST[ZP]',
   Mail='$_POST[Mail]',
   Pidiv='$_POST[Pidiv]',
   Kategorie='$_POST[Kategorie]',
@@ -372,6 +393,7 @@ $query="UPDATE ".$table." SET
   Alias='$alias',
   Jmeno='$jmeno',
   Prijmeni='$prijmeni',
+  ZP='$_POST[ZP]',
   Mail='$_POST[Mail]',
   Pidiv='$_POST[Pidiv]',
   Kategorie='$_POST[Kategorie]',

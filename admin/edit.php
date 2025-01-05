@@ -18,6 +18,13 @@ $Squad_old=$line[Squad];
 if ($match_data[Payment_before]=="") {
    $paymentBeforeClass.=" d-none";
 }
+ if ($match_configuration[Zavod_more_divisions]=="") {
+   $zavodMoreDivisionsClass=" d-none";
+ }
+
+ if ($match_data[Zavod_zbrojni_prukaz]=="") {
+   $zavodZbrojniPrukazClass=" d-none";
+ }
 
 ?>
       <div class="modal-header bg-success text-center">
@@ -35,12 +42,21 @@ if ($match_data[Payment_before]=="") {
 		<INPUT type="hidden" id="Zaplaceno" name="Zaplaceno" value="<?php echo "$line[Zaplaceno]";?>">
 	  <!-- stav platby -->
 		<div class="col-md-10 font-weight-bolder">Osobní informace</div>
+
 			<div class="col-md-6">
 				<label for="Alias" class="form-label pt-2">Alias</label>
 				<input class="form-control" type="text" name="Alias" id="Alias" onkeypress="return avoidspace(event)" onblur="replaceChars()" value="<?php echo "$line[Alias]";?>" required>
 				<div class="invalid-feedback">Nevyplnili jste alias</div>
 			</div>
-			<div class="col-md-6"></div>
+
+			<div class="col-md-6 <?php echo "$zavodZbrojniPrukazClass"; ?>">
+				<label for="ZP" class="form-label pt-2">Zbrojní průkaz</label>
+				<input class="form-control" type="text" name="ZP" id="ZP" value="<?php echo "$line[ZP]";?>"	>
+				<div class="invalid-feedback">Nevyplnili jste číslo zbrojního průkazu</div>
+			  </div>
+
+			<div class="<?php if ($match_data[Zavod_zbrojni_prukaz]=="on") {echo "col-md-0";} else {echo "col-md-12";}; ?>"></div>
+
 			<div class="col-md-3">
 				<label for="Jmeno" class="form-label pt-2">Jméno</label>
 				<input class="form-control" type="text" name="Jmeno" id="Jmeno" onkeypress="return avoidspace(event)" placeholder="Jan" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Jan'" value="<?php echo "$line[Jmeno]";?>" required>
@@ -105,7 +121,6 @@ if ($match_data[Payment_before]=="") {
 					$query = mysql_query("SELECT * from $table_categories");
 						while($category = mysql_fetch_array($query))
 						{
-							//echo "<option value=".$category['Name'].">". $category['Value']."</option>";
 							echo "<option value=".$category['id'].">". $category['Name']."</option>";
 						}
 					?>
@@ -115,8 +130,8 @@ if ($match_data[Payment_before]=="") {
 				<label for="Pifak" class="form-label pt-2">Faktor</label>
 					<select class="form-control" name=Pifak required>
 						<option value="<?php echo "$line[Pifak]";?>"><?php echo "$line[Pifak]";?></option>
-						<option value="MIN">Minor - MIN</option>
-						<option value="MAJ">Major - MAJ</option>
+						<option value="MIN">Minor</option>
+						<option value="MAJ">Major</option>
 					</select>
 			</div>
 			<div class="col-md-6">

@@ -1,4 +1,5 @@
-<?php include "header.php";
+<?php 
+include "header.php";
 
 echo "
 <div class='text-center'>
@@ -57,4 +58,3 @@ var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
 ";
 
 include "footer.php"; ?>
-
