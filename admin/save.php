@@ -8,7 +8,7 @@ session_start();
 // If the user is not logged in redirect to the login page...
 if (!isset($_SESSION['loggedin'])) {
 	header('Location: ../index.php');
-	exit;
+	exit();
 }
 
 if (file_exists('./db/dbconn.php')) {
@@ -116,7 +116,7 @@ $result = mysql_query($query);
 
 if ($result) {
 	header("refresh:0;url=index.php");
-	exit;
+	exit();
  }
 else {
  echo "
@@ -233,7 +233,6 @@ $result = mysql_query($query);
 
 if ($result) {
 	header("refresh:0;url=index.php");
-//	exit;
  }
 else {
  echo "
@@ -446,7 +445,7 @@ if (!$result) {
 		})
 	</script>
   ";
-exit;
+exit();
 }
 	
 	
@@ -549,7 +548,7 @@ if (($_POST[Squad_old]=="-2") AND ($_POST[Squad_old]!=$_POST[Squad])){
 
 else {
 	header("refresh:0;url=index.php");
-	exit;
+	exit();
 }
 
 };
@@ -566,7 +565,7 @@ if (isset($_GET[delete_shooter])) {
 
 if ($result) {
 	header("refresh:0;url=index.php");
-	exit;
+	exit();
  }
 
 else {
@@ -706,7 +705,7 @@ if (!$result) {
 		})
 	</script>
   ";
-exit;
+exit();
 }
 
 $query="UPDATE ".$table." 
@@ -865,8 +864,8 @@ if (isset($_GET[new_division])) {
 	 $result = mysql_query($query);
 
 if ($result) {
-	header("refresh:0;url=index.php");
-	exit;
+	header("Location: index.php?divisions");
+	exit();
  }
 
 else {
@@ -898,8 +897,8 @@ if (isset($_GET[delete_division])) {
 
 
 if ($result) {
-	header("refresh:0;url=index.php");
-	exit;
+	    header("Location: index.php?divisions");
+	exit();
  }
 
 else {
@@ -936,8 +935,8 @@ if (isset($_GET[new_category])) {
 	 $result = mysql_query($query);
 
 if ($result) {
-	header("refresh:0;url=index.php");
-	exit;
+	header("Location: index.php?categories");
+	exit();
  }
 
 else {
@@ -969,8 +968,8 @@ if (isset($_GET[delete_category])) {
 
 
 if ($result) {
-	header("refresh:0;url=index.php");
-	exit;
+	header("Location: index.php?categories");
+	exit();
  }
 
 else {
@@ -1007,8 +1006,8 @@ if (isset($_GET[new_squad])) {
 	 $result = mysql_query($query);
 
 if ($result) {
-	header("refresh:0;url=index.php");
-	exit;
+	header("Location: index.php?squads");
+	exit();
  }
 
 else {
@@ -1040,8 +1039,8 @@ if (isset($_GET[delete_squad])) {
 
 
 if ($result) {
-	header("refresh:0;url=index.php");
-	exit;
+	header("Location: index.php?squads");
+	exit();
  }
 
 else {
@@ -1074,12 +1073,12 @@ else {
 var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
 	myModal.show();
 	backdrop: 'static',
-	keyboard: false
+	keyboard: 'false'
 </script>
 
 <script  type='text/javascript'>
 	$('#regInfo').modal({
 		backdrop: 'static',
-		keyboard: false
+		keyboard: 'false'
 	})
 </script>

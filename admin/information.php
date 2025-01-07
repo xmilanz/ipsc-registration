@@ -207,5 +207,5 @@ if ($match_data[Zavod_zbrojni_prukaz]=="") {
 
       <!--Footer-->
 	<div class="modal-footer border-top-0 mt-3 col-12">
-		<button type="button" class="btn btn-default" onclick="window.location.href = 'index.php';">Zrušit</button>
+		<button type="button" class="btn btn-outline-dark" data-dismiss="modal" aria-label="Close">Zavřít</button>
 	</div>

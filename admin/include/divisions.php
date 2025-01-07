@@ -22,7 +22,7 @@
 					<tr>
 						<td width="25px"><?php echo $row["Name"]; ?></td>
 						<td><?php echo $row["Value"]; ?></td>
-						<td width="50px"><a class="btn btn-sm btn-danger" href="./save.php?delete_division&pidiv=<?php echo $row["Name"]; ?>">Smazat</a></td>
+						<td width="50px">    <a class="btn btn-sm btn-danger" href="./save.php?delete_division&pidiv=<?php echo $row["Name"]; ?>">Smazat</a></td>
 					</tr>
 					<?php
 					$i++;
@@ -40,7 +40,7 @@
 				<div class="invalid-feedback">Nevyplnili jste hodnotu</div>
 			</div>
 			<div class="col-md-2">
-				<button type="submit" class="btn btn-success">Přidat</button>
+				<button type="submit" class="btn btn-success" >Přidat</button>
 			</div>
 
 			<div id="accordion" class="col-md-12 mt-3 ml-3 pr-5">
@@ -83,3 +83,4 @@
     <!--/.Content-->
   </div>
 </div>
+

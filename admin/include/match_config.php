@@ -395,7 +395,7 @@
       <!--Footer-->
 		<div class="modal-footer border-top-0">
 			<button type="submit" class="btn btn-success">Uložit konfiguraci závodu</button>
-			<button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close">Zrušit</button>
+			<button type="button" class="btn btn-outline-dark" data-dismiss="modal" aria-label="Close">Zavřít bez uložení</button>
 		</div>
 	 </form>
     </div>

@@ -116,17 +116,17 @@ if ($match_data[Payment_before]=="") {
 			<button class="btn btn-dark dropdown-toggle mx-2" id="dropdownButton1">Závodníci</button>
 				<div class="custom-dropdown" id="customDropdown1">
 					<a href="" data-toggle="modal" data-target="#new_shooter">Nový závodník</a>
-					<a class="" onclick="startExport()" href="#">Export do PS</a>
+					<a onclick="startExport()" href="">Export do PS</a>
 				</div>
 		</div>
 
 		<div class="dropdown" id="dropdownContainer2">
 			<button class="btn btn-dark dropdown-toggle mx-2" id="dropdownButton2">Nastavení závodu</button>
 				<div class="custom-dropdown" id="customDropdown2">
-					<a href="" class="" data-toggle="modal" data-target="#manage_squads">Squady</a>
-					<a href="" class="" data-toggle="modal" data-target="#manage_divisions">Divize</a>
-					<a href="" class="" data-toggle="modal" data-target="#manage_categories">Kategorie</a>
-					<a href="" class="" data-toggle="modal" data-target="#upload_stages">Nahrání situací</a>
+					<a href="" data-toggle="modal" data-target="#manage_squads">Squady</a>
+					<a href="" data-toggle="modal" data-target="#manage_divisions">Divize</a>
+					<a href="" data-toggle="modal" data-target="#manage_categories">Kategorie</a>
+					<a href="" data-toggle="modal" data-target="#upload_stages">Nahrání situací</a>
 				</div>
 		</div>
 
@@ -293,8 +293,6 @@ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 <div class="footer">Klub praktické střelby Eggenberg &copy; Milan Žídek <?php echo date("Y"); ?></div>
 </div>
 
-<script type="text/javascript" src="./js/admin_scripts.js"></script>
-
 <?php 
 	include_once ("./include/match_config.php");
 	include_once ("./include/new.php");
@@ -305,5 +303,6 @@ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 	include_once ("./include/pass_values.php");  
 ?>
 
+<script type="text/javascript" src="./js/admin_scripts.js"></script>
 </BODY>
 </HTML>
