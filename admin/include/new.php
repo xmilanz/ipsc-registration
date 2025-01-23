@@ -57,7 +57,7 @@
 			<div class="col-md-5">
 				<label for="Prijmeni" class="form-label mt-2">Příjmení</label>
 				<input class="form-control" type="text" name="Prijmeni" id="Prijmeni" placeholder="Novák" onfocus="this.placeholder = ''" onblur="Novák" onkeypress="return avoidspace(event)" required>
-				<div class="invalid-feedback">Nevyplnili jste příjemní</div>
+				<div class="invalid-feedback">Nevyplnili jste příjmení</div>
 			  </div>
 			<div class="col-md-4">
 				<label for="Prijmeni_stav" class="form-label mt-2">Doplnění jména</label>

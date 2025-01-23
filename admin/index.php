@@ -18,13 +18,8 @@ if (file_exists('./db/dbconn.php')) {
     include '../db/dbconn.php';
 }
 
-
-//$query = "SELECT * from match_config where Zavod_id='$table'";
-//$result = mysql_query($query) or die('Query failed: ' . mysql_error());
-//$match_data = mysql_fetch_array($result);
-
 // nastaveni poradatele pro soubor stylů
-if ((strpos($match_data[Zavod_poradatel], 'Eggenberg') | strpos($match_data[Zavod_poradatel],'EGGENBERG') | strpos($match_data[Zavod_poradatel],'eggenebrg')) !== false) {
+if ((strpos($match_data[Zavod_poradatel], 'Eggenberg') || strpos($match_data[Zavod_poradatel],'EGGENBERG') || strpos($match_data[Zavod_poradatel],'eggeneberg')) !== false) {
 	$poradatel="eggenberg";
 }
 elseif ((strpos($match_data[Zavod_poradatel], 'Pelhřimov') || strpos($match_data[Zavod_poradatel], 'PELHŘIMOV') || strpos($match_data[Zavod_poradatel], 'pelhřimov') || strpos($match_data[Zavod_poradatel], 'Pelhrimov') || strpos($match_data[Zavod_poradatel], 'PELHRIMOV') || strpos($match_data[Zavod_poradatel], 'pelhrimov')) !== false) {
@@ -73,8 +68,6 @@ if ($match_data[Payment_before]=="") {
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-colvis-2.2.2/b-html5-2.2.2/b-print-2.2.2/cr-1.5.5/date-1.1.2/fc-4.0.2/fh-3.2.2/r-2.2.9/sc-2.0.5/sb-1.3.2/sp-2.0.0/sr-1.1.0/datatables.min.css"/>
 <!-- dataTable https://datatables.net/download/ -->
 
-	<script type="text/javascript" src="./js/admin_reg_form.js"></script>
-	
 </HEAD>
 <BODY>
 <div class="container">
@@ -304,5 +297,7 @@ $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 ?>
 
 <script type="text/javascript" src="./js/admin_scripts.js"></script>
+<script type="text/javascript" src="./js/admin_reg_form.js"></script>
+
 </BODY>
 </HTML>

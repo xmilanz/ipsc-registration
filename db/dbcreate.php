@@ -56,6 +56,11 @@ switch ($dbcreateParam) {
     Zavod_zacatek_registrace int(3) DEFAULT '10',
     Zavod_konec_registrace int(3) DEFAULT '10',
     Zavod_registrace_pozastaveno varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    Zavod_more_divisions varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    Zavod_zbrojni_prukaz varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    Zavod_zobrazovat_sponzory varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    Web_zobrazovat_situace varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    Web_zobrazovat_aliasy varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Zavod_cas_prematch varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '13:00 - 17:00',
     Zavod_cas_prezence varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '8:00 - 9:00',
     Zavod_cas_main varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '9:00 - 14:00',
@@ -243,7 +248,6 @@ switch ($dbcreateParam) {
     };
     echo "<strong>OK - pokracujte klavesou F5</strong><br/>";
   break;
-
 }
 
 ?>

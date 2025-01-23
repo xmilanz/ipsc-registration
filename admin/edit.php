@@ -184,5 +184,3 @@ if ($match_data[Payment_before]=="") {
 		<button type="button" class="btn btn-default" onclick="window.location.href = 'index.php';">Zrušit</button>
 	</div>
 	 </form>
-
-	

@@ -21,7 +21,7 @@
 <div class="modal fade" id="info_shooter" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel"  aria-hidden="true">
         <div class="modal-dialog modal-notify modal-warning" role="document">
         <div class="modal-content">
-		<!-- ZDE SE VKLADA OBSAH info.php-->
+		<!-- ZDE SE VKLADA OBSAH information.php-->
 		</div>
         </div>
 </div>

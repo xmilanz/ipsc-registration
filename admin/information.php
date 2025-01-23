@@ -24,7 +24,6 @@ if ($match_data[Zavod_zbrojni_prukaz]=="") {
         </button>
 	  </div>
       <div class="modal-body">
-		<form class="row needs-validation" method="post" action="./save.php?match_config" novalidate>
 
 	<!--Accordion-->
  	<div id="accordion" class="col-md-12">
@@ -207,5 +206,5 @@ if ($match_data[Zavod_zbrojni_prukaz]=="") {
 
       <!--Footer-->
 	<div class="modal-footer border-top-0 mt-3 col-12">
-		<button type="button" class="btn btn-outline-dark" data-dismiss="modal" aria-label="Close">Zavřít</button>
+		<button type="button" class="btn btn-outline-dark" data-dismiss="modal" aria-label="Close" onclick="window.location.href = 'index.php';">Zavřít</button>
 	</div>

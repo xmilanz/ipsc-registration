@@ -56,6 +56,7 @@
 							<dt class="col-3 text-right pr-0">PRD</dt><dd class="col-9 pl-2">Production</dd>
 							<dt class="col-3 text-right pr-0">PDO</dt><dd class="col-9 pl-2">Production Optics</dd>
 							<dt class="col-3 text-right pr-0">STD</dt><dd class="col-9 pl-2">Standard</dd>
+							<dt class="col-3 text-right pr-0">SDO</dt><dd class="col-9 pl-2">Standard Optics</dd>
 							<dt class="col-3 text-right pr-0">OPN</dt><dd class="col-9 pl-2">Open</dd>
 							<dt class="col-3 text-right pr-0">CLA</dt><dd class="col-9 pl-2">Classic</dd>
 							<dt class="col-3 text-right pr-0">REV</dt><dd class="col-9 pl-2">Revolver</dd>

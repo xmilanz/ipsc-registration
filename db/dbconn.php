@@ -79,7 +79,7 @@ if (mysql_num_rows($result)==0) {
 }
 
 
-// aktualizace klicu - query presunuta do registrovat.php
+// aktualizace klicu - query presunuta do save.php
 //$result = mysql_query("update $table set klic= FLOOR(10 + (RAND(Cislo) * 9000)) where klic is null or klic=0;");
 
 $dbver=0;
@@ -96,7 +96,4 @@ if ($dbver<3.1) {
   require_once 'dbupdate3_1.php';
 }
 
-if ($dbver<3.2) {
-  require_once 'dbupdate3_2.php';
-}
 ?>

@@ -85,19 +85,23 @@
      <div id="collapseTwo" class="collapse" data-parent="#accordion">
         <div class="card-body">
 			<div class="row">
-
-			  <div class="col-md-5 mb-3  ml-3">
-				<label class="form-check-label" for="Zavod_zobrazovat_sponzory">
-					<input type="checkbox" class="form-check-input" id="Zavod_zobrazovat_sponzory" name="Zavod_zobrazovat_sponzory" <?php if ( $match_configuration['Zavod_zobrazovat_sponzory']=="on"){ echo "CHECKED";};?> >Zobrazovat sponzory</span>
+	 		   <div class="col-md-3 mb-3  ml-4">
+			  	<label class="form-check-label" for="Zavod_zobrazovat_sponzory">
+			  		<input type="checkbox" class="form-check-input" id="Zavod_zobrazovat_sponzory" name="Zavod_zobrazovat_sponzory" <?php if ( $match_configuration['Zavod_zobrazovat_sponzory']=="on"){ echo "CHECKED";};?> >Sponzoři</span>
+			  	</label>
+			  </div>
+			  <div class="col-md-3 mb-3">
+				<label class="form-check-label" for="Web_zobrazovat_aliasy">
+					<input type="checkbox" class="form-check-input" id="Web_zobrazovat_aliasy" name="Web_zobrazovat_aliasy" <?php if ( $match_configuration['Web_zobrazovat_aliasy']=="on"){ echo "CHECKED";};?> >Aliasy</span>
 				</label>
 			</div>
-				<div class="col-md-6 mb-3">
+				<div class="col-md-3 mb-3">
 					<label class="form-check-label" for="Web_zobrazovat_situace">
-						<input type="checkbox" class="form-check-input" id="Web_zobrazovat_situace" name="Web_zobrazovat_situace" <?php if ( $match_configuration['Web_zobrazovat_situace']=="on"){ echo "CHECKED";};?> ><span class="tooltip">Zobrazovat situace<span class="tooltiptext">Pokud nebudete v registraci zveřejňovat obrázky situací, odškrtněte volbu</span></span>
+						<input type="checkbox" class="form-check-input" id="Web_zobrazovat_situace" name="Web_zobrazovat_situace" <?php if ( $match_configuration['Web_zobrazovat_situace']=="on"){ echo "CHECKED";};?> ><span class="tooltip">Situace<span class="tooltiptext">Pokud nebudete v registraci zveřejňovat obrázky situací, odškrtněte volbu</span></span>
 					</label>
 			  </div>
 
-			  <div class="col-md-5 mb-3  ml-3">
+			  <div class="col-md-5 mb-3  ml-4">
 					<label class="form-check-label" for="Zavod_more_divisions">
 						<input type="checkbox" class="form-check-input" id="Zavod_more_divisions" name="Zavod_more_divisions" <?php if ( $match_configuration['Zavod_more_divisions']=="on"){ echo "CHECKED";};?> ><span class="tooltip">Registrace do více divizí<span class="tooltiptext">Závodník se může zaregistrovat vícekrát bez nutnosti zadat jiné registrační údaje (alias, jméno a příjmení).<br><br>Do aliasu a příjmení se doplní zkratka divize (např. ALIAS-MR, PŘÍJMENÍ-MR</span></span>
 					</label>
