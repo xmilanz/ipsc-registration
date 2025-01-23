@@ -30,7 +30,7 @@ if ($squad_pocet>=$squad_max) {
   		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Po kliknutí na tlačítko <kbd>Zpět</kbd> se vraťte do registrace a zvolte nezaplněný squad.</p>
         </div>
         <div class='modal-footer'>
-  		<button class='btn btn-primary waves-effect waves-light' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
+  		<button class='btn btn-primary' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
         </div>
       </div>
     </div>
@@ -88,7 +88,7 @@ echo "
 		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Zrušit registraci může závodník pouze pomocí odkazu v registračním emailu<br>(odkaz je funkční pro konkrétní registraci a jediné odhlášení).</p>
       </div>
       <div class='modal-footer'>
-		<button class='btn btn-primary waves-effect waves-light' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
+		<button class='btn btn-primary' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
       </div>
     </div>
   </div>
@@ -134,7 +134,7 @@ echo "
 		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Kliknutím na tlačítko <kbd>Zpět</kbd> se vraťte na registraci (údaje zadané do formuláře v příslušném squadu budou stále vyplněné). Zvolte tedy znovu squad $_POST[Squad] a upravte příjmení.</p>
       </div>
       <div class='modal-footer'>
-		<button class='btn btn-primary waves-effect waves-light' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
+		<button class='btn btn-primary' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
       </div>
     </div>
   </div>
@@ -174,7 +174,7 @@ echo "
 		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Kliknutím na tlačítko <kbd>Zpět</kbd> se vraťte na registraci (údaje zadané do formuláře v příslušném squadu budou stále vyplněné). Zvolte tedy znovu squad $_POST[Squad] a opravte alias.</p>
       </div>
       <div class='modal-footer'>
-		<button class='btn btn-primary waves-effect waves-light' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
+		<button class='btn btn-primary' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
       </div>
     </div>
   </div>
@@ -309,8 +309,8 @@ echo "
       </div>
       <div class='modal-footer mb-3'>
 		<a href='./registrace.php' rel='modal:close'><button type='button' class='btn btn-primary'>Nová registrace</button></a>&nbsp;&nbsp;
-		<a href='./kontrola_aliasu.php' rel='modal:close'><button type='button' class='$paymentBeforeClass btn btn-success'>Kontrola aliasů série</button></a>&nbsp;&nbsp;
-		<!--a href='./zavodnici.php' rel='modal:close'><button type='button' class='btn btn-default'>Zavřít</button></a-->
+		<a href='./kontrola_aliasu.php' rel='modal:close'><button type='button' class='$ZobrazovatAliasyClass btn btn-success'>Kontrola aliasů série</button></a>&nbsp;&nbsp;
+		<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-outline-dark'>Zavřít</button></a>
       </div>
     </div>
   </div>
@@ -432,7 +432,7 @@ $line=mysql_fetch_array($result);
 			</div>
 		</div>
 		<div class='modal-footer border-top-0 col-12'>
-			<button type='button' class='btn btn-default' onclick=\"window.location.href = 'index.php';\">Zavřít</button>
+			<button type='button' class='btn btn-outline-dark' onclick=\"window.location.href = 'index.php';\">Zavřít</button>
 		</div>
 		</div>
  </div>

@@ -22,8 +22,12 @@ if ($match_data[Web_zobrazovat_situace]=="") {
    $ZobrazovatSituaceClass=" d-none";
 }
 
+if ($match_data[Web_zobrazovat_aliasy]=="") {
+   $ZobrazovatAliasyClass=" d-none";
+}
+
 // nastaveni poradatele pro soubor stylů
-if ((strpos($match_data[Zavod_poradatel], 'Eggenberg') | strpos($match_data[Zavod_poradatel],'EGGENBERG') | strpos($match_data[Zavod_poradatel],'eggenebrg')) !== false) {
+if ((strpos($match_data[Zavod_poradatel], 'Eggenberg') | strpos($match_data[Zavod_poradatel],'EGGENBERG') || strpos($match_data[Zavod_poradatel],'eggenebrg')) !== false) {
 	$poradatel="eggenberg";
 	$sponzor="<a href='https://www.mujnuz.cz/' target='_blank'><img src='./images/mujnuz.png' class='img-thumbnail mb-3 mx-auto d-block' alt='Můj nůž.cz'></a>";
 }
@@ -102,7 +106,7 @@ else {
     <li class="nav-item <?php echo "$ZobrazovatSituaceClass"; ?>">
       <a class="nav-link" href="./situace.php">Situace</a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item <?php echo "$ZobrazovatAliasyClass"; ?>">
       <a class='nav-link' href='./kontrola_aliasu.php'>Aliasy</a>
     </li>
     <li class="nav-item">

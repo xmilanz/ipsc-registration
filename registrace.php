@@ -310,6 +310,7 @@ for ($i = -2; $i <= 211; $i++) {
 					  <option value="CZE" selected>Czech Republic</option>
 					  <option value="GER">Germany</option>
 					  <option value="POL">Poland</option>
+					  <option value="SUI">Switzerland</option>
 					  <option value="SVK">Slovak Republic</option>
 				</select>
 				<div class="invalid-feedback">Nevybrali jste region</div>
