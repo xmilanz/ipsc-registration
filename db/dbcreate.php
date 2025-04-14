@@ -29,7 +29,7 @@ switch ($dbcreateParam) {
     Urgence varchar(255),
     Zaplaceno varchar(3),
     ZaplatiNaMiste varchar(3),
-    DatumZaplaceni varchar(3),
+    DatumZaplaceni varchar(255),
     VarSym varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
     klic int(11) NOT NULL DEFAULT '0',
     OdeslanRegMail varchar(3),
