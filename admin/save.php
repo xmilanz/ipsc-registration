@@ -415,6 +415,7 @@ if (isset($_GET['edit_shooter'])) {
     $jmeno = trim(mb_convert_case($_POST['Jmeno'], MB_CASE_TITLE, "UTF-8"));
     $prijmeni = trim(mb_convert_case($_POST['Prijmeni'], MB_CASE_TITLE, "UTF-8")) . $_POST['Prijmeni_stav'] . '';
     $zp = trim($_POST['ZP']);
+    $email = trim($_POST['Mail']);
     $mena = $match_data['Banka_ucet_MENA'];
     $dnes = date_format(new DateTime(), "j.n.Y H:i");
 
@@ -445,7 +446,7 @@ if (isset($_GET['edit_shooter'])) {
             $jmeno,
             $prijmeni,
             $zp,
-            $_POST['Mail'],
+            $email,
             $_POST['Divize'],
             $_POST['Kategorie'],
             $_POST['Faktor'],
@@ -483,7 +484,7 @@ if (isset($_GET['edit_shooter'])) {
             $jmeno,
             $prijmeni,
             $zp,
-            $_POST['Mail'],
+            $email,
             $_POST['Divize'],
             $_POST['Kategorie'],
             $_POST['Faktor'],
@@ -515,11 +516,131 @@ if (isset($_GET['edit_shooter'])) {
         header("refresh:0;url=index.php");
     }
 
-    // TO-DO přesun cekatele do squadu
+    // přesun čekatele do běžného squadu
+    if (($_POST['Squad_old'] == "-2") and ($_POST['Squad_old'] != $_POST['Squad'])) {
+        $stmt = $conn->prepare("
+		SELECT * FROM $table
+		WHERE Prijmeni = ? and Jmeno = ? and  Mail = ?
+	    ");
+        $stmt->bind_param(
+            "sss",
+            $prijmeni,
+            $jmeno,
+            $email
+        );
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
 
-    //   if (($_POST[Squad_old]=="-2") AND ($_POST[Squad_old]!=$_POST[Squad])){
-    // TO-DO přesun cekatele do squadu
+        $line = mysqli_fetch_array($result);
 
+        // Uprava terminu zaplaceni závodníka, co je zaregistrovan mene nez Zavod_pocet_dni_na_platbu dni pred prematchem
+        $datumZavod = new DateTime($match_data['Zavod_datum']);
+        $datumPrematch = (clone $datumZavod)->modify("-1 days");
+
+        $datumRegistraceZavodnika = new DateTime();
+        $datumRegistraceZavodnika->setTimestamp($line['DatReg']);
+
+        if ($datumRegistraceZavodnika >= $datumPrematch->modify("-$match_data[Zavod_pocet_dni_na_platbu] days")) {
+            $paymentDeadline = $datumZavod->modify("-2 days")->format('j.n.Y');
+        } else {
+            $paymentDeadline = (clone $datumRegistraceZavodnika)->modify("+$match_data[Zavod_pocet_dni_na_platbu] days")->format('j.n.Y');
+        }
+
+        $dnes = date_format(new DateTime(), "j.n.Y H:i");
+        $mena = $match_data['Banka_ucet_MENA'];
+        $varsymbol = $line['VarSym'];
+        $squad = $line['Squad'];
+        $link_cancel = "<a href='$web_adresa_admin/zrus_ucast.php?id=$line[Cislo]&klic=$line[klic]'><strong>zrušit účast</strong></a>";
+
+        // podmínky pro volbu textu v závislosti na statutu závodníka
+        if ($match_data['Payment_before'] == "") {
+            $message = $email_registrace_cekatel_presun_bez_platby_predem;
+        } elseif ($line['ZaplatiNaMiste'] == "on") {
+            $message = $email_registrace_cekatel_presun_platba_na_miste;
+        } else {
+            $message = $email_registrace_cekatel_presun_platba;
+        }
+
+        // priprava podkladu pro email zavodnikovi
+        // nice názvy pro mail
+        $faktorLabels = [
+            "MIN" => "Minor",
+            "MAJ"  => "Major"
+        ];
+        $faktorLabel = $faktorLabels[$line['Faktor']] ?? htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8');
+
+        $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
+        $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
+        // nice názvy pro mail
+
+        $STRELEC .= "<strong>IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "</strong>" . "\r\n";
+        $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " [$link_cancel]\r\n";
+        $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
+        $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
+        $STRELEC .= "Squad: $squad" . "\r\n";
+
+        $qrParams = [
+            'accountNumber' => $match_data['Banka_ucet_cislo'],
+            'bankCode'      => $match_data['Banka_ucet_kod'],
+            'amount'        => $match_data['Banka_ucet_CASTKA'],
+            'currency'      => $match_data['Banka_ucet_MENA'],
+            'vs'            => $varsymbol,
+            'message'       => $match_data['Zavod'],
+            'size'          => 100
+        ];
+        $qr_link = 'https://api.paylibo.com/paylibo/generator/czech/image?' . http_build_query($qrParams);
+
+        $from_text = "";
+        $from = htmlspecialchars($match_data['Zavod_email_from'], ENT_QUOTES, 'UTF-8');
+        $to = $email;
+        $subject = "Změna registrace " . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8');
+        $message = str_replace("##STRELEC##", $STRELEC, $message);
+        $message=str_replace("##Squad##",$squad,$message);
+        $message = str_replace("##VAR_SYMBOL##", $varsymbol, $message);
+        $message = str_replace("##QR_LINK##", $qr_link, $message);
+        $message = str_replace("##DatPay##", $paymentDeadline, $message);
+
+        $send_email = email($from_text, $from, $to, $subject, $message);
+        if (!$send_email) {
+            include './components/modal-warning.php';
+            WarningModal(
+                "danger",
+                "Chyba odeslání emailu",
+                "index.php",
+                "Při odeslání emailu závodníkovi došlo k chybě.",
+                "Závodník byl zaregistrován, pro odstranění problému s odesíláním kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba odeslani emailu'>vývojáře</a> registračního systému.",
+                "Zpět do administrace"
+            );
+        } else {
+            // zapiseme do DB, ze registracni mail byl odeslan
+            $stmt = $conn->prepare("
+		UPDATE $table 
+		SET OdeslanRegMail = '1'
+		WHERE Mail = ? AND OdeslanRegMail IS NULL
+	");
+            $stmt->bind_param(
+                "s",
+                $email
+            );
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $stmt->close();
+            if ($result->num_rows === 0) {
+                include './components/modal-warning.php';
+                WarningModal(
+                    "danger",
+                    "Chyba databáze",
+                    "index.php",
+                    "Při vkládání do databáze došlo k chybě!",
+                    "Kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba aktualizace databáze [$table]'>vývojáře</a> registračního systému.",
+                    "Zpět do administrace"
+                );
+            } else {
+//                header("refresh:0;url=index.php");
+            }
+        }
+    }
 }
 
 // MAZANI ZAVODNIKA - HOTOVO REFACTORING

@@ -105,10 +105,6 @@ S pozdravem
 ";
 
 
-//////////////
-// to-do   //
-/////////////
-
 // reg mail v zavodu bez placeni predem
 
 $email_registrace_bez_platby_text="Dobrý den,
@@ -261,9 +257,66 @@ S pozdravem
 <strong>".$match_data['Zavod_poradatel']."</strong>
 ";
 
+
+$email_registrace_cekatel_presun_platba_na_miste="Dobrý den,
+
+pořadatel Vás přesunul z čekatelů do squadu ##Squad##. Posíláme Vám registrační email závodu <strong>". htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . "</strong> (" . htmlspecialchars($match_data['Zavod_misto'], ENT_QUOTES, 'UTF-8') . ").
+Datum závodu: ".$match_data['Zavod_datum'].".
+
+##STRELEC##
+
+Protože jste se s pořadatelem domluvil(a) na <strong>platbě na místě</strong>, nemusíte platit startovné před závodem.
+
+Nemůžete-li se z nějakých důvodů zůčastnit závodu, neprodleně nás informujte v odpovědi na tento email nebo kliněte na odkaz <strong>\"zrušit účast\"</strong> vedle svého jména. Uvolníte tak místo dalším zájemcům.
+
+Další informace o závodu najdete na adrese <a href='$web_adresa_admin'>$web_adresa_admin</a>
+
+Nemůžete-li se z nějakých důvodů zůčastnit závodu, neprodleně nás informujte v odpovědi na tento email nebo kliněte na odkaz <strong>\"zrušit účast\"</strong> vedle svého jména. Po připsání platby na účet již není možné startovné vrátit, v souladu s pravidly závodu je však možné jej přenést na jiného závodníka.
+
+Další informace o závodu najdete na adrese <a href='$web_adresa_admin'>$web_adresa_admin</a>
+
+S pozdravem
+<strong>".$match_data['Zavod_poradatel']."</strong>
+<i><small>
+------
+Výpis z pravidel registrace
+Přesuny závodníků mezi squady na základě jejich žádosti je možné provádět <strong>nejpozději do 30 minut před oficiálním zahájením hlavního závodu</strong>.
+</i></small>
+";
+
+
+$email_registrace_cekatel_presun_bez_platby_predem="Dobrý den,
+
+pořadatel Vás přesunul z čekatelů do squadu ##Squad##. Posíláme Vám registrační email závodu <strong>". htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . "</strong> (" . htmlspecialchars($match_data['Zavod_misto'], ENT_QUOTES, 'UTF-8') . ").
+Datum závodu: ".$match_data['Zavod_datum'].".
+
+##STRELEC##
+
+V souladu s pravidly registrace se startovné " . (($match_data['Banka_ucet_CASTKA'] == 0) ? '(částka podle registrovaných kategorií dle propozic)' : $match_data['Banka_ucet_CASTKA'] . ' ' . $match_data['Banka_ucet_MENA']) . " platí před závodem na místě.
+
+
+Nemůžete-li se z nějakých důvodů zůčastnit závodu, neprodleně nás informujte v odpovědi na tento email nebo kliněte na odkaz <strong>\"zrušit účast\"</strong> vedle svého jména. Uvolníte tak místo dalším zájemcům.
+
+Další informace o závodu najdete na adrese <a href='$web_adresa_admin'>$web_adresa_admin</a>
+
+Nemůžete-li se z nějakých důvodů zůčastnit závodu, neprodleně nás informujte v odpovědi na tento email nebo kliněte na odkaz <strong>\"zrušit účast\"</strong> vedle svého jména. Po připsání platby na účet již není možné startovné vrátit, v souladu s pravidly závodu je však možné jej přenést na jiného závodníka.
+
+Další informace o závodu najdete na adrese <a href='$web_adresa_admin'>$web_adresa_admin</a>
+
+S pozdravem
+<strong>".$match_data['Zavod_poradatel']."</strong>
+<i><small>
+------
+Výpis z pravidel registrace
+Přesuny závodníků mezi squady na základě jejich žádosti je možné provádět <strong>nejpozději do 30 minut před oficiálním zahájením hlavního závodu</strong>.
+</i></small>
+";
+
+
+
 $email_registrace_cekatel_presun_platba="Dobrý den,
 
-pořadatel Vás přesunul z čekatelů do squadu ##Squad##. Posíláme Vám registrační email závodu <strong>". htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . "</strong> (" . htmlspecialchars($match_data['Zavod_misto'], ENT_QUOTES, 'UTF-8') . "). s podklady pro zaplacení startovného.
+pořadatel Vás přesunul z čekatelů do squadu ##Squad##. Posíláme Vám registrační email závodu <strong>". htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . "</strong> (" . htmlspecialchars($match_data['Zavod_misto'], ENT_QUOTES, 'UTF-8') . ") s podklady pro zaplacení startovného.
 Datum závodu: ".$match_data['Zavod_datum'].".
 
 ##STRELEC##
