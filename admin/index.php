@@ -1,303 +1,199 @@
 <?php
-
-//error_reporting(64);
-//ini_set('display_errors',1);
-//error_reporting(E_WARNING);
-
-// We need to use sessions, so you should always start sessions using the below code.
-session_start();
-// If the user is not logged in redirect to the login page...
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: ../index.php');
-    exit;
-}
-
-if (file_exists('./db/dbconn.php')) {
-    include './db/dbconn.php';
-} elseif (file_exists('../db/dbconn.php')) {
-    include '../db/dbconn.php';
-}
-
-// nastaveni poradatele pro soubor stylů
-if ((strpos($match_data[Zavod_poradatel], 'Eggenberg') || strpos($match_data[Zavod_poradatel],'EGGENBERG') || strpos($match_data[Zavod_poradatel],'eggeneberg')) !== false) {
-	$poradatel="eggenberg";
-}
-elseif ((strpos($match_data[Zavod_poradatel], 'Pelhřimov') || strpos($match_data[Zavod_poradatel], 'PELHŘIMOV') || strpos($match_data[Zavod_poradatel], 'pelhřimov') || strpos($match_data[Zavod_poradatel], 'Pelhrimov') || strpos($match_data[Zavod_poradatel], 'PELHRIMOV') || strpos($match_data[Zavod_poradatel], 'pelhrimov')) !== false) {
-	$poradatel="pelhrimov";
-}
-else {
-	$poradatel="";
-}
-
-if ($match_data[Payment_before]=="") {
-     $paymentBeforeClass.=" d-none";
-  }
-
+include "header.php";
 ?>
+<div id="main">
+    <div class="content">
+        <button class="btn btn-secondary btn-rounded my-2" onclick="ToggleFilter()">Zobrazit / skrýt filtr</button>
+        <?php
+        $ip = $_SERVER['REMOTE_ADDR'];
+        // Dotaz pro získání závodníků
+        $query = " SELECT 
+             		$table.Cislo,Prijmeni AS 'Příjmení',Jmeno AS 'Jméno',Alias,ZP,Region,DatReg,Divize,Faktor,Kategorie,Squad,SquadReg,Staff,Klic,FROM_UNIXTIME(DatReg,'%d.%m.%Y %T') AS  Registrace,RegistraceIP AS 'IP registrace',Mail,VarSym AS 'VS',DatPay AS 'Zaplatit',ZaplatiNaMiste AS 'NaMiste',Zaplaceno,Castka,DatumZaplaceni AS 'Datum zaplaceni',Urgence,Vyrazeno,VyrazenoIP AS 'IP vyrazeni',Poznamka
+             	  FROM $table WHERE Squad >=-9 ";
+        ?>
 
-<HTML>
-<HEAD>
-    <meta http-equiv="Content-Language" content="cs">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="shortcut icon" href="https://www.kps-eggenberg.cz/images/favicon.ico" />
-    <title>Administrace závodu <?php echo "$match_data[Zavod]"; ?></title>
+        <table id="zavodnici" class="table table-striped table-bordered bg-white my-2 ">
+            <thead>
+                <tr>
+                    <?php
+                    // Nový dotaz kvůli resetu výsledku (nebo opětovné použití po těle tabulky)
+                    $result = $conn->query($query);
+                    if ($result) {
+                        while ($meta = $result->fetch_field()) {
+                            $nazev = $meta->name;
 
-    <link rel="stylesheet" type="text/css" href="../styles/style_admin.css">
-	<link rel="stylesheet" href="../styles/style_<?php echo "$poradatel" . ".css"; ?>">
+                            if ($nazev == "DatReg") {
+                                continue; // přeskočit
+                            }
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
-    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+                            if ($nazev == "VS") {
+                                echo "<th>Funkce</th>";
+                            }
 
-<!-- bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+                            // Bezpečné HTML zobrazení hlavičky (kvůli &nbsp;, mezerám apod.)
+                            echo "<th>" . htmlspecialchars($nazev, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</th>";
+                        }
+                    } else {
+                        echo "<th>Chyba dotazu</th>";
+                    }
+                    ?>
+                </tr>
+            </thead>
 
-<!-- CSS pro datepicker -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
+            <?php
+            $result = $conn->query($query);
+            // Získat názvy sloupců
+            $sloupce = [];
+            while ($meta = $result->fetch_field()) {
+                $sloupce[] = $meta->name;
+            }
 
-<!-- JS pro datepicker a lokalizace pro češtinu -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.cs.min.js"></script>
+            // Smyčka přes řádky
+            while ($row_array = $result->fetch_assoc()) {
 
-<!-- dataTable https://datatables.net/download/ -->
-    <script type="text/javascript" src="./js/datatable_conf.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-colvis-2.2.2/b-html5-2.2.2/b-print-2.2.2/cr-1.5.5/date-1.1.2/fc-4.0.2/fh-3.2.2/r-2.2.9/sc-2.0.5/sb-1.3.2/sp-2.0.0/sr-1.1.0/datatables.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-colvis-2.2.2/b-html5-2.2.2/b-print-2.2.2/cr-1.5.5/date-1.1.2/fc-4.0.2/fh-3.2.2/r-2.2.9/sc-2.0.5/sb-1.3.2/sp-2.0.0/sr-1.1.0/datatables.min.css"/>
-<!-- dataTable https://datatables.net/download/ -->
+                $z = $row_array;
+                $rowClass = "";
+                $dnes = date_format(new DateTime(), "Y-m-d");
+                $DatReg = date('d.m.Y', $z['DatReg']);
 
-</HEAD>
-<BODY>
-<div class="container">
+                // harmonogram registrace
+                // 1. zavodnik se zaregistruje
+                // 2. při registraci se automaticky posle mail s platebními údaji (QR kód) a odkazem na zrušení registrace
+                //	- z kontroly placení jsou vyřazeni: rozhodčí, pomocníci, VIP, čekatelé
+                // 3. zavodnik do 10 dnu zaplatí nebo sám zruší registraci pomocí odkazu v registračním mailu
+                // 4. závodník do 10 dnů nezaplatí (kontrola 10. den v 18:00) => automatické vyřazení
 
-<div class="header">
-	<div class="header-logo">
-		<img src="../images/logo-header-dvc.png" alt="Logo">
-		<div class="text-over-image">
-			<a class="logo-text" href="<?php echo $web_adresa_admin; ?>" target="_blank">
-				<p>
-					<?php echo "$match_data[Zavod] - administrace</a><br>"; 
-					if ($match_data[Zavod_registrace_pozastaveno]=="on") {
-						echo "<span class='text-danger tooltip '>[registrace je pozastavená]<span class='tooltiptext  lh-base'><strong>Spuštění registrace</strong> se provede v <span class='bg-success text-white' >Konfiguraci</span> - sekce <strong>Základní informace</strong></span></span>";
-						}
-					elseif ($match_data[Payment_before]=="on") {
-						echo "<span class='text-danger tooltip '>[platba startovného $match_data[Zavod_pocet_dni_na_platbu] dnů od registrace]<span class='tooltiptext'>Startovné se platí před závodem, nejpozději do $match_data[Zavod_pocet_dni_na_platbu] dnů od provedení registrace.<br><br>Nezaplatí-li závodník do té doby, pošle se ráno upozornění na chybějící platbu.<br><br>Jestliže nezaplatí ani po tomto upozornění, je druhý den večer automaticky vyřazen.</span></span>";
-						}
-					else {
-						echo "<span class='text-danger tooltip '>[platba startovného na místě]<span class='tooltiptext'>Závodník platí v den závodu při prezenci <strong>nejpozději 30 minut před závodem</strong></span></span>";
-						}
-					?>
-				</p>
-		</div>
-	</div>
+
+                // podminene formatovani
+                if ($z['Squad'] == "-9") {
+                    $rowClass .= " zrusenaregistrace";
+                }
+                if ($z['NaMiste'] == 'on') {
+                    $rowClass .= " zaplatinamiste";
+                }
+
+                if ($z['Zaplaceno'] == 'on') {
+                    $rowClass .= " zaplaceno";
+                    $mena = $z['Mena'];
+
+                    $castka = $z['Castka'];
+                    $sumaZaplaceno[$mena] = $sumaZaplaceno[$mena] + $castka;
+                }
+
+                if ($z['Urgence'] != "") {
+                    $rowClass .= " urgence";
+                }
+
+                if ((($dnes >= date('Y-m-d', strtotime($z['Zaplatit'] . ' - 5 days'))) and ($row_array['Squad'] >= 100) and ($row_array['Staff'] == "PAY") and ($row_array['Zaplaceno'] !== "on") and ($match_data['Payment_before'] == "on"))) {
+                    $rowClass .= " nezaplacenopolimitu";
+                }
+                // konec podminene formatovani
+
+                echo "<TR class='$rowClass'>";
+                foreach ($sloupce as $pole) {
+                    if ($pole == "DatReg") {
+                        continue;
+                    }
+
+                    if ($pole == "Zaplaceno") {
+                        echo "<TD class='$pole'>";
+                        if (!empty($row_array['Zaplaceno'])) {
+                            echo "<center><i class='fas fa-coins' style='font-size:18px; color:#FF9900;'></i></center>";
+                        }
+                        echo "</TD>";
+                    } elseif ($pole == "VS") {
+                        echo "<td class='functions'>";
+                        if (intval($row_array['Squad']) > -10) {
+                            echo "<a data-id='{$row_array['Cislo']}' href='#edit_shooter' class='modal_edit_shooter' data-bs-toggle='modal' title='Upravit závodníka'><i class='fas fa-edit' style='font-size:15px'></i></a>";
+                            echo "&nbsp;<a data-id='$row_array[Cislo]' data-key='$row_array[Klic]' href='#send_regmail' class='modal_regmail' data-bs-toggle='modal' data-bs-backdrop='static' data-bs-keyboard='false' title='Poslat závodníkovi registrační email'><i class='fas fa-envelope 1' style='font-size:15px'></i></a>";
+                            if ($row_array['Zaplaceno'] !== "on" and $row_array['NaMiste'] !== "on") {
+                                echo "&nbsp;<a data-id='$row_array[Cislo]' data-key='$row_array[Klic]' href='#payment_warn' class='modal_payment_warn $paymentBeforeClass' data-bs-toggle='modal' data-bs-backdrop='static' data-bs-keyboard='false' title='Poslat závodníkovi upozornění na nezaplacení'><i class='fas fa-exclamation-triangle 1' style='font-size:15px;color:gold;'></i></a>";
+                                echo "&nbsp;<a data-id='$row_array[Cislo]' data-key='$row_array[Klic]' href='#payment_save' class='modal_payment_save $paymentBeforeClass' data-bs-toggle='modal' data-bs-backdrop='static' data-bs-keyboard='false' title='Označit jako ZAPLACENO'><i class='fas fa-check-circle 1' style='font-size:15px;color:#40a73f;'></i></a>";
+                            }
+                            echo "&nbsp;<a data-id='$row_array[Cislo]' data-key='$row_array[Klic]' href='#cancel_shooter' class='modal_cancel_shooter' data-bs-toggle='modal' data-bs-backdrop='static' data-bs-keyboard='false' title='Vyřadit závodníka'><i class='fas fa-minus-circle 1' style='font-size:15px;color:#6d757d;'></i></a>";
+                            echo "&nbsp;<a data-id='$row_array[Cislo]' href='#info_shooter' class='modal_info_shooter' data-bs-toggle='modal' data-bs-backdrop='static' data-bs-keyboard='false' title='Informace o závodníkovi'><i class='fas fa-info-circle 1 text-warning' style='font-size:16px;'></i></a>";
+                            if ($_SESSION['name'] == "milan.zidek") {
+                                echo "&nbsp;<a data-id='$row_array[Cislo]' data-key='$row_array[Klic]' href='#delete_shooter' class='modal_delete_shooter' data-bs-toggle='modal' data-bs-backdrop='static' data-bs-keyboard='false' title='Smazat závodníka'><i class='fas fa-trash-alt' style='font-size:15px;color:#ff0000;' 1></i></a>";
+                            }
+                        }
+                        echo "</td>";
+                        echo "<TD class='$pole'>{$row_array[$pole]}</TD>";
+                    } else {
+                        echo "<TD class='$pole'>" . ($row_array[$pole] ?? '') . "</TD>";
+                    }
+                }
+                echo "</TR>";
+            }
+            ?>
+        </table>
+        <div class="mt-3<?php echo "$paymentBeforeClass"; ?>">
+            <h5>Vyúčtování</h5>
+            <?php foreach ($sumaZaplaceno as $mena => $castka) {
+                echo "&nbsp;- zaplaceno: $castka CZK";
+            } ?>
+        </div>
+        <div class="my-4">
+            <h5>Legenda</h5>
+            &nbsp;- registrováno<br>
+            <span class="<?php echo "$paymentBeforeClass"; ?>">
+                &nbsp;- VIP neplatí (automaticky se potvrdí účast a neposílá se urgence ani se automaticky nevyřadí)<br>
+                &nbsp;- <span style='background-color: #9fff9f'>zaplaceno<br></span>
+                &nbsp;- <span style='color: #7433FF'>zaplatí na místě<br></span>
+                &nbsp;- <span style='color: #ff0000; '>ruční urgence před limitem<br></span>
+                &nbsp;- <span style='color: #ff0000; font-weight: bolder; '>zbývá méně jak 5 dní do zaplacení<br></span>
+            </span>
+            &nbsp;- <span style='color:#858585;background-color: #d3d3d3'>vyřazeno</span></i>)
+        </div>
+    </div>
+    <div class="footer">SSAŠ střelnice Prachatice &copy; Milan Žídek <?php echo date("Y"); ?><span style="float:right">Shooting match registration system 1.0</span></div>
 </div>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed-top">
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	</button>
-
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-		<button href="" class="btn btn-success" data-toggle="modal" data-target="#match_configuration">Konfigurace</button>
-      </li>
-
-		<div class="dropdown" id="dropdownContainer1">
-			<button class="btn btn-dark dropdown-toggle mx-2" id="dropdownButton1">Závodníci</button>
-				<div class="custom-dropdown" id="customDropdown1">
-					<a href="" data-toggle="modal" data-target="#new_shooter">Nový závodník</a>
-					<a onclick="startExport()" href="">Export do PS</a>
-				</div>
-		</div>
-
-		<div class="dropdown" id="dropdownContainer2">
-			<button class="btn btn-dark dropdown-toggle mx-2" id="dropdownButton2">Nastavení závodu</button>
-				<div class="custom-dropdown" id="customDropdown2">
-					<a href="" data-toggle="modal" data-target="#manage_squads">Squady</a>
-					<a href="" data-toggle="modal" data-target="#manage_divisions">Divize</a>
-					<a href="" data-toggle="modal" data-target="#manage_categories">Kategorie</a>
-					<a href="" data-toggle="modal" data-target="#upload_stages">Nahrání situací</a>
-				</div>
-		</div>
-
-    </ul>
-
-    <a class="btn btn-danger text-white ml-4" href="logout.php"><i class="fas fa-sign-out-alt mr-2"></i>Odhlásit [<?=$_SESSION['name']?>]</a>
-  </div>
-</nav>
-
-<div class="content">
-
-
-<div class="filter">
-<button class="btn btn-secondary btn-rounded my-3" onclick="ToggleFilter()">Zobrazit / skrýt filtr</button>
-</div>
-
 <?php
-$ip=$_SERVER["REMOTE_ADDR"];
-
-if ($match_data[Payment_before]=="on"){
-	$query=" SELECT 
-		".$table.".Cislo,Prijmeni AS 'Příjmení',Jmeno AS 'Jméno',Alias,ZP,Region,DatReg,Divize,Faktor,Kategorie,Squad,SquadReg,Staff,Klic,FROM_UNIXTIME(DatReg,'%d.%m.%Y %T') AS  Registrace,RegistraceIP AS 'IP&nbsp;registrace',Mail,VarSym AS 'VS',DatPay AS 'Zaplatit',ZaplatiNaMiste AS 'NaMiste',Zaplaceno,Castka,DatumZaplaceni AS 'Datum&nbsp;zaplaceni',Urgence,Vyrazeno,VyrazenoIP AS 'IP&nbsp;vyrazeni',Poznamka
-	  FROM ".$table."
-	  WHERE Squad >=-9 ";
-	}
-	else {
-		$query=" SELECT 
-		".$table.".Cislo,Prijmeni AS 'Příjmení',Jmeno AS 'Jméno',Alias,ZP,Region,DatReg,Divize,Faktor,Kategorie,Squad,SquadReg,Staff,Klic,FROM_UNIXTIME(DatReg,'%d.%m.%Y %T') AS Registrace,RegistraceIP AS 'IP&nbsp;registrace',Mail,VarSym AS 'VS',Vyrazeno,VyrazenoIP AS 'IP&nbsp;vyřazení',Poznamka
-		FROM ".$table."";
-	}
-$result = mysql_query($query) or die('Query failed: ' . mysql_error());
+include_once("./include/match_config.php");
+include_once("./include/new.php");
+include_once("./include/categories.php");
+include_once("./include/divisions.php");
+include_once("./include/squads.php");
+include_once("./include/stages.php");
+include_once("./include/targets.php");
+include_once("./include/pass_values.php");
 ?>
 
- <table id="zavodnici" class="table table-striped table-bordered bg-white">
-	<thead>
-	<tr>
-	<?php
- // Sestavujeme tabulku zavodniku
-	for ($i=0; $i<(mysql_num_fields($result));$i++){
-		$meta = mysql_fetch_field($result, $i);
-		if ($meta->name=="DatReg") {
-		  continue;
-		}
-		if (!$meta) {
-			echo "--";
-		}
-		if ($meta->name=="VS") {
-		  echo "<TH>Funkce</TH>";
-		}
-		echo "<TH>$meta->name</TH>";
-	}
-	?>
-	</TR>
-	</thead>
-
- <?php
-  while ($row_array = mysql_fetch_array($result)){
-  $z=$row_array;
-  $rowClass="";
-  
-  $dnes=date_format(new DateTime(),"Y-m-d");
-  $DatReg=date('d.m.Y', $z[DatReg]);
-  
-  // harmonogram registrace
-  // 1. zavodnik se zaregistruje
-  // 2. při registraci se automaticky posle mail s platebními údaji (QR kód) a odkazem na zrušení registrace
-  //	- z kontroly placení jsou vyřazeni: rozhodčí, pomocníci, VIP, čekatelé
-  // 3. zavodnik do 10 dnu zaplatí nebo sám zruší registraci pomocí odkazu v registračním mailu
-  // 4. závodník do 10 dnů nezaplatí (kontrola 10. den v 18:00) => automatické vyřazení
-  
-  // podminene formatovani
-  if ($z[NaMiste]=='on') {
-    $rowClass.=" zaplatinamiste";
-  }
-
-  if ($z[Zaplaceno]=='on') {
-    $rowClass.=" zaplaceno";
-    $mena=$z[Mena];
-    $castka=$z[Castka];
-    $sumaZaplaceno[$mena]=$sumaZaplaceno[$mena]+$castka;
-  }
-  
-  if ($z[Squad]=="-9") {
-    $rowClass.=" zrusenaregistrace";
-  }
-  
-  if ($z[Urgence]!="") {
-    $rowClass.=" urgence";
-  }
-  
-  if ((($dnes >= date('Y-m-d', strtotime($z[Zaplatit]. ' - 5 days'))) and ($row_array[Squad]>=100) and ($row_array[Staff]==NULL) and ($row_array[Zaplaceno]!=="on") and ($match_data[Payment_before]=="on"))) {
-    $rowClass.=" nezaplacenopolimitu";
-  }
-  
-  // konec podminene formatovani
-  
-  echo "<TR class='$rowClass'>";
-  	for ($i=0; $i<(mysql_num_fields($result));$i++){
-      $meta = mysql_fetch_field($result, $i); 
-      $pole=$meta->name;
-      if ($meta->name=="DatReg") {
-        continue;
-      }
-  		if ($i==0) {
-  			echo "<TD class='$pole'>".$row_array[$i]."</a>";
-        echo "</TD>\n";
-  		} elseif ($pole=="Zaplaceno")
-  
-  		{
-  		if(!$row_array['Zaplaceno']){
-  			echo "<TD class='$pole'>";
-  			echo "</TD>";
-  		}  else {
-          echo "<TD class='$pole'>";
-  			echo "<center><i class='fas fa-coins' style='font-size:18px; color:#FF9900;'></i></a></center>";
-          echo "</TD>";
-  			};
-  		} 
-  		else{
-  		    if ($pole=='VS') {
-          echo "<td class='functions'>";
-          if (intval($row_array[Squad])>-10) { 
-  			echo "<a data-id='$row_array[Cislo]' href='#edit_shooter' class='modal_edit_shooter' data-toggle='modal' data-backdrop='static' data-keyboard='false' title='Upravit závodníka'><i class='fas fa-edit' style='font-size:15px'></i></a>";
-  			echo "&nbsp;<a data-id='$row_array[Cislo]' href='#send_regmail' class='modal_regmail' data-toggle='modal' data-backdrop='static' data-keyboard='false' title='Poslat závodníkovi registrační email'><i class='fas fa-envelope 1' style='font-size:15px'></i></a>";
-  			if ($row_array[Zaplaceno]!=="on" and $row_array[NaMiste]!=="on") {
-  				echo "&nbsp;<a data-id='$row_array[Cislo]' href='#send_paymail' class='modal_paymail $paymentBeforeClass' data-toggle='modal' data-backdrop='static' data-keyboard='false' title='Poslat závodníkovi upozornění na nezaplacení'><i class='fas fa-exclamation-triangle 1' style='font-size:15px;color:gold;'></i></a>";
-  				echo "&nbsp;<a data-id='$row_array[Cislo]' data-key='$row_array[Klic]' href='#save_payment' class='modal_save_payment $paymentBeforeClass' data-toggle='modal' data-backdrop='static' data-keyboard='false' title='Označit jako ZAPLACENO'><i class='fas fa-check-circle 1' style='font-size:15px;color:#40a73f;'></i></a>";
-  			}
-  			echo "&nbsp;<a data-id='$row_array[Cislo]' data-key='$row_array[Klic]' href='#cancel_shooter' class='modal_cancel_shooter' data-toggle='modal' data-backdrop='static' data-keyboard='false' title='Vyřadit závodníka'><i class='fas fa-minus-circle 1' style='font-size:15px;color:#6d757d;'></i></a>";
-  			echo "&nbsp;<a data-id='$row_array[Cislo]' href='#info_shooter' class='modal_info_shooter' data-toggle='modal' data-backdrop='static' data-keyboard='false' title='Informace o závodníkovi'><i class='fas fa-info-circle 1 text-warning' style='font-size:16px;'></i></a>";
-  			if ($_SESSION[name]=="milan.zidek") {
-  				echo "&nbsp;<a data-id='$row_array[Cislo]' href='#delete_shooter' class='modal_delete_shooter' data-toggle='modal' data-backdrop='static' data-keyboard='false' title='Smazat závodníka'><i class='fas fa-trash-alt' style='font-size:15px;color:#ff0000;' 1></i></a>";
-  			}
-          }
-          echo "</td>";
-        }      
-        echo "<TD class='$pole'>".$row_array[$i]."</TD>";	
-  		};
-  	};
-  echo "</TR>";
-  };
- ?>
- </table>
-
- <div class="mt-3<?php echo "$paymentBeforeClass"; ?>" >
-	<h5>Vyúčtování</h5>
-	<?php foreach ($sumaZaplaceno as $mena => $castka) {echo "&nbsp;- zaplaceno: $castka CZK"; } ?>
+<div class="modal fade" id="info_shooter" tabindex="-1" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-center">
+                <h4 class="modal-title text-white w-100 fw-bold">Informace o závodníkovi</h4>
+                <br>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="window.location.href = 'index.php';"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="modalID"> <!-- Skryté pole pro přenos ID -->
+                <div id="modal-info-included">Načítám...</div>
+            </div>
+            <div class="modal-footer border-top-0 mt-3 col-12">
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" aria-label="Close" onclick="window.location.href = 'index.php';">Zavřít</button>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="my-4">
-	<h5>Legenda</h5>
-	&nbsp;- registrováno<br>
-	<span class="<?php echo "$paymentBeforeClass"; ?>">
-		&nbsp;- rozhodčí, pomocníci a VIP neplatí (automaticky se potvrdí účast a neposílá se ani urgence ani se automaticky nevyřadí)<br>
-		&nbsp;- <span style='background-color: #9fff9f'>zaplaceno<br></span>
-		&nbsp;- <span style='color: #7433FF'>zaplatí na místě<br></span>
-		&nbsp;- <span style='color: #ff0000; '>ruční urgence před limitem<br></span>
-		&nbsp;- <span style='color: #ff0000; font-weight: bolder; '>zbývá méně jak 5 dní do zaplacení<br></span>
-	</span>
-	&nbsp;- <span style='color:#858585;background-color: #d3d3d3'>vyřazeno</span> (ve výchozím nastavení se nezobrazuje -> filtr)
- </div>
-  
-</div>
-<div class="footer">Klub praktické střelby Eggenberg &copy; Milan Žídek <?php echo date("Y"); ?></div>
-</div>
+<script>
+    $(document).ready(function() {
+        $('.modal_info_shooter').click(function() {
+            var ID = $(this).data('id'); // Získáme ID z data-id
+            $('#modalID').val(ID); // Uložíme ID do skrytého inputu
 
-<?php 
-	include_once ("./include/match_config.php");
-	include_once ("./include/new.php");
-	include_once ("./include/categories.php");
-	include_once ("./include/divisions.php");
-	include_once ("./include/squads.php");
-	include_once ("./include/stages.php");
-	include_once ("./include/pass_values.php");  
-?>
-
+            $.post("information.php", {
+                ID: ID
+            }, function(result) {
+                $("#modal-info-included").html(result); // Naplníme pouze obsah modalu
+            });
+        });
+    });
+</script>
 <script type="text/javascript" src="./js/admin_scripts.js"></script>
 <script type="text/javascript" src="./js/admin_reg_form.js"></script>
 
 </BODY>
+
 </HTML>

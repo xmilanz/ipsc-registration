@@ -18,35 +18,47 @@
 })();
 
 function replaceChars() {
-	var input1 = document.getElementById("Alias").value;
-	var input2 = document.getElementById("Mail").value;
-	
-	var output1 = input1.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]/g, "");
-	var output2 = input2.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9@\.]/g, "");
+	var aliasInput = document.getElementById(`Alias`);
+	if (aliasInput) {
+		var inputAlias = aliasInput.value;
+		var outputAlias = inputAlias.normalize("NFD").replace(/[^a-zA-ZáÁčČďĎéÉěĚíÍňŇóÓřŘšŠťŤúÚůŮýÝžŽ]/g, "");
+		aliasInput.value = outputAlias;
+	}
 
-	document.getElementById("Alias").value = output1;
-	document.getElementById("Mail").value = output2;
+    var jmenoInput = document.getElementById(`Jmeno`);
+	if (jmenoInput) {
+		var inputJmeno = jmenoInput.value;
+		var outputJmeno = inputJmeno.replace(/[^a-zA-ZáÁčČďĎéÉěĚíÍňŇóÓřŘšŠťŤúÚůŮýÝžŽ]/g, "");
+		jmenoInput.value = outputJmeno;
+	}
+
+	var prijmeniInput = document.getElementById(`Prijmeni`);
+	if (prijmeniInput) {
+		var inputPrijmeni = prijmeniInput.value;
+		var outputPrijmeni = inputPrijmeni.replace(/[^a-zA-ZáÁčČďĎéÉěĚíÍňŇóÓřŘšŠťŤúÚůŮýÝžŽ0-9]/g, "");
+		prijmeniInput.value = outputPrijmeni;
+	}
+
+	var emailInput = document.getElementById(`Mail`);
+	if (emailInput) {
+		var inputEmail = emailInput.value;
+		var outputEmail = inputEmail.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9@\.]/g, "");
+		emailInput.value = outputEmail;
+	}
 }
 
-function avoidspace(event) {
-    var k = event ? event.which : window.event.keyCode;
-    if (k == 32) return false;
-}
-
-
-function togglePidiv() {
+function toggleDivize() {
     var pidivDalsi = document.getElementById("Divize_dalsi");
     var pidiv = document.getElementById("Divize");
 
     if (pidivDalsi.value) {
-        pidiv.disabled = true; // Deaktivuje pole "Divize", pokud je vybr�na hodnota v "Divize_dalsi"
+        pidiv.disabled = true; // Deaktivuje pole "Divize", pokud je vybrana hodnota v "Divize_dalsi"
     } else {
-        pidiv.disabled = false; // Aktivuje pole "Divize", pokud je vybr�na pr�zdn� hodnota v "Divize_dalsi"
+        pidiv.disabled = false; // Aktivuje pole "Divize", pokud je vybrana prazdna hodnota v "Divize_dalsi"
     }
 }
 
-
-function togglePidivMain() {
+function toggleDivizeMain() {
     var pidivDalsi = document.getElementById("Divize_dalsi");
     var pidiv = document.getElementById("Divize");
 

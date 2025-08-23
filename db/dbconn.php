@@ -1,99 +1,68 @@
-<?php
-//error_reporting(64);
-//ini_set('display_errors',1);
-//error_reporting(E_WARNING);
+﻿<?php
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 
-if (file_exists('./config/data.php')) {
-    require_once './config/data.php';
-} elseif (file_exists('../config/data.php')) {
-    require_once '../config/data.php';
+require_once __DIR__ . '/../config/data.php';
+require_once __DIR__ . '/../functions.php';
+
+$conn = new mysqli($db_host, $db_login, $db_pass, $db_dtb);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+$conn->set_charset('utf8mb4');
+
+$result = $conn->query("SELECT * from ecbs5_match_config where Zavod_id='$table' limit 1");
+if ($result->num_rows > 0) {$match_data = $result->fetch_array();}
+
+ensureTable($conn, $table_nastaveni, 'nastaveni', $table . '_nastaveni');
+ensureTable($conn, $table, 'hlavni', $table);
+ensureTable($conn, 'ecbs5_match_config', 'ecbs5_match_config');
+ensureTable($conn, $table_divisions, 'divisions', $table . '_divisions');
+ensureTable($conn, $table_categories, 'categories', $table . '_categories');
+ensureTable($conn, $table_squads, 'squads', $table . '_squads');
+ensureTable($conn, 'site_admins', 'site_admins');
+
+// insert záznamu pro $table do ecbs5_match_config, pokud ještě neexistuje
+$safeTableId = $conn->real_escape_string($table);
+$check = $conn->query("SELECT Zavod_id FROM ecbs5_match_config WHERE Zavod_id='$safeTableId'");
+if ($check && $check->num_rows === 0) {
+    $stmt = $conn->prepare("INSERT INTO ecbs5_match_config (Zavod_id) VALUES (?)");
+    $stmt->bind_param("s", $table);
+    $stmt->execute();
+    $stmt->close();
+//    echo "<pre class='text-success>Závod '$table' byl přidán do tabulky ecbs5_match_config</pre>";
+
+	$stmt = $conn->prepare("
+		UPDATE ecbs5_match_config
+		SET Zavod_datum = DATE_FORMAT(CURDATE(),'%d.%m.%Y')
+		WHERE Zavod_id = ?
+	");
+	$stmt->bind_param(
+		"s",
+		$table
+	);
+	$stmt->execute();
+	$affected = $stmt->affected_rows;
+	$stmt->close();
+//    echo "<pre class='text-success>Datum závodu '$table' byl nastaven na dnešní datum. Je V administraci je potřeba nastavit skutečný datum.</pre>";
 }
 
-if (file_exists('./functions.php')) {
-    include_once './functions.php';
-} elseif (file_exists('../functions.php')) {
-    include_once '../functions.php';
-}
+$migrations = [
+    2 => 'dbupdate2.php',
+    // … další verze
+];
 
+$res = $conn->query("SELECT parValueI FROM $table_nastaveni WHERE parName='dbver' LIMIT 1");
+$row = $res ? $res->fetch_assoc() : null;
+$currentVersion = $row['parValueI'] ?? 0;
 
-$mysql = mysql_connect($db_host, $db_login, $db_pass) or die('Could not connect: ' . mysql_error());
-mysql_select_db($db_dtb) or die('Could not select database');
-
-mysql_query("SET NAMES utf8;");
-mysql_query("SET CHARACTER_SET utf8;");
-
-if ($_GET["recreate"]) {
-  $query="drop table $table;";
-  mysql_query($query);
-  $query="drop table $table_nastaveni;";
-  mysql_query($query);
-	}
-
-
-$result = mysql_query("SHOW TABLES LIKE '".$table."'");
-if (mysql_num_rows($result)==0) {
-  $dbcreateParam="hlavni";
-  $dbcreateTable=$table;
-  require_once ("dbcreate.php");
-}
-
-$result = mysql_query("SHOW TABLES LIKE '".$table_nastaveni."'");
-if (mysql_num_rows($result)==0) {
-  $dbcreateParam="nastaveni";
-  $dbcreateTable=$table."_nastaveni";
-  require_once ("dbcreate.php");
-}
-
-$result = mysql_query("SHOW TABLES LIKE '".$table_divisions."'");
-if (mysql_num_rows($result)==0) {
-  $dbcreateParam="divisions";
-  $dbcreateTable=$table."_divisions";
-  require_once ("dbcreate.php");
-}
-
-$result = mysql_query("SHOW TABLES LIKE '".$table_categories."'");
-if (mysql_num_rows($result)==0) {
-  $dbcreateParam="categories";
-  $dbcreateTable=$table."_categories";
-  require_once ("dbcreate.php");
-}
-
-$result = mysql_query("SHOW TABLES LIKE '".$table_squads."'");
-if (mysql_num_rows($result)==0) {
-  $dbcreateParam="squads";
-  $dbcreateTable=$table."_squads";
-  require_once ("dbcreate.php");
-}
-
-
-$result = mysql_query("SHOW TABLES LIKE 'match_config'");
-if (mysql_num_rows($result)==0) {
-  $dbcreateParam="match_config";
-  require_once ("dbcreate.php");
-}
-
-$result = mysql_query("SHOW TABLES LIKE 'site_admins'");
-if (mysql_num_rows($result)==0) {
-  $dbcreateParam="match_admins";
-  require_once ("dbcreate.php");
+foreach ($migrations as $version => $script) {
+    if ($currentVersion < $version) {
+        require $script;
+    }
 }
 
 
-// aktualizace klicu - query presunuta do save.php
-//$result = mysql_query("update $table set klic= FLOOR(10 + (RAND(Cislo) * 9000)) where klic is null or klic=0;");
-
-$dbver=0;
-$result = mysql_query("select parName,parValueI from ".$table_nastaveni." where parName='dbver' LIMIT 1;");
-if (mysql_num_rows($result)==1) {
-  $z=mysql_fetch_array($result);
-  $dbver=$z[parValueI];
-}
-
-if ($dbver<3) {
-  require_once 'dbupdate3.php';
-}
-if ($dbver<3.1) {
-  require_once 'dbupdate3_1.php';
-}
 
 ?>

@@ -1,9 +1,4 @@
 <?php
-/*
-  JUMBO 26.10.2017
-  podpůrné funkce
-*/
-
 if ((include 'phpmailer/PHPMailerAutoload.php')===false) {
   if ((include '../phpmailer/PHPMailerAutoload.php')===false) {
   }
@@ -28,7 +23,7 @@ function email($from_text,$from,$to, $subject = '', $message = '', $headers = ''
   //Set the hostname of the mail server
   $mail->Host = $smtp_server;
   //Set the SMTP port number - likely to be 25, 465 or 587
-  $mail->Port = 25;
+  $mail->Port = 587;
   //Whether to use SMTP authentication
   $mail->SMTPAuth = true;
   //Username to use for SMTP authentication
@@ -61,4 +56,61 @@ function email($from_text,$from,$to, $subject = '', $message = '', $headers = ''
   }
 }
 
-?>
+function getShooterData(mysqli $conn, string $table, int $shooterID, int $shooterKEY): ?array {
+    $stmt = $conn->prepare("SELECT * FROM $table WHERE Cislo = ? AND klic = ?");
+    $stmt->bind_param("ii", $shooterID, $shooterKEY);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $data = $result->fetch_assoc();
+    $stmt->close();
+
+    return $data ?: null;
+}
+
+function ensureTable(mysqli $conn, string $name, string $paramKey, string $paramTable = ''): void {
+    global $table; // přístup k $table z data.php
+    $res = $conn->query("SHOW TABLES LIKE '" . $conn->real_escape_string($name) . "'");
+    if (! $res || $res->num_rows === 0) {
+        $dbcreateParam = $paramKey;
+        $dbcreateTable = $paramTable ?: $name;
+
+        // Předání proměnných do dbcreate skriptu
+        $_SERVER['dbcreateParam'] = $dbcreateParam;
+        $_SERVER['dbcreateTable'] = $dbcreateTable;
+        include_once __DIR__ . '/db/dbcreate.php';
+    }
+}
+
+function runQuery($query, $name = '') {
+    global $conn;
+    if ($conn->query($query) === TRUE) {
+        echo "<pre style='color:white;font-size:14px;'>$name<br/>Pokračujte klávesou F5</pre>";
+    } else {
+        echo "<pre style='color:#ff0000;font-size:14px;'>$name: Chyba – " . $conn->error . "</pre>";
+        exit;
+    }
+}
+
+function getValueFromTable($conn, $table, $whereColumn, $whereValue, $returnColumn) {
+    // připravíme dotaz s placeholderem
+    $sql = "SELECT $returnColumn FROM $table WHERE $whereColumn = ?";
+    $stmt = $conn->prepare($sql);
+
+    if (!$stmt) {
+        die("Chyba při přípravě dotazu: " . $conn->error);
+    }
+
+    // určení typu (integer nebo string)
+    $type = is_int($whereValue) ? "i" : "s";
+
+    // napojení parametru
+    $stmt->bind_param($type, $whereValue);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        return $row[$returnColumn];
+    } else {
+        return null; // pokud nic nenajde
+    }
+}

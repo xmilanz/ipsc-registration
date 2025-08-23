@@ -5,14 +5,17 @@ if (!isset($_SESSION['loggedin'])) {
     header('Location: ../index.php');
     exit;
 }
-if (file_exists('./db/dbconn.php')) {
-    include './db/dbconn.php';
-} elseif (file_exists('../db/dbconn.php')) {
-    include '../db/dbconn.php';
-}
+
+require_once __DIR__ . '/../db/dbconn.php';
+
+//if (file_exists('./db/dbconn.php')) {
+//    include './db/dbconn.php';
+//} elseif (file_exists('../db/dbconn.php')) {
+//    include '../db/dbconn.php';
+//}
 
 header('Content-Type: text/csv');
-header('Content-Disposition: attachment; filename="praktiscore_shooters.csv"');
+header('Content-Disposition: attachment; filename="'.$table.'-shooters-practiscore.csv"');
 header('Pragma: no-cache');
 header('Expires: 0');
 
@@ -29,7 +32,8 @@ while ($z = mysql_fetch_array($strelci)) {
 		case "REV": $z['Divize'] = "Revolver"; break;
 		case "REV6": $z['Divize'] = "Revolver"; break;
 		case "OPN": $z['Divize'] = "Open"; break;
-		case "PCC": $z['Divize'] = "PCC"; break;
+		case "OPT": $z['Divize'] = "Optics (Standard Optics)"; break;
+		case "PCC": $z['Divize'] = "Pistol Caliber Carbine"; break;
 		case "PCCI": $z['Divize'] = "PCC Iron"; break;
 		case "PCCO": $z['Divize'] = "PCC Optics"; break;
 		case "MR": $z['Divize'] = "Mini Rifle"; break;
@@ -37,6 +41,12 @@ while ($z = mysql_fetch_array($strelci)) {
 		case "MRS": $z['Divize'] = "Mini Rifle Standard"; break;
 		default: $z['Divize'] = "Production"; break;
 	}
+//	switch ($z['Kategorie']) {
+//		case "SSenior": $z['Kategorie'] = "Super Senior"; break;
+//		case "GSenior": $z['Kategorie'] = "Grand Senior"; break;
+//		case "LSenior": $z['Kategorie'] = "Super Lady"; break;
+//		case "SJunior": $z['Kategorie'] = "Super Junior"; break;
+//	}
 	switch (true) {
 		case ($z['Zaplaceno'] == 'on' && $z['Staff'] == 'RO'): $z['Zaplaceno'] = "RO"; break;
 		case ($z['Zaplaceno'] == 'on' && $z['Staff'] == 'POM'): $z['Zaplaceno'] = "Staff"; break;

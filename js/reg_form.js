@@ -23,15 +23,35 @@ function avoidspace(event) {
     if (k == 32) return false;
 }
 
-function replaceChars(index) {
-	var inputAlias = document.getElementById(`Alias${index}`).value;
-	var inputEmail = document.getElementById(`Email${index}`).value;
-	
-	var outputAlias = inputAlias.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]/g, "");
-	var outputEmail = inputEmail.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9@\.]/g, "");
 
-	document.getElementById(`Alias${index}`).value = outputAlias;
-	document.getElementById(`Email${index}`).value = outputEmail;
+function replaceChars(index) {
+	var aliasInput = document.getElementById(`Alias${index}`);
+	if (aliasInput) {
+		var inputAlias = aliasInput.value;
+		var outputAlias = inputAlias.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9\.]/g, "");
+		aliasInput.value = outputAlias;
+	}
+
+    var jmenoInput = document.getElementById(`Jmeno${index}`);
+	if (jmenoInput) {
+		var inputJmeno = jmenoInput.value;
+		var outputJmeno = inputJmeno.replace(/[^a-zA-ZáÁčČďĎéÉěĚíÍňŇóÓřŘšŠťŤúÚůŮýÝžŽ]/g, "");
+		jmenoInput.value = outputJmeno;
+	}
+
+	var prijmeniInput = document.getElementById(`Prijmeni${index}`);
+	if (prijmeniInput) {
+		var inputPrijmeni = prijmeniInput.value;
+		var outputPrijmeni = inputPrijmeni.replace(/[^a-zA-ZáÁčČďĎéÉěĚíÍňŇóÓřŘšŠťŤúÚůŮýÝžŽ0-9]/g, "");
+		prijmeniInput.value = outputPrijmeni;
+	}
+
+	var emailInput = document.getElementById(`Email${index}`);
+	if (emailInput) {
+		var inputEmail = emailInput.value;
+		var outputEmail = inputEmail.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9@\.]/g, "");
+		emailInput.value = outputEmail;
+	}
 }
 
 function toggleDivizeMain(index) {

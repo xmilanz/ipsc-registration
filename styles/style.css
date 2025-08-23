@@ -12,11 +12,6 @@ body, html{
 	text-align: justify;
 }
 
-#container {
-    width: auto;
-    margin: 0 auto;
-    box-shadow: 0 0 6px #000;
-}
 
 .header-logo {
     position: relative;
@@ -35,6 +30,7 @@ body, html{
 	font-size: 2.7em;
 	position: absolute;
 	left: 200px;
+	text-decoration: none;
 }
 
 .text-over-image a:hover {text-decoration: none; color: black;}
@@ -44,8 +40,6 @@ body, html{
     top: 0;
     left: 0;
     width: 100%;
-//	background-image: url(../images/logo-header-eggenberg.png) ;
-//	background-image: url(../images/logo-header-pelhrimov.png) ;
 	background-repeat: no-repeat;
 	text-align: center;
     padding-top: 30px;
@@ -53,13 +47,11 @@ body, html{
 	height: 100%
 }
 
-
-
 #main{
     background-color: #F5F5F5;
     width:100%;
     min-height: 300px;
-    height:100%;
+/*    height:100%;*/
     padding: 20px;
     display: inline-block;
     box-sizing:border-box;
@@ -77,17 +69,24 @@ body, html{
 /*----------------------------------------------
 	Elements
 -----------------------------------------------*/
-H1 {font-size: 24px; color: #2a5a8e !important; text-shadow: 0 0 1px #000;}
-H2 {font-size: 19px; font-weight: bold; color: #2a5a8e !important; text-shadow: 0 0 1px #000;}
-H3 {font-size: 17px; color: #2a5a8e !important;}
-H4 {font-size: 16px; font-weight: bold; padding-top: 5px;}
+h1 {font-size: 24px; color: #2a5a8e !important; text-shadow: 0 0 1px #000;}
+h2 {font-size: 19px; font-weight: bold; color: #2a5a8e !important; }
+h3 {font-size: 17px; font-weight: bold; color: #2a5a8e !important;}
+h4 {font-size: 16px; font-weight: bold; padding-top: 10px;}
 
-th {
-    background-color: #2375d2;
-    color: white;
-    text-align: left;
-    padding-left: 10px;
+#zavodnici th, .prehledy th {
+    background-color: #2375d2 !important;
+    color: white !important;
+    text-align: left !important;
+    padding-left: 10px !important;
 }
+
+#zavodnici td, #zavodnici th, .prehledy td, .prehledy th  {
+	padding: .75rem;
+	border: 1px solid #dee2e6;
+}
+
+
 
 .cursor-pointer {
     cursor: pointer !important;
@@ -124,31 +123,13 @@ a.nav-link.active, .nav-link:hover {
 
 .navbar-dark .navbar-nav .nav-link.disabled {color: rgba(255,255,255,.25) !important;}
 
-/*
-.dropdown:hover .dropdown-menu {
-	background-color: #2A5A8E !important;
-    color: #2A5A8E;
-    display: block;
-    margin-top: 0;
- }
-
-.dropdown-item {
-	color: #ffffff;
-	font-size: 1.1rem;
-    font-weight: normal !important;
-}
-
-.dropdown-item.active, .dropdown-item:active {
-    background-color: #ffffff !important;
-	color: #2A5A8E;
-}
-*/
 /*----------------------------------------------
 	Content
 -----------------------------------------------*/
 .container {
     width: auto;
     margin: 0 auto;
+	padding: 0px 110px;
 }
 
 .article {
@@ -157,28 +138,18 @@ a.nav-link.active, .nav-link:hover {
 	font-size: 1.2rem;
 }
 
-.jumbotron {
-	padding: 0.5rem !important;
-	margin-bottom: 0.5rem;
-	border-radius: 0px;
+.caption-text {
+	padding-top: 0.4rem;
+	display: inline-block;
+}
+
+.caption {
 	background-color: #e9ecef !important;
 }
 
 
 .border-primary {box-shadow: 0 0 1px #2a5a8e; border: none !important;}
 .border-info {border-color: #c1cddb !important;}
-
-
-#searchInput {
-	background-image: url("../images/search.png");
-	background-position: 10px 10px;
-	background-repeat: no-repeat;
-	width: 100%;
-	font-size: 16px;
-	padding: 10px 0px 5px 40px;
-	border: 1px solid #ddd;
-	margin-bottom: 12px;
-}
 
 
 /*----------------------------------------------
@@ -234,32 +205,34 @@ label.alias_validation {padding-bottom: 1rem;}
 
 @media screen and (max-width: 1200px)
 {
-	.banner {display:none;}
-	.text-over-image {
-		font-size: 1em;
-		background-size: 12%;
-	}
+	.header-logo {background-size: 50%;}
+	.logo-text {font-size: 1.5em !important;}
 }
 
 @media screen and (max-width: 991px)
 {
-	.banner {display:none;}
-	.text-over-image {
-		font-size: 0.7em;
-		padding-top: 20px;
-	}
+	.logo-text {font-size: 1.5em !important;}
+	.container, .container-sm {
+        max-width: 100% !important;
+		padding: 0px 50px;
+    }
 }
 
-
 @media screen and (max-width: 767px) {
+	.header-logo {background-size: 95%;}
+	.logo-text {display: none;}
 
-	.text-over-image {	background-image: none;	}
-	.header-logo {display: none;}
+	.container, .container-sm {
+        max-width: 100% !important;
+		    padding: 0px 20px;
+    }
+
 
 	.nav-item, .navbar {
 		background-image: none;
 		background-color: #2a5a8e !important;
 		border: 0px;
+		font-size: 2rem;
 	}
 	.dropdown-menu.show, .dropdown-menu {
 		 color: #ffffff;
@@ -273,23 +246,26 @@ label.alias_validation {padding-bottom: 1rem;}
 
 }
 /*----------------------------------------------
-	DatTable a Bootstrap
+	DataTable a Bootstrap
 -----------------------------------------------*/
 
-.dtsb-titleRow {display: none;}
-div.dtsb-searchBuilder div.dtsb-group {width: 600px;}
+
+.table-bordered {
+border: 1px solid #dee2e6;
+ }
+
+.table td, .table th {
+	padding: .75rem;
+}
+
 .btn-secondary, .btn-light{background-color: #4a9fff; color: #ffffff;}
 .dt-print-view {background: #ffffff;}
 
 .close {opacity: .75;}
 
-.toast.show {
-    z-index: 100;
-    background-color: white;
-}
-
 ::placeholder {
-  color: #ced4da85 !important;
+	opacity: .75 !important;
+	    font-style: italic;	
 }
 
 .modal-body {
@@ -297,6 +273,15 @@ div.dtsb-searchBuilder div.dtsb-group {width: 600px;}
     overflow-y: auto;.
     overflow-x: hidden;
 }
+
+
+.accordion-button:not(.collapsed) {
+	background-color: #e9ecef !important;
+    font-weight: bold !important;
+    color: #2a5a8e !important;
+	}
+
+
 
 
 /*----------------------------------------------
@@ -339,4 +324,20 @@ div.dtsb-searchBuilder div.dtsb-group {width: 600px;}
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
+}
+
+
+/*----------------------------------------------
+	Responsive
+-----------------------------------------------*/
+
+@media screen and (max-width: 1200px) {
+	
+}
+
+@media screen and (max-width: 991px) {
+	
+}
+
+@media screen and (max-width: 576px) {
 }

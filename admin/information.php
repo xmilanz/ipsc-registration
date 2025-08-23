@@ -1,210 +1,219 @@
 <?php
 session_start();
-// If the user is not logged in redirect to the login page...
 if (!isset($_SESSION['loggedin'])) {
     header('Location: ../index.php');
     exit;
 }
 
-require_once ("../config/data.php");
+require_once __DIR__ . '/../config/data.php';
+require_once __DIR__ . '/../db/dbconn.php';
 
-$ID=$_GET['ID'];
-$query="SELECT * FROM ".$table." WHERE Cislo=$ID";
-$res=mysql_query($query);
-$line=mysql_fetch_array($res);
+$ID = isset($_POST['ID']) ? intval($_POST['ID']) : 0;
 
-if ($match_data[Zavod_zbrojni_prukaz]=="") {
-   $zavodZbrojniPrukazClass=" d-none";
-}
-?>
-      <div class="modal-header bg-warning text-center">
-		<h4 class="modal-title text-white w-100 font-weight-bold">Informace o závodníkovi</h4><br>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="window.location.href = 'index.php';">
-          <span aria-hidden="true" class="text-white">&times;</span>
-        </button>
-	  </div>
-      <div class="modal-body">
+if ($ID > 0) {
+    $stmt = $conn->prepare("
+		SELECT * FROM $table
+		WHERE Cislo = ?
+	 ");
+    $stmt->bind_param(
+        "i",
+        $ID
+    );
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
 
-	<!--Accordion-->
- 	<div id="accordion" class="col-md-12">
+    if ($result && mysqli_num_rows($result) > 0) {
+        $line = mysqli_fetch_assoc($result);
 
-   <!-- accordion 1 Základní informace -->
-    <div class="card">
-    <a class="card-link" data-toggle="collapse" href="#collapseOne">
-	  <div class="card-header font-weight-bolder ">Osobní údaje</div>
-      </a>
-     <div id="collapseOne" class="collapse show" data-parent="#accordion">
-        <div class="card-body">
-			<div class="row">
- 			<div class="col-md-6">
-				<label class="form-label pt-1">Jméno</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Jmeno']; ?>">
-			  </div>
-		  
-			<div class="col-md-6">
-				<label class="form-label pt-1">Příjmení</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Prijmeni']; ?>">
-			</div>
+        $staffLabels = [
+            "PAY" => "platící&nbsp;závodník",
+            "RO"  => "rozhodčí",
+            "POM" => "pomocník",
+            "VIP" => "VIP"
+        ];
+        $staffLabel = $staffLabels[$line['Staff']] ?? htmlspecialchars($line['Staff'], ENT_QUOTES, 'UTF-8');
 
-			<div class="col-md-12 py-2"></div>
+        $faktorLabels = [
+            "MIN" => "Minor",
+            "MAJ"  => "Major"
+        ];
+        $faktorLabel = $faktorLabels[$line['Faktor']] ?? htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8');
 
- 			<div class="col-md-6">
-				<label class="form-label pt-1">IPSC alias</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Alias']; ?>">
-			  </div>
+        $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
+        $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
 
+        echo /*html*/ "
+<div class='accordion' id='accordionInformation'>
+  <div class='accordion-item'>
+    <h2 class='accordion-header'>
+      <button class='accordion-button' type='button' data-bs-toggle='collapse' data-bs-target='#collapseOne' aria-expanded='true' aria-controls='collapseOne'>
+        Základní informace
+      </button>
+    </h2>
+    <div id='collapseOne' class='accordion-collapse collapse show' data-bs-parent='#accordionInformation'>
+      <div class='accordion-body'>
+            <div class='accordion-body'>
+                <div class='row pb-3'>
+                    <div class='col-md-6'>
+                        <label class='form-label pt-1'>Jméno</label>
+                        <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . "'>
+                    </div>
 
- 			<div class="col-md-6">
-				<label class="form-label pt-1">Zbrojní průkaz</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['ZP']; ?>">
-			  </div>
-		  
-			<div class="col-md-12 py-2"></div>
-			<!--div class="<?php if ($match_data[Zavod_zbrojni_prukaz]=="on") {echo "col-md-0";} else {echo "col-md-12";}; ?>"></div-->
+                    <div class='col-md-6'>
+                       <label class='form-label pt-1'>Příjmení</label>
+                       <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . "'>
+                    </div>
+               </div>
 
-			<div class="col-md-6">
-				<label class="form-label pt-1">E-mail</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Mail']; ?>">
-			</div>
+               <div class='row pb-3'>
+                    <div class='col-md-6'>
+                       <label class='form-label'>IPSC alias</label>
+                       <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "'>
+                    </div>
 
-			<div class="col-md-6">
-				<label class="form-label pt-1">Poznámka</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Poznamka']; ?>">
-			</div>
+                  <div class='col-md-6 " . (!empty($match_data['Zavod_zbrojni_prukaz']) ? '' : 'd-none') . "'>
+                     <label class='form-label pt-1'>Zbrojní průkaz</label>
+                     <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['ZP'], ENT_QUOTES, 'UTF-8') . "'>
+                  </div>
+               </div>
 
-
-        </div>
-       </div>
-     </div>
+               <div class='row pb-3'>
+                    <div class='col-md-6'>
+                       <label class='form-label'>E-mail</label>
+                       <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Mail'], ENT_QUOTES, 'UTF-8') . "'>
+                    </div>
+                    <div class='col-md-6'>
+                       <label class='form-label'>Poznámka</label>
+                       <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Poznamka'], ENT_QUOTES, 'UTF-8') . "'>
+                    </div>
+               </div>
+            </div>
+      </div>
     </div>
+  </div>
+    <div class='accordion-item'>
+         <h2 class='accordion-header'>
+            <button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' aria-expanded='false' data-bs-target='#collapseTwo' aria-controls='collapseTwo'>
+            Závod
+            </button>
+         </h2>
+         <div id='collapseTwo' class='accordion-collapse collapse' data-bs-parent='#accordionInformation'>
+            <div class='accordion-body'>
+               <div class='row pb-3'>
+                  <div class='col-md-2'>
+                        <label class='form-label'>Číslo</label>
+                        <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Cislo'], ENT_QUOTES, 'UTF-8') . "'>
+                  </div>
+                  <div class='col-md-3'>
+                     <label class='form-label'>Squad</label>
+                     <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Squad'], ENT_QUOTES, 'UTF-8') . "'>
+                  </div>
+                  <div class='col-md-3 " . (empty($line['SquadReg']) ? 'd-none' : '') . "'>
+                     <label class='form-label'>Squad (reg)</label>
+                     <input readonly class='bg-light text-muted form-control'  value='" . htmlspecialchars($line['SquadReg'], ENT_QUOTES, 'UTF-8') . "'>
+                  </div>
+                  <div class='col-md-4'>
+                     <label class='form-label'>Statut závodníka</label>
+                     <input readonly class='bg-light text-dark form-control' value=$staffLabel>
+                  </div>
+                  <div class='col-md-3'>
+                        <label class='form-label'>Region</label>
+                        <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Region'], ENT_QUOTES, 'UTF-8') . "'>
+                  </div>
+              </div>
+              <div class='row pb-3'> 
+                  <div class='col-md-5'>
+                        <label class='form-label'>Kategorie</label>
+                        <input readonly class='bg-light text-dark form-control'  value='$nazev_kategorie'>
+                  </div>
 
-	<!-- accordion 2 -->
-		<div class="card">
-		<a class="collapsed card-link <?php if ($line['Staff']!='')  {echo 'bg-success text-white';} ?>" data-toggle="collapse" href="#collapseTwo">
-			<div class="card-header font-weight-bolder ">Závod</div>
-		</a>
-		<div id="collapseTwo" class="collapse" data-parent="#accordion">
-			<div class="card-body">
-			<div class="row">
-			<div class="col-md-3">
-				<label class="form-label pt-1">Číslo</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Cislo']; ?>">
-			</div>
- 			<div class="col-md-3">
-				<label class="form-label pt-1">Squad</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Squad']; ?>">
-			  </div>
- 			<div class="col-md-3">
-				<label class="form-label pt-1">Squad (reg)</label>
-				<input readonly class="bg-light text-muted form-control"  value="<?php echo $line['SquadReg']; ?>">
-			  </div>
- 			<div class="col-md-3">
-				<label class="form-label pt-1">Staff</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Staff']; ?>">
-			  </div>
-			  
-			<div class="col-md-12 py-2"></div>
-		  
-			<div class="col-md-3">
-				<label class="form-label pt-1">Kategorie</label>
-				<input readonly class="bg-light form-control"  value="<?php echo $line['Kategorie']; ?>">
-			</div>
- 			<div class="col-md-3">
-				<label class="form-label pt-1">Divize</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Divize']; ?>">
-			  </div>
- 			<div class="col-md-3">
-				<label class="form-label pt-1">Faktor</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Faktor']; ?>">
-			  </div>
- 			<div class="col-md-3">
-				<label class="form-label pt-1">Region</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Region']; ?>">
-			  </div>
-		  
-        </div>
-		</div>
-		</div>
-		</div>
-	
-	<!-- accordion 3 -->
-		<div class="card">
-		<a class="collapsed card-link" data-toggle="collapse" href="#collapseThree">
-			<div class="card-header font-weight-bolder <?php if ($line['Vyrazeno']!='')  {echo 'bg-secondary text-white';} ?>">Registrace a vyřazení</div>
-		</a>
-		<div id="collapseThree" class="collapse" data-parent="#accordion">
-			<div class="card-body">
+                  <div class='col-md-4'>
+                        <label class='form-label'>Divize</label>
+                        <input readonly class='bg-light text-dark form-control'  value='$nazev_divize'>
+                  </div>
 
-			<div class="row">
-			<div class="col-md-6">
-				<label class="form-label pt-1">Datum registrace</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo gmdate("d.m.Y H:i", $line['DatReg']); ?>">
-			</div>
- 			<div class="col-md-6">
-				<label class="form-label pt-1">IP registrace</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['RegistraceIP']; ?>">
-			  </div>
+                  <div class='col-md-3'>
+                        <label class='form-label'>Faktor</label>
+                        <input readonly class='bg-light text-dark form-control'  value='$faktorLabel'>
+                  </div>
 
-			<div class="col-md-12 py-2"></div>
-		  
-			<div class="col-md-6">
-				<label class="form-label pt-1">Datum a čas vyřazení</label>
-				<input readonly class="bg-light form-control"  value="<?php if ($line['Vyrazeno']=='') {echo "";} else {echo date("d.m.Y", strtotime($line['Vyrazeno']));} ?>">
-			</div>
- 			<div class="col-md-6">
-				<label class="form-label pt-1">IP vyřazení</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['VyrazenoIP']; ?>">
-			  </div>
-
-			</div>
-			</div>
-		</div>
-		</div>
-	
-	<!-- accordion 4 placení závodu -->
-		<div class="card <?php if (($line['ZaplatiNaMiste']=='on') OR ($line['Staff']=='RO') OR ($line['Staff']=='POM') OR ($line['Staff']=='VIP')) {echo 'd-none';} ?>">
-		<a class="collapsed card-link" data-toggle="collapse" href="#collapseFour">
-			<div class="card-header font-weight-bolder ">Placení</div>
-		</a>
-		<div id="collapseFour" class="collapse" data-parent="#accordion">
-			<div class="card-body">
-			<div class="row">
-			<div class="col-md-3">
-				<label class="form-label pt-1">Klíč</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['klic']; ?>">
-			</div>
-			<div class="col-md-3">
-				<label class="form-label pt-1">VS</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['VarSym']; ?>">
-			</div>
- 			<div class="col-md-4">
-				<label class="form-label pt-1">Zaplatit do</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php if ($line['ZaplatiNaMiste']=="on") {echo "na místě";} else {echo date("d.m.Y", strtotime($line['DatPay']));} ?>">
-			  </div>
-
-
-			<div class="col-md-12 py-2"></div>
-
- 			<div class="col-md-4">
-				<label class="form-label pt-1">Urgence</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Urgence']; ?>">
-			  </div>
- 			<div class="col-md-4">
-				<label class="form-label pt-1">Zaplaceno</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php if ($line['ZaplatiNaMiste']=='on') {echo 'na místě';} elseif ($line['DatumZaplaceni']==NULL) {echo "";} else {echo date("d.m.Y", strtotime($line['DatumZaplaceni']));} ?>">
-			  </div>
- 			<div class="col-md-3">
-				<label class="form-label pt-1">Částka (Kč)</label>
-				<input readonly class="bg-light text-dark form-control"  value="<?php echo $line['Castka']; ?>">
-			  </div>
-		</div>
-		</div>
-	</div>
-	<!--Accordion-->
+              </div>
+            </div>
+         </div>
       </div>
+      <div class='accordion-item'>
+         <h2 class='accordion-header'>
+            <button class='accordion-button collapsed " . (!empty($line['Vyrazeno']) ? 'bg-secondary text-white' : '') . "' type='button' data-bs-toggle='collapse' data-bs-target='#collapseThree' aria-expanded='false' aria-controls='collapseThree'>
+            Registrace a vyřazení
+            </button>
+         </h2>
+         <div id='collapseThree' class='accordion-collapse collapse' data-bs-parent='#accordionInformation'>
+            <div class='accordion-body'>
+               <div class='row'>
+                  <div class='col-md-6'>
+                     <label class='form-label pt-1'>Datum registrace</label>
+                     <input readonly class='bg-light text-dark form-control'  value='" . gmdate("d.m.Y H:i", htmlspecialchars($line['DatReg'], ENT_QUOTES, 'UTF-8')) . "'>
+                  </div>
+                  <div class='col-md-6'>
+                     <label class='form-label pt-1'>IP registrace</label>
+                     <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['RegistraceIP'], ENT_QUOTES, 'UTF-8') . "'>
+                  </div>
+                  <div class='col-md-12 py-2'></div>
+                  <div class='col-md-6'>
+                     <label class='form-label pt-1'>Datum a čas vyřazení</label>
+                     <input readonly class='bg-light form-control' value='" . (!empty($line['Vyrazeno']) ? date('d.m.Y H:i', strtotime($line['Vyrazeno'])) : '---') . "'>
+                  </div>
+                  <div class='col-md-6'>
+                     <label class='form-label pt-1'>IP vyřazení</label>
+                     <input readonly class='bg-light text-dark form-control'  value='" . (!empty($line['VyrazenoIP']) ? htmlspecialchars($line['VyrazenoIP'], ENT_QUOTES, 'UTF-8') : '---') . "'>
+                  </div>
+               </div>
+            </div>
+         </div>
       </div>
+      <div class='accordion-item " . (empty($match_data['Payment_before']) ? 'd-none' : '') . "'>
+         <h2 class='accordion-header'>
+            <button class='accordion-button collapsed " . (!empty($line['Zaplaceno']) ? 'bg-success text-white' : '') . "' type='button' data-bs-toggle='collapse' data-bs-target='#collapseFour' aria-expanded='false' aria-controls='collapseFour'>
+            Placení 
+            </button>
+         </h2>
+         <div id='collapseFour' class='accordion-collapse collapse' data-bs-parent='#accordionInformation'>
+            <div class='accordion-body'>
+               <div class='row'>
+                  <div class='col-md-3'>
+                     <label class='form-label pt-1'>Klíč</label>
+                     <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['klic'], ENT_QUOTES, 'UTF-8') . "'>
+                  </div>
+                  <div class='col-md-3'>
+                     <label class='form-label pt-1'>VS</label>
+                     <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['VarSym'], ENT_QUOTES, 'UTF-8') . "'>
+                  </div>
+                  <div class='col-md-4'>
+                     <label class='form-label pt-1'>Zaplatit do</label>
+                     <input readonly class='bg-light text-dark form-control' value='" . (!empty($line['ZaplatiNaMiste']) ? 'na místě' : htmlspecialchars($line['DatPay'], ENT_QUOTES, 'UTF-8')) . "'>
+                  </div>
+                  <div class='col-md-12 py-2'></div>
+                  <div class='col-md-4 " . (!empty($line['ZaplatiNaMiste']) ? 'd-none' : '') . "'>
+                     <label class='form-label pt-1'>Urgence</label>
+                     <input readonly class='bg-light text-dark form-control'  value='" . (!empty($line['Urgence']) ? htmlspecialchars($line['Urgence'], ENT_QUOTES, 'UTF-8') : '---') . "'>
+                  </div>
+                  <div class='col-md-4 " . (!empty($line['ZaplatiNaMiste']) ? 'd-none' : '') . "'>
+                     <label class='form-label pt-1'>Zaplaceno dne</label>
+                     <input readonly class='bg-light text-dark form-control'  value='" . (!empty($line['DatumZaplaceni']) ? date('d.m.Y H:i', strtotime($line['DatumZaplaceni'])) : '---') . "'>
 
-      <!--Footer-->
-	<div class="modal-footer border-top-0 mt-3 col-12">
-		<button type="button" class="btn btn-outline-dark" data-dismiss="modal" aria-label="Close" onclick="window.location.href = 'index.php';">Zavřít</button>
-	</div>
+                  </div>
+                  <div class='col-md-3 " . (!empty($line['ZaplatiNaMiste']) ? 'd-none' : '') . "'>
+                     <label class='form-label pt-1'>Částka (Kč)</label>
+                     <input readonly class='bg-light text-dark form-control'  value='" . (!empty($line['Castka']) ? htmlspecialchars($line['Castka'], ENT_QUOTES, 'UTF-8') : '---') . "'>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+</div>
+		";
+    } else {
+        echo /*html*/ "<p class='text-danger'>Záznam nenalezen.</p>";
+    }
+}

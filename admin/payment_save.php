@@ -30,14 +30,14 @@ $line = getShooterData($conn, $table, $shooterID, $shooterKEY);
 include './components/modal-warning-form.php';
 WarningModalForm(
     "success",
-    "Registrační mail",
+    "Evidence úhrady startovného",
     "index.php",
     [
         "shooterID" => $shooterID,
         "shooterKEY" => $shooterKEY
     ],
-    "Opravdu chcete poslat závodníkovi " . htmlspecialchars($line['Jmeno']) . " " . htmlspecialchars($line['Prijmeni']) . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ") registrační mail?",
-    "Znovu pošleme registrační e-mail (informace o závodu,<br>QR kód pro zaplacení,...).",
-    "./send.php?regmail",
-    "Odeslat registrační mail"
+    "Závodník " . htmlspecialchars($line['Jmeno']) . " " . htmlspecialchars($line['Prijmeni']) . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ") zaplatil.",
+    "Zaevidujeme platbu a pošleme závodníkovi potvrzení.",
+    "./save.php?mark_paid",
+    "Zaevidovat platbu"
 );

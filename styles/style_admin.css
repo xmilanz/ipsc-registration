@@ -22,6 +22,8 @@ body,html {
 	font-size: 2em;
 }
 
+a.logo-text, a.card-link {text-decoration: none;}
+
 .text-over-image a:hover {text-decoration: none; color: black;}
 
 .text-over-image {
@@ -55,8 +57,6 @@ body,html {
     color: #fff;
     box-sizing:border-box;
 }
-
-h3 {font-size: 16px;}
 
 .nadpis, .nadpis a, .nadpis a:hover {
 	font-family: Verdana, Arial, Helvetica;
@@ -124,30 +124,41 @@ th.print {background-color: #dee2e6 !important; }
 }
 
 /*----------------------------------------------
-	DatTable
+	DataTable
 -----------------------------------------------*/
 .dataTables_scroll {font-size: 10px;}
-.dtsb-titleRow, .dtsb-searchBuilder {display: none;}
-.dtsb-group {max-width: 600px; margin-left: 40px !important;}
-.btn-secondary, .btn-light{background-color: #939393 !important; color: #ffffff!important;}
+.dtsb-titleRow, .dtsb-searchBuilder {display: none;} 
+.dtsb-group {max-width: 600px;}
+div.dt-container div.dt-layout-start>*:not(:last-child) {margin-left: 20px;}
 .dt-print-view {background: #ffffff;}
+.d-md-flex.dt-layout-start{ display: block !important;}
 
 /*----------------------------------------------
   Bootstrap
 -----------------------------------------------*/
 
 .close {opacity: .75;}
+
 .navbar { border-bottom: 2px solid #e9ecef; }
-.jumbotron, .alert { border-radius: 0px !important;}
 
 ::placeholder {
-  color: #ced4da85 !important;
+  opacity: .75 !important;
+  font-style: italic;
 }
 
 .modal-body {
     max-height: 75vh; 
     overflow-y: auto; 
     overflow-x: hidden;
+}
+
+nav.navbar.navbar-expand-lg {padding: 10px;}
+
+.accordion-body {background-color: #f5f5f5;}
+
+
+.form-check-input {
+    margin-right: 5px;
 }
 
 /*----------------------------------------------

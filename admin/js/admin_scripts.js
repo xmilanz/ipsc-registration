@@ -1,30 +1,15 @@
-//EXPORT TO PRAKTISCORE
-function startExport() {
-  fetch('exports.php')
-    .then(response => response.blob())
-    .then(blob => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = "praktiscore_shooters.csv";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    });
-}
-
 // DROPDOWN
   const dropdownButton1 = document.getElementById('dropdownButton1');
   const dropdownMenu1 = document.getElementById('customDropdown1');
   const dropdownContainer1 = document.getElementById('dropdownContainer1');
 
 
-  // Zobrazit dropdown pøi najetí myši
+  // Zobrazit dropdown pri najeti mysi
   dropdownContainer1.addEventListener('mouseenter', function() {
     dropdownMenu1.classList.add('show');
   });
 
-  // Skrýt dropdown pøi opuštìní myši
+  // Skryt dropdown pri opusteni mysi
   dropdownContainer1.addEventListener('mouseleave', function() {
     dropdownMenu1.classList.remove('show');
   });
@@ -34,12 +19,12 @@ function startExport() {
   const dropdownContainer2 = document.getElementById('dropdownContainer2');
 
 
-  // Zobrazit dropdown pøi najetí myši
+  // Zobrazit dropdown pri najeti mysi
   dropdownContainer2.addEventListener('mouseenter', function() {
     dropdownMenu2.classList.add('show');
   });
 
-  // Skrýt dropdown pøi opuštìní myši
+  // Skryt dropdown pri opusteni mysi
   dropdownContainer2.addEventListener('mouseleave', function() {
     dropdownMenu2.classList.remove('show');
   });
@@ -47,11 +32,11 @@ function startExport() {
 
 // DATA TABLE
 $(document).ready(function(){
-  $('[data-toggle="popover"]').popover();
+  $('[data-bs-toggle="popover"]').popover();
 });
 
 $(document).ready(function(){
-  $('[data-toggle="tooltip"]').tooltip();   
+  $('[data-bs-toggle="tooltip"]').tooltip();   
 });
 
 function ToggleFilter() {
@@ -87,7 +72,6 @@ $(function () {
 });  
 
 // reopen modals
-
 	// divison
     $(document).ready(function(){
         // Check if URL contains the reopen_modal parameter
@@ -162,3 +146,7 @@ $(function () {
         }
     });
 
+function avoidspace(event) {
+    var k = event ? event.which : window.event.keyCode;
+    if (k == 32) return false;
+}

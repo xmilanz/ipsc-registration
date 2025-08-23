@@ -1,480 +1,430 @@
-<?php 
+<?php
 include "./header.php";
 
-// NOVA REGISTRACE 
+// NOVA REGISTRACE
+if (isset($_GET['registrovat'])) {
 
-if (isset($_GET[registrovat])) {
+    // zkontrolovat max pocet ve squadu 
+    $_POST['Squad'] == 100 ? $squad_max = $match_data['Squad_prem_max'] : $squad_max = $match_data['Squad_main_max'];
 
-/* zkontrolovat max pocet ve squadu */
-$squad_max=$match_data[Squad_main_max];
-if ($_POST[Squad]==100) {
-  $squad_max=$match_data[Squad_prem_max];
-}
-$query = "SELECT Count(Prijmeni) FROM ".$table." WHERE Squad=\"".$_POST[Squad]."\"";
-$result = mysql_query($query) or die('Query failed: ' . mysql_error());
-$line = mysql_fetch_row($result);
-$squad_pocet=$line[0];
-if ($squad_pocet>=$squad_max) {
-  echo "
-  <div class='text-center'>
-  	<img src='./images/EC_ASCII.png'>
-  </div>
-  <div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
-    <div class='modal-dialog'>
-      <div class='modal-content'>
-        <div class='modal-header'>
-          <h4 class='modal-title text-danger' id='exampleModalLabel'>Neúspěšná registrace</h4>
-        </div>
-        <div class='modal-body'>
-  		<p class='font-weight-bold'>Squad $_POST[Squad] je zaplněný</p>
-  		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Po kliknutí na tlačítko <kbd>Zpět</kbd> se vraťte do registrace a zvolte nezaplněný squad.</p>
-        </div>
-        <div class='modal-footer'>
-  		<button class='btn btn-primary' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script  type='text/javascript'>
-  var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
-  	myModal.show();
-      backdrop: 'static',
-      keyboard: false
-  </script>
-  
-  <script  type='text/javascript'>
-  	$('#regInfo').modal({
-  		backdrop: 'static',
-  		keyboard: false
-  	})
-  </script>
-  ";
-}
+    $stmt = $conn->prepare("
+		SELECT Count(Prijmeni) FROM $table
+		WHERE Squad = ?
+	 ");
+    $stmt->bind_param(
+        "i",
+        $_POST['Squad']
+    );
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
 
-else {
-  $varsymbol=substr(rand(),0,4);
-  $alias=trim(mb_convert_case($_POST[Alias], MB_CASE_UPPER, "UTF-8")).mb_convert_case($_POST[Divize_dalsi], MB_CASE_UPPER);
-  $jmeno=trim(mb_convert_case($_POST[Jmeno], MB_CASE_TITLE, "UTF-8"));
-  $prijmeni=trim(mb_convert_case($_POST[Prijmeni], MB_CASE_TITLE, "UTF-8")).mb_convert_case($_POST[Divize_dalsi], MB_CASE_UPPER).$_POST[Prijmeni_stav].'';
+    $line = mysqli_fetch_row($result);
+    $pocet = $line[0];
+    if ($pocet >= $squad_max) {
+        include './components/modal-warning.php';
+        WarningModal(
+            "Neúspěšná registrace",
+            "registrace.php",
+            "<div class='col-12 fw-bolder text-danger'>Squad $_POST[Squad] je zaplněný",
+            "Kliknutím na  tlačítko <kbd>Zpět na registraci</kbd> se vraťte do registrace<br>a zvolte nezaplněný squad.",
+            "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'registrace.php';\">Zpět na registraci</button>"
+        );
+        exit;
+    } else {
+        $varsymbol = substr(rand(), 0, 4);
+        $alias = trim(mb_convert_case($_POST['Alias'], MB_CASE_UPPER, "UTF-8")) . mb_convert_case($_POST['Divize_dalsi'], MB_CASE_UPPER);
+        $jmeno = trim(mb_convert_case($_POST['Jmeno'], MB_CASE_TITLE, "UTF-8"));
+        $prijmeni = trim(mb_convert_case($_POST['Prijmeni'], MB_CASE_TITLE, "UTF-8")) . mb_convert_case($_POST['Divize_dalsi'], MB_CASE_UPPER) . $_POST['Prijmeni_stav'] . '';
+        $ip = $_SERVER["REMOTE_ADDR"];
+        $zp = trim($_POST['ZP']);
+        $email = trim($_POST['Email']);
 
-  $ip=$_SERVER["REMOTE_ADDR"];
+        empty($_POST['Divize']) ? $divize = substr($_POST['Divize_dalsi'], 1) : $divize = $_POST['Divize'];
 
-  if ($_POST[Divize]=="") {
-	$pidiv=substr("$_POST[Divize_dalsi]", 1);
-	} else {
-	$pidiv=$_POST[Divize];}
+        //kontrola, zda se zavodnik nepokousi opakovane vyrazovat a znovu registrovat (vice jak 1x)
+        $stmt = $conn->prepare("
+	 	SELECT count(Squad) as pocet FROM $table
+	 	WHERE Squad='-9' AND Alias = ?
+	 ");
+        $stmt->bind_param(
+            "s",
+            $alias
+        );
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+        $countAliasVyrazeno = mysqli_fetch_assoc($result);
 
-//kontrola, zda se zavodnik nepokousi opakovane vyrazovat a znovu registrovat (vice jak 1x)
+        if ($countAliasVyrazeno['pocet'] > 1) {
+            include './components/modal-warning-extended.php';
+            WarningModalExtended(
+                "Neúspěšná registrace",
+                "registrace.php",
+                "<div class='col-12 fw-bolder text-danger'>Závodník $jmeno $prijmeni [$alias] je evidovaný jako dvakrát vyřazený.",
+                "Opakované zrušení registrace a provedení nové se často dělá za účelem obcházení termínu pro zaplacení registrace. ",
+                "Pokud si nejste vědomi, že byste <strong>již dvakrát zrušili svoji účast závodě</strong>, kontaktujte <a href='mailto:$match_data[Zavod_email_poradatel]?subject=Neúspěšná registrace - opakované vyřazení'>pořadatele</a> nebo <a href='mailto:$match_data[Zavod_email_stats]?subject=Neúspěšná registrace - opakované vyřazení'>statistika</a>.",
+                "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'registrace.php';\">Zpět na registraci</button>"
+            );
+            exit;
+        }
 
-$query=mysql_query("SELECT count(Squad) as pocet from dev where Squad='-9' AND Alias='$alias'");
-$countAliasVyrazeno=mysql_fetch_assoc($query);
-// echo $countAliasVyrazeno['pocet'];
+        //kontrola, zda je závodnik se jmenem, prijmenim a aliasem zaregistrovan (bez vyřazených)
+        $stmt = $conn->prepare("
+   SELECT Alias,Prijmeni,Jmeno FROM $table
+   WHERE ((Alias = ?) OR (Jmeno = ? AND Prijmeni = ?)) AND Squad >-2
+   ");
+        $stmt->bind_param(
+            "sss",
+            $alias,
+            $jmeno,
+            $prijmeni
+        );
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+        $line = mysqli_fetch_array($result);
 
-if ($countAliasVyrazeno['pocet'] > 1){
-echo "
-<div class='text-center'>
-	<img src='./images/EC_ASCII.png'>
-</div>
-<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
-  <div class='modal-dialog'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h4 class='modal-title text-danger' id='exampleModalLabel'>Neúspěšná registrace</h4>
-      </div>
-      <div class='modal-body'>
-		<p class='font-weight-bold'>Závodník $jmeno $prijmeni [$alias] je evidovaný jako dvakrát vyřazený.</p>
-		<p class='font-italic'>Opakované zrušení registrace a provedení nové se často dělá za účelem obcházení termínu pro zaplacení registrace.</p>
-		<p class='font-weight-bold'>Pokud si nejste vědomi, že byste <strong>již dvakrát zrušili svoji účast závodě</strong>, kontaktujte <a href='mailto:$match_data[Zavod_email_poradatel]?subject=Neúspěšná registrace - opakované vyřazení'>pořadatele</a> nebo <a href='mailto:$match_data[Zavod_email_stats]?subject=Neúspěšná registrace - opakované vyřazení'>statistika</a>.</p>
-		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Zrušit registraci může závodník pouze pomocí odkazu v registračním emailu<br>(odkaz je funkční pro konkrétní registraci a jediné odhlášení).</p>
-      </div>
-      <div class='modal-footer'>
-		<button class='btn btn-primary' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
-      </div>
-    </div>
-  </div>
-</div>
+        if ($prijmeni == $line['Prijmeni'] and $jmeno == $line['Jmeno'] and $alias == $line['Alias']) {
+            include './components/modal-warning-extended.php';
+            WarningModalExtended(
+                "Neúspěšná registrace",
+                "registrace.php",
+                "<div class='col-12 fw-bolder text-danger'>Závodník $jmeno $prijmeni ($alias) už je zaregistrovaný",
+                "Buď vás už někdo zaregistroval nebo jste použili stejné jméno, příjmení a IPSC&nbsp;alias jako jiný závodník.<br>V případě, že jste zadali skutečně váš zaregistrovaný IPSC alias, <br>kontaktujte <a href='mailto:$match_data[Zavod_email_poradatel]?subject=Neúspěšná registrace - duplicitní IPSC alias, prijmeni a jmeno'>pořadatele</a> nebo <a href='mailto:$match_data[Zavod_email_stats]?subject=Neúspěšná registrace - duplicitní IPSAC alias, prijmeni a jmeno'>statistika</a>.<br>Pokud jste zadali alias <strong>nezaregistrovaný na IPSC-TECH.ORG</strong>, <br>použijte tento <a href='https://ipscresults.org/Mobile/AliasRegistration.html' target='_new'>odkaz</a> a&nbsp;zaregistrujte se.<br>Pro odlišení napište za příjmení $prijmeni nějaký další znak<br><small> nebo z nabídky zvolte <b>ml./st.</b></small>
+            <p class='text-danger text-center mb-3 fst-italic'>Kombinaci <mark>Jméno Příjmení (ALIAS)</mark> byste měli používat v průběhu celé série závodu.</p>",
+                "Kliknutím na tlačítko <kbd>Zpět na registraci</kbd> se vraťte na registraci.",
+                "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'registrace.php';\">Zpět na registraci</button>"
+            );
+            exit;
+        }
 
-<script  type='text/javascript'>
-var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
-	myModal.show();
-    backdrop: 'static',
-    keyboard: false
-</script>
+        //kontrola, zda je závodnik s aliasem uz zaregistrovan (bez vyřazených)
+        elseif ($alias == $line['Alias']) {
+            include './components/modal-warning-extended.php';
+            WarningModalExtended(
+                "Neúspěšná registrace",
+                "registrace.php",
+                "<div class='col-12 fw-bolder text-danger'>Závodník aliasem $alias už je zaregistrovaný",
+                "V případě, že jste zadali skutečně váš zaregistrovaný IPSC alias, <br>kontaktujte <a href='mailto:$match_data[Zavod_email_poradatel]?subject=Neúspěšná registrace - duplicitní IPSC alias'>pořadatele</a> nebo <a href='mailto:$match_data[Zavod_email_stats]?subject=Neúspěšná registrace - duplicitní alias'>statistika</a>.<br>Pokud jste zadali alias <strong>nezaregistrovaný na IPSC-TECH.ORG</strong>, <br>použijte tento <a href='https://ipscresults.org/Mobile/AliasRegistration.html' target='_new'>odkaz</a> a&nbsp;zaregistrujte se.<br>
+            <p class='text-danger text-center mb-3 fst-italic'>V průběhu celé série závodu byste měli používat stále stejný <mark>IPSC alias</mark>.</p>",
+                "Kliknutím na tlačítko <kbd>Zpět na registraci</kbd> se vraťte na registraci.",
+                "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'registrace.php';\">Zpět na registraci</button>"
+            );
+            exit;
+        } else {
 
-<script  type='text/javascript'>
-	$('#regInfo').modal({
-		backdrop: 'static',
-		keyboard: false
-	})
-</script>
-";
-	die();
-}	
+            // konecne registrujeme zavodnika
+            $stmt = $conn->prepare("
+		    INSERT INTO $table 
+		    (Alias,Prijmeni,Jmeno,ZP,VarSym,Region,Mail,Kategorie,Divize,Faktor,DatReg,RegistraceIP,Squad,Staff,Zavod)
+		    VALUES (?, ?, ?, NULLIF(?,''), ?, ?, ?, ?, ?, ?, ?, ?, ?, NULLIF(?,''),?)
+	");
+            $stmt->bind_param(
+                "ssssisssssssiss",
+                $alias,
+                $prijmeni,
+                $jmeno,
+                $zp,
+                $varsymbol,
+                $_POST['Region'],
+                $email,
+                $_POST['Kategorie'],
+                $divize,
+                $_POST['Faktor'],
+                $_POST['datreg'],
+                $ip,
+                $_POST['Squad'],
+                $_POST['Staff'],
+                $table
+            );
+            $stmt->execute();
+            $affected = $stmt->affected_rows;
+            $stmt->close();
 
-//kontrola, zda je závodnik s aliasem nebo jmenem a primenim uz zaregistrovan (bez vyřazených)
-$check="SELECT * FROM $table WHERE ((Alias = '$alias') OR (Jmeno = '$jmeno' AND Prijmeni = '$prijmeni')) AND Squad>=100";
-$check_z=mysql_query($check);
-$zavodnik=mysql_fetch_array($check_z);
+            if ($affected === 0) {
+                include './components/modal-warning.php';
+                WarningModal(
+                    "Chyba databáze",
+                    "registrace.php",
+                    "<div class='col-12 fw-bolder text-danger'>Při vkládání do databáze došlo k chybě!",
+                    "Zkuste to později nebo kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba aktualizace databáze [$table]'>pořadatele závodu</a>.",
+                    "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'registrace.php';\">Zpět na registraci</button>"
+                );
+                exit;
+            }
 
-if ($prijmeni==$zavodnik[Prijmeni] AND $jmeno==$zavodnik[Jmeno]){
-echo "
-<div class='text-center'>
-	<img src='./images/EC_ASCII.png'>
-</div>
-<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
-  <div class='modal-dialog'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h4 class='modal-title text-danger' id='exampleModalLabel'>Neúspěšná registrace</h4>
-      </div>
-      <div class='modal-body'>
-		<p class='font-weight-bold'>Závodník $jmeno $prijmeni už je zaregistrovaný</p>
-		<p class='font-italic'>Buď vás už někdo zaregistroval nebo máte stejné jméno a příjmení jako jiný závodník :-) V&nbsp;tom případě napište pro odlišení za Vaše příjmení $prijmeni nějaký další znak (např. <b>$prijmeni"."1 nejlépe bez mezery)</b>"." nebo z nabídky zvolte <b>ml./st.</b></p>
-		<p class='text-danger text-center mb-3 font-italic'><i class='far fa-exclamation-circle pr-2' style='font-size:16px'></i>Kombinaci <mark>Jméno Příjmení</mark> byste měli používat v průběhu celé série závodu.</p>
-		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Kliknutím na tlačítko <kbd>Zpět</kbd> se vraťte na registraci (údaje zadané do formuláře v příslušném squadu budou stále vyplněné). Zvolte tedy znovu squad $_POST[Squad] a upravte příjmení.</p>
-      </div>
-      <div class='modal-footer'>
-		<button class='btn btn-primary' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
-      </div>
-    </div>
-  </div>
-</div>
+            $stmt = $conn->prepare("
+		UPDATE $table 
+		SET klic = FLOOR(10 + (RAND(Cislo) * 9000))
+		WHERE klic is null or klic=0
+	");
+            $stmt->execute();
+            $stmt->close();
 
-<script  type='text/javascript'>
-var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
-	myModal.show();
-    backdrop: 'static',
-    keyboard: false
-</script>
+            // posilame potvrzeni registrace a platebni udaje zavodnihovi vcetne  odkazu na spravu ucasti (zruseni)
+            $stmt = $conn->prepare("
+		SELECT * FROM $table
+		WHERE Prijmeni = ? and Jmeno = ? and VarSym = ? and  Mail = ?
+	");
+            $stmt->bind_param(
+                "ssis",
+                $prijmeni,
+                $jmeno,
+                $varsymbol,
+                $email
+            );
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $stmt->close();
+            $line = mysqli_fetch_array($result);
 
-<script  type='text/javascript'>
-	$('#regInfo').modal({
-		backdrop: 'static',
-		keyboard: false
-	})
-</script>
-";
-	die();
-}
-if ($alias==$zavodnik[Alias]){
-echo "
-<div class='text-center'>
-	<img src='./images/EC_ASCII.png'>
-</div>
-<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
-  <div class='modal-dialog'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h4 class='modal-title text-danger' id='exampleModalLabel'>Neúspěšná registrace</h4>
-      </div>
-      <div class='modal-body'>
-		<p class='font-weight-bold'>Závodník s aliasem $alias už je zaregistrovaný</p>
-		<p class='font-italic mb-3'>V případě, že jste zadali skutečně váš zaregistrovaný alias, kontaktujte kontaktujte <a href='mailto:$match_data[Zavod_email_poradatel]?subject=Neúspěšná registrace - duplicitní alias'>pořadatele</a> nebo <a href='mailto:$match_data[Zavod_email_stats]?subject=Neúspěšná registrace - duplicitní alias'>statistika</a>.<br>Pokud jste zadali alias <strong>nezaregistrovaný na IPSC-TECH.ORG</strong>, použijte tento <a href='https://www.ipsc-tech.org/ics/hq/embdAliasReg.aspx' target='_new'>odkaz</a> a&nbsp;zaregistrujte se.</p>
-		<p class='text-danger text-center mb-3 font-italic'><i class='far fa-exclamation-circle pr-2' style='font-size:16px'></i>V průběhu celé série závodu byste měli používat stále stejný <mark>alias</mark>.</p>
-		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-2' style='font-size:16px'></i>Kliknutím na tlačítko <kbd>Zpět</kbd> se vraťte na registraci (údaje zadané do formuláře v příslušném squadu budou stále vyplněné). Zvolte tedy znovu squad $_POST[Squad] a opravte alias.</p>
-      </div>
-      <div class='modal-footer'>
-		<button class='btn btn-primary' onclick=\"window.location.href = 'javascript:history.go(-1)';\">Zpět</button>
-      </div>
-    </div>
-  </div>
-</div>
+            $squad = $line['Squad'];
+            $line['Staff'] == "RO" ? $Rozhodci = "ANO" : $Rozhodci = "NE";
+            $line['Staff'] == "POM" ? $Pomocnik = "ANO" : $Pomocnik = "NE";
 
-<script  type='text/javascript'>
-var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
-	myModal.show();
-    backdrop: 'static',
-    keyboard: false
-</script>
+            // Uprava terminu zaplaceni závodníka, co se zaregistruje mene nez Zavod_pocet_dni_na_platbu dni pred prematchem
+            $datumZavod = new DateTime($match_data['Zavod_datum']);
+            $datumPrematch = (clone $datumZavod)->modify("-1 days");
+            $datumRegistraceZavodnika = new DateTime();
+            $datumRegistraceZavodnika->setTimestamp($line['DatReg']);
+            if ($datumRegistraceZavodnika >= $datumPrematch->modify("-$match_data[Zavod_pocet_dni_na_platbu] days")) {
+                $paymentDeadline = $datumZavod->modify("-2 days")->format('j.m.Y');
+            } else {
+                $paymentDeadline = (clone $datumRegistraceZavodnika)->modify("+$match_data[Zavod_pocet_dni_na_platbu] days")->format('j.m.Y');
+            }
+            $tyden = str_replace(' ', '', htmlspecialchars($match_data['Zavod_datum'], ENT_QUOTES, 'UTF-8'));
+            $tyden = intval(date("W", strtotime($tyden)));
+            $varsymbol_new = "$tyden" . ($line['Cislo']);
 
-<script  type='text/javascript'>
-	$('#regInfo').modal({
-		backdrop: 'static',
-		keyboard: false
-	})
-</script>
-";
-	die();
-}
+            $stmt = $conn->prepare("
+    		UPDATE $table 
+    		SET VarSym = ?,
+    		DatPay = ?
+    		WHERE VarSym = ?
+    	    ");
+            $stmt->bind_param(
+                "isi",
+                $varsymbol_new,
+                $paymentDeadline,
+                $varsymbol
+            );
 
-else
-{
-  $query="INSERT INTO ".$table." (Alias,Prijmeni,Jmeno,ZP,VarSym,Region,Mail,Kategorie,Divize,Faktor,DatReg,RegistraceIP,Squad,Staff,Zavod) 
-  VALUES (
-  '$alias',
-  '$prijmeni',
-  '$jmeno',
-  NULLIF('$_POST[ZP]',''),
-  '$varsymbol',
-  '$_POST[Region]',
-  '$_POST[Email]',
-  '$_POST[Kategorie]',
-  '$pidiv',
-  '$_POST[Faktor]',
-  '$_POST[datreg]',
-  '$ip',
-  '$_POST[Squad]',
-  NULLIF('$_POST[Staff]',''),
-  '$table'
-  )";
+            $stmt->execute();
+            $stmt->close();
 
-  $result = mysql_query($query);
-  if (!$result) {
-       echo"<BR> <FONT COLOR=RED>Při vkládání do databáze došlo k chybě. Zkuste to později.</FONT><BR>\n";
-	     echo mysql_errno($mysql) . ": " . mysql_error($mysql) . "\n";
-       die();
-  };
-}
+            $varsymbol = $varsymbol_new;
+            // nice názvy pro mail
+            $faktorLabels = [
+                "MIN" => "Minor",
+                "MAJ"  => "Major"
+            ];
+            $faktorLabel = $faktorLabels[$line['Faktor']] ?? htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8');
 
-$result = mysql_query("update $table set klic= FLOOR(10 + (RAND(Cislo) * 9000)) where klic is null or klic=0;");
+            $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
+            $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
+            // nice názvy pro mail
 
-// Zaslani potvrzeni registrace a platebnich udaju zavodnihovi s odkazy na spravu ucasti (zruseni)
-  $query="select * from $table where Prijmeni='$prijmeni' and Jmeno='$jmeno' and VarSym='$varsymbol' and  Mail='$_POST[Email]';";
-  $strelec=mysql_query($query);
-  $z=mysql_fetch_array($strelec);
-  $squad=$z[Squad];
+            $STRELEC_ALIAS = "<strong>IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "</strong>";
+            $STRELEC_SHOOTER = "Střelec: " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8');
+            $STRELEC_CATEGORY = "Kategorie: $nazev_kategorie";
+            $STRELEC_DIVISION = "Divize: $nazev_divize $faktorLabel";
+            $STRELEC_SQUAD = "Squad: $squad";
+            $STRELEC_RO = "Rozhodčí: $Rozhodci";
+            $STRELEC_POM = "Pomocník: $Pomocnik";
+            $STRELEC_VS = "Variabilní symbol: $varsymbol";
+            $link_cancel = "<a href='" . htmlspecialchars($web_adresa, ENT_QUOTES, 'UTF-8') . "/zrus_ucast.php?id=" . rawurlencode($line['Cislo']) . "&klic=" . rawurlencode($line['klic']) . "'><strong>zrušit účast</strong></a>";
 
-   if ($z[Staff]=="RO") {
-     $Rozhodci="ANO";
-   } else {
-     $Rozhodci="NE";
-   }
+            include './components/modal-warning.php';
+            WarningModal(
+                "Úspěšná registrace",
+                "registrace.php",
+                "<div class='col-12 fw-bolder text-danger'>Zaregistrovali jsme závodníka s těmito údaji<br>
+                <div class='font-monospace d-inline-block text-start mt-2'>
+                    $STRELEC_ALIAS<br>
+                    $STRELEC_SHOOTER<br>
+                    $STRELEC_DIVISION<br>
+                    $STRELEC_CATEGORY<br>
+                    $STRELEC_SQUAD<br><br>
+                    $STRELEC_RO<br>
+                    $STRELEC_POM
+                </div>
+                ",
+                "Potvrzení registrace bylo odesláno na adresu $email",
+                "<button type='button' class='btn btn-primary' onclick=\"window.location.href = 'registrace.php';\">Nová registrace</button>
+                 <button type='button' class='btn btn-outline-dark' onclick=\"window.location.href = 'index.php';\">Zavřít</button>
+                "
+            );
 
-   if ($z[Staff]=="POM") {
-     $Pomocnik="ANO";
-   } else {
-     $Pomocnik="NE";
-   }
+            // posilame mail zavodnikovi
+            $STRELEC .= "<strong>IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "</strong>" . "\r\n";
+            $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " [$link_cancel]\r\n";
+            $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
+            $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
+            $STRELEC .= "Squad: $squad" . "\r\n\r\n";
+            $STRELEC .= "<i>Rozhodčí: $Rozhodci" . "\r\n";
+            $STRELEC .= "Pomocník: $Pomocnik</i>" . "\r\n";
 
-  $prematch_datum=date('Y-m-d', strtotime("-1 day", strtotime($match_data[Zavod_datum])));
-  $DatReg=date('d.m.Y', $z[DatReg]);
+            $qrParams = [
+                'accountNumber' => $match_data['Banka_ucet_cislo'],
+                'bankCode'      => $match_data['Banka_ucet_kod'],
+                'amount'        => $match_data['Banka_ucet_CASTKA'],
+                'currency'      => $match_data['Banka_ucet_MENA'],
+                'vs'            => $varsymbol,
+                'message'       => $match_data['Zavod'],
+                'size'          => 100
+            ];
+            $qr_link = 'https://api.paylibo.com/paylibo/generator/czech/image?' . http_build_query($qrParams);
 
-  $payLimit=$match_data[Zavod_pocet_dni_na_platbu];
+            $from_text = "";
+            $from = htmlspecialchars($match_data['Zavod_email_from'], ENT_QUOTES, 'UTF-8');
+            $to = $email;
+            $subject = "Registrace " . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8');
+            $dnes = date_format(new DateTime(), "j.n.Y H:i");
+            $mena = $match_data['Banka_ucet_MENA'];
 
-  // Převod datumů na objekty typu DateTime
-  $prematchDateTime = new DateTime($prematch_datum);
-  $regDateTime = new DateTime($datReg);
+            if ($match_data['Payment_before'] == "") {
+                $message = $email_registrace_zavod_bez_platby_predem;
+            } elseif (($line['Staff'] == "RO") or ($line['Staff'] == "POM")) {
+                $message = $email_registrace_bez_platby_text;
+                $stmt = $conn->prepare("
+        		UPDATE $table 
+        		SET Zaplaceno = 'on',
+                Castka = '0',
+                Mena = ?, 
+                DatumZaplaceni = ?
+                WHERE Cislo = ? and klic = ?
+        	    ");
+                $stmt->bind_param(
+                    "ssii",
+                    $mena,
+                    $dnes,
+                    $line['Cislo'],
+                    $line['klic']
+                );
+                $stmt->execute();
+                $stmt->close();
+            } elseif ($line['Squad'] == "-2") {
+                $message = $email_registrace_cekatel_text;
+            } else {
+                $message = $email_registrace_platba_text;
+            }
 
-  // Odčítání 10 dní od datumu konání prematche
-  $prematchDateTime->modify("-$payLimit days");
+            $message = str_replace("##STRELEC##", $STRELEC, $message);
+            $message = str_replace("##VAR_SYMBOL##", $varsymbol, $message);
+            $message = str_replace("##QR_LINK##", $qr_link, $message);
+            $message = str_replace("##DatPay##", $paymentDeadline, $message);
 
-  if ($regDateTime >= $prematchDateTime) {
-      $DatPay=date('d.m.Y', strtotime("-2 day", strtotime($match_data[Zavod_datum])));
-  } else {
-  	  $DatPay=date('d.m.Y', strtotime("+$match_data[Zavod_pocet_dni_na_platbu] day", strtotime($DatReg)));
-  }
-
-  $tyden=str_replace(' ','',$match_data[Zavod_datum]);
-  $tyden=intval(date("W",strtotime($tyden)));
-  $varsymbol_new="$tyden".($z[Cislo]);
-
-  $query="update ".$table." set VarSym='$varsymbol_new',DatPay='$DatPay' where VarSym='$varsymbol'";
-
-  $res=mysql_query($query);
-  $varsymbol=$varsymbol_new;
-
-  $STRELEC_ALIAS="<b>Alias: $z[Alias]<b>"."\r\n";
-  $STRELEC_SHOOTER="Střelec: #$z[Cislo] $z[Prijmeni] $z[Jmeno]"."\r\n";
-  $STRELEC_CATEGORY="Kategorie: $z[Kategorie]"."\r\n";
-  $STRELEC_DIVISION="Divize: $z[Divize] $z[Faktor]"."\r\n";
-  $STRELEC_SQUAD="Squad: $squad"."\r\n";
-  $STRELEC_RO="Rozhodčí: $Rozhodci"."\r\n";
-  $STRELEC_POM="Pomocník: $Pomocnik"."\r\n";
-  $STRELEC_VS="Variabilní symbol: $varsymbol"."\r\n";
-
-  $link_cancel="<a href='$web_adresa/zrus_ucast.php?id=$z[Cislo]&klic=$z[klic]'><strong>zrušit účast</strong></a>";
-
-echo "
-<div class='text-center'>
-	<img class='registrovat-bkg' src='./images/EC_ASCII.png'>
-</div>
-<div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
-  <div class='modal-dialog'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h4 class='modal-title text-success' id='exampleModalLabel'>Úspěšná registrace</h4>
-      </div>
-      <div class='modal-body'>
-		<p class='font-weight-bold mb-1'>Zaregistrovali jsme závodníka s těmito údaji</p>
-		<p class='text-monospace ml-3'>
-		$STRELEC_ALIAS<br>
-		$STRELEC_SHOOTER<br>
-		$STRELEC_CATEGORY<br>
-		$STRELEC_DIVISION<br>
-		$STRELEC_SQUAD<br>
-		$STRELEC_RO<br>
-		$STRELEC_POM<br>
-		<p class='text-primary text-center mb-0'><i class='far fa-info-circle pr-1' style='font-size:16px'></i>Potvrzení registrace s podklady pro platbu startovného byly odeslány na adresu $_POST[Email].</p>
-		<p class='text-center mb-0 pt-2'>Platbu je nutné provést do $match_data[Zavod_pocet_dni_na_platbu] dnů, jinak bude registrace stornována.</p>
-      </div>
-      <div class='modal-footer mb-3'>
-		<a href='./registrace.php' rel='modal:close'><button type='button' class='btn btn-primary'>Nová registrace</button></a>&nbsp;&nbsp;
-		<a href='./kontrola_aliasu.php' rel='modal:close'><button type='button' class='$ZobrazovatAliasyClass btn btn-success'>Kontrola aliasů série</button></a>&nbsp;&nbsp;
-		<a href='./index.php' rel='modal:close'><button type='button' class='btn btn-outline-dark'>Zavřít</button></a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script  type='text/javascript'>
-var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
-	myModal.show();
-    backdrop: 'static',
-    keyboard: false
-</script>
-
-<script  type='text/javascript'>
-	$('#regInfo').modal({
-		backdrop: 'static',
-		keyboard: false
-	})
-</script>
-";
-
-// priprava podkladu pro email zavodnikovi
-  $STRELEC="<b>Alias: $z[Alias]</b>"."\r\n";
-  $STRELEC.="Střelec: #$z[Cislo] $z[Prijmeni] $z[Jmeno] [$link_cancel]"."\r\n";
-  $STRELEC.="Kategorie: $z[Kategorie]"."\r\n";
-  $STRELEC.="Divize: $z[Divize] $z[Faktor]"."\r\n";
-  $STRELEC.="Squad: $squad"."\r\n\r\n";
-  $STRELEC.="<i>Rozhodčí: $Rozhodci"."\r\n";
-  $STRELEC.="Pomocnik: $Pomocnik</i>"."\r\n";
-
-  $DatReg=date('d.m.Y', $z[DatReg]);
-
-  $qr_link="https://api.paylibo.com/paylibo/generator/czech/image?accountNumber=$match_data[Banka_ucet_cislo]&bankCode=$match_data[Banka_ucet_kod]&amount=$match_data[Banka_ucet_CASTKA]&currency=$match_data[Banka_ucet_MENA]&vs=".$varsymbol."&message=$match_data[Zavod]&size=100";
-
-  $from_text="";
-  $from=$match_data[Zavod_email_from];
-  $to=$_POST[Email];
-  $subject = "Registrace ".$match_data[Zavod];
-
-	if (($z[Staff]=="RO") or ($z[Staff]=="POM")) {
-		$message=$email_registrace_bez_platby_text;
-		$query="UPDATE ".$table." SET Zaplaceno='on' ,Castka='0',Mena='$match_data[Banka_ucet_MENA]',DatumZaplaceni='$dnes' WHERE Cislo='$z[Cislo]' AND klic='$z[klic]'";
-		$res=mysql_query($query);
-	} elseif ($_POST[Squad]=="-2") {
-		$message=$email_registrace_cekatel_text;
-	} elseif ($match_data[Payment_before]=="") {
- 		$message=$email_registrace_zavod_bez_platby_predem;
-	} else {
-		$message=$email_registrace_platba_text;
-	}
-  $message=str_replace("##ALIAS##",$STRELEC,$message);
-  $message=str_replace("##STRELEC##",$STRELEC,$message);
-  $message=str_replace("##VAR_SYMBOL##",$varsymbol,$message);
-  $message=str_replace("##QR_LINK##",$qr_link,$message);
-  $message=str_replace("##DatPay##",$DatPay,$message);
-
-// posilame email zavodnikovi
-  email($from_text,$from,$to,$subject, $message);
-
-// zapiseme do DB, ze registracni mail byl odeslan
-  $query_odeslano="UPDATE ".$table." SET OdeslanRegMail='1' WHERE Mail='$_POST[Email]' AND OdeslanRegMail IS NULL";
-  $res3=mysql_query($query_odeslano);
- };
-
-};
-
-
-
-// VYRAZENI ZAVODNIKA
-if (isset($_GET[cancel_shooter])) {
-$ip=($_SERVER["REMOTE_ADDR"]);
-
-$query="select * from $table WHERE Cislo='$_POST[shooterID]' and klic='$_POST[shooterKEY]'";
-$result=mysql_query($query);
-
-if (!$result) {
-  die('<strong><FONT COLOR=RED>Nelze dohledat závodníka</FONT></strong>');
+            $send_email = email($from_text, $from, $to, $subject, $message);
+            if (!$send_email) {
+                include './components/modal-warning.php';
+                WarningModal(
+                    "Chyba odeslání emailu",
+                    "index.php",
+                    "<div class='col-12 fw-bolder text-danger'>Při odeslání emailu došlo k chybě!",
+                    "Závodník je úspěšně zaregistrovaný. Kontaktujte <a href='mailto:" . htmlspecialchars($line['Zavod_email_poradatel'], ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba odeslani emailu na [$email]'>pořadatele závodu</a>.",
+                    "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'index.php';\">Zpět</button>"
+                );
+                exit;
+            } else {
+                //zapiseme do DB, ze registracni mail byl odeslan
+                $stmt = $conn->prepare("
+            	UPDATE $table 
+		        SET OdeslanRegMail = '1'
+		        WHERE Mail = ? AND OdeslanRegMail IS NULL
+	            ");
+                $stmt->bind_param(
+                    "s",
+                    $email
+                );
+                $stmt->execute();
+                $stmt->close();
+            };
+        };
+    };
 }
 
-$line=mysql_fetch_array($result);
+// VYRAZENI ZAVODNIKA - OPTIMALIZACE DOKONCENA
+if (isset($_GET['cancel_shooter'])) {
+    $ip = ($_SERVER["REMOTE_ADDR"]);
 
-$query="UPDATE ".$table." SET SquadReg='$line[Squad]',Squad='-9',Vyrazeno='$dnes',VyrazenoIP='$ip' WHERE Cislo='$_POST[shooterID]' and klic='$_POST[shooterKEY]'";
-$result = mysql_query($query);
+    $line = getShooterData($conn, $table, $_POST['shooterID'], $_POST['shooterKEY']);
 
-if (!$result) {
-	echo "<center>";
-	echo"<p style='color:#ff0000;font-weight:bolder;'>Při vkládání do databáze došlo k chybě. Zkuste to později nebo kontaktujte <a href='mailto:$vyvojar?subject=$match_data[Zavod] - chyba aktualizace databáze [$table]'>správce aplikace</a>.</p>";
-	echo "<pre>MySQL Error: ". mysql_error();"</pre>";
-	echo "<br><br><button style=\" padding:3px; cursor:pointer;\" onclick=\"window.location.href = 'index.php';\">Zpět</button>";
-	echo "</center>";
-	exit;
+    if (!$line) {
+        include './components/modal-warning.php';
+        WarningModal(
+            "Vyřazení závodníka",
+            "index.php",
+            "<div class='col-12 fw-bolder text-danger'>Nelze dohledat závodníka.",
+            "Kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba vyrazeni zavodnika'>pořadatele závodu</a>.",
+            "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'registrace.php';\">Zpět</button>"
+        );
+        exit;
+    } else {
+        $stmt = $conn->prepare("
+		UPDATE $table 
+		SET SquadReg = ?,
+		Squad = '-9', 
+		Vyrazeno = ?, 
+		VyrazenoIP = ? 
+		WHERE Cislo = ? AND klic = ?
+	");
+        $stmt->bind_param(
+            "sssii",
+            $line['Squad'],
+            $dnes,
+            $ip,
+            $_POST['shooterID'],
+            $_POST['shooterKEY']
+        );
+        $stmt->execute();
+        $affected = $stmt->affected_rows;
+        $stmt->close();
+    }
+
+    if ($affected === 0) {
+        include './components/modal-warning.php';
+        WarningModal(
+            "Chyba databáze",
+            "registrace.php",
+            "<div class='col-12 fw-bolder text-danger'>Při vkládání do databáze došlo k chybě!",
+            "Zkuste to později nebo kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba aktualizace databáze [$table]'>pořadatele závodu</a>.",
+            "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'registrace.php';\">Zpět na registraci</button>"
+        );
+        exit;
+    } else {
+        include './components/modal-warning.php';
+        WarningModal(
+            "Vyřazení závodníka",
+            "index.php",
+            "<div class='col-12 fw-bolder text-danger'>Závodník #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ")<br>byl vyřazen ze závodu $match_data[Zavod].",
+            "Email s informací byl odeslán na adresu " . htmlspecialchars($line['Mail'], ENT_QUOTES, 'UTF-8') . " zadanou při registraci.",
+            "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'index.php';\">Zavřít</button>"
+        );
+    }
+    // posilame mail zavodnikovi
+    // nice názvy pro mail
+    $faktorLabels = [
+        "MIN" => "Minor",
+        "MAJ"  => "Major"
+    ];
+    $faktorLabel = $faktorLabels[$line['Faktor']] ?? htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8');
+
+    $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
+    $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
+    // nice názvy pro mail
+
+    $STRELEC .= "IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "\r\n";
+    $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . "\r\n";
+    $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
+    $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
+
+    $from_text = "";
+    $from = htmlspecialchars($match_data['Zavod_email_from'], ENT_QUOTES, 'UTF-8');
+    $to = htmlspecialchars($line['Mail'], ENT_QUOTES, 'UTF-8');
+    $subject = "Zrušení registrace závodníka " . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8');
+    $message = $email_text_vyrazeni_vlastni;
+    $message = str_replace("##STRELEC##", $STRELEC, $message);
+
+    $send_email = email($from_text, $from, $to, $subject, $message);
 }
-
-else {
-$query="select * from $table WHERE Cislo='$_POST[shooterID]' and klic='$_POST[shooterKEY]'";
-$result = mysql_query($query);
-$line=mysql_fetch_array($result);
-	echo "
- <div class='text-center'>
-	<img src='./images/EC_ASCII.png'>
- </div>
- <div class='modal fade' id='regInfo' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
-	<div class='modal-dialog'>
-		<div class='modal-content'>
-		<div class='modal-header bg-danger text-center'>
-			<h4 class='modal-title text-white w-100 font-weight-bold py-2'>Vyřazení závodníka</h4><br>
-			<button type='button' class='close' data-dismiss='modal' aria-label='Close' onclick='window.location.href = 'index.php';'>
-			<span aria-hidden='true' class='text-white'>&times;</span>
-			</button>
-		</div>
-		<div class='modal-body text-center '>
-			<div class='col-12 font-weight-bolder text-danger pb-2'>
-				Závodník $line[Jmeno] $line[Prijmeni] '$line[Alias]' byl vyřazen ze závodu <strong>$match_data[Zavod]</strong>.
-			</div>
-			<div class='col-12 pb-3'>
-				Děkujeme za uvolnění místa případnému dalšímu zájemci.
-			</div>
-			<div class='col-12'>
-				<i class='far fa-info-circle pr-1' style='font-size:13px'></i>Email s informací byl odeslán na adresu $line[Mail] zadanou při registraci.
-			</div>
-		</div>
-		<div class='modal-footer border-top-0 col-12'>
-			<button type='button' class='btn btn-outline-dark' onclick=\"window.location.href = 'index.php';\">Zavřít</button>
-		</div>
-		</div>
- </div>
- </div>
-
-<script  type='text/javascript'>
-var myModal = new bootstrap.Modal(document.getElementById('regInfo'));
-	myModal.show();
-    backdrop: 'static',
-    keyboard: false
-</script>
-
-<script  type='text/javascript'>
-	$('#regInfo').modal({
-		backdrop: 'static',
-		keyboard: false
-	})
-</script>
-
-";
-}
-
-// posilame mail zavodnikovi
-$query="select * from $table where Cislo='$_POST[shooterID]' and klic='$_POST[shooterKEY]'";
-$strelci=mysql_query($query);
-$z=mysql_fetch_array($strelci);
-
-   $STRELEC="ALIAS: $z[Alias]"."\r\n";
-   $STRELEC.="STŘELEC: #$z[Cislo] $z[Prijmeni] $z[Jmeno]"."\r\n";
-   $STRELEC.="KATEGORIE: $z[Kategorie]"."\r\n";
-   $STRELEC.="DIVIZE: $z[Divize] $z[Faktor]"."\r\n";
-
-   $from_text="";
-   $from=$match_data[Zavod_email_from];
-   $to=$z[Mail];
-   $subject = "Zrušení registrace závodníka ".$match_data[Zavod];
-   $message=$email_text_vyrazeni_vlastni;
-   $message=str_replace("##STRELEC##", $STRELEC, $message);
-
-$send_email = email($from_text,$from,$to,$subject, $message);
-
-}
-// KONEC VYRAZENI ZAVODNIKA
-
-?>
