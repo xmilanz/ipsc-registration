@@ -14,106 +14,204 @@ require_once __DIR__ . '/../config/mail_texty.php';
 $conn = new mysqli($db_host, $db_login, $db_pass, $db_dtb);
 // KONFIGRACE ZAVODU 
 if (isset($_GET['match_config'])) {
-
     if ($match_data['Payment_before'] == "on") {
-        $query = "UPDATE ecbs5_match_config SET
-   		Banka_ucet_CASTKA='$_POST[Banka_ucet_CASTKA]',
-   		Banka_ucet_cislo='$_POST[Banka_ucet_cislo]',
-   		Banka_ucet_kod='$_POST[Banka_ucet_kod]',
-   		Banka_nazev='$_POST[Banka_nazev]',
-   		Banka_adresa='$_POST[Banka_adresa]',
-   		Klub_web='$_POST[Klub_web]',
-   		Zavod='$_POST[Zavod]',
-   		Zavod_datum='$_POST[Zavod_datum]',
-   		Zavod_cas_registrace='$_POST[Zavod_cas_registrace]',
-   		Zavod_zacatek_registrace='$_POST[Zavod_zacatek_registrace]',
-   		Zavod_konec_registrace='$_POST[Zavod_konec_registrace]',
-   		Zavod_registrace_pozastaveno='$_POST[Zavod_registrace_pozastaveno]',
-   		Zavod_more_divisions='$_POST[Zavod_more_divisions]',
-   		Zavod_zobrazovat_sponzory='$_POST[Zavod_zobrazovat_sponzory]',
-   		Zavod_zbrojni_prukaz='$_POST[Zavod_zbrojni_prukaz]',
-   		Web_zobrazovat_situace='$_POST[Web_zobrazovat_situace]',
-   		Web_zobrazovat_aliasy='$_POST[Web_zobrazovat_aliasy]',
-   		Zavod_cas_prematch='$_POST[Zavod_cas_prematch]',
-   		Zavod_cas_prezence='$_POST[Zavod_cas_prezence]',
-   		Zavod_cas_main='$_POST[Zavod_cas_main]',
-   		Zavod_cas_main_dopoledne='$_POST[Zavod_cas_main_dopoledne]',
-   		Zavod_cas_main_odpoledne='$_POST[Zavod_cas_main_odpoledne]',
-   		Zavod_misto='$_POST[Zavod_misto]',
-   		Zavod_misto_mapa='$_POST[Zavod_misto_mapa]',
-   		Zavod_poradatel='$_POST[Zavod_poradatel]',
-   		Zavod_poradatel_adresa='$_POST[Zavod_poradatel_adresa]',
-   		Zavod_match_director='$_POST[Zavod_match_director]',
-   		Zavod_email_poradatel='$_POST[Zavod_email_poradatel]',
-   		Zavod_telefon_poradatel='$_POST[Zavod_telefon_poradatel]',
-   		Zavod_range_master='$_POST[Zavod_range_master]',
-   		Zavod_email_range_master='$_POST[Zavod_email_range_master]',
-   		Zavod_telefon_range_master='$_POST[Zavod_telefon_range_master]',
-   		Zavod_stats='$_POST[Zavod_stats]',
-   		Zavod_email_stats='$_POST[Zavod_email_stats]',
-   		Zavod_telefon_stats='$_POST[Zavod_telefon_stats]',
-   		Zavod_hospodar='$_POST[Zavod_hospodar]',
-   		Zavod_email_hospodar='$_POST[Zavod_email_hospodar]',
-   		Zavod_telefon_hospodar='$_POST[Zavod_telefon_hospodar]',
-   		Zavod_email_from='$_POST[Zavod_email_from]',
-   		Zavod_stages='$_POST[Zavod_stages]',
-   		Zavod_min_pocet_ran='$_POST[Zavod_min_pocet_ran]',
-   		Zavod_pocet_dni_na_platbu='$_POST[Zavod_pocet_dni_na_platbu]',
-   		Zavod_vysledky='$_POST[Zavod_vysledky]',
-   		Squad_main_max='$_POST[Squad_main_max]',
-   		Squad_prem_max='$_POST[Squad_prem_max]',
-   		Payment_before='$_POST[Payment_before]'
-
-   	WHERE Zavod_id='$table'";
+        $stmt = $conn->prepare("
+	UPDATE ecbs5_match_config 
+        SET Banka_ucet_CASTKA = ?,
+   	 Banka_ucet_cislo = ?,
+   	 Banka_ucet_kod = ?,
+   	 Banka_nazev = ?,
+   	 Banka_adresa = ?,
+   	 Klub_web = ?,
+   	 Zavod = ?,
+   	 Zavod_datum = ?,
+   	 Zavod_cas_registrace = ?,
+   	 Zavod_zacatek_registrace = ?,
+   	 Zavod_konec_registrace = ?,
+   	 Zavod_registrace_pozastaveno = ?,
+   	 Zavod_more_divisions = ?,
+   	 Zavod_zobrazovat_sponzory = ?,
+   	 Zavod_zbrojni_prukaz = ?,
+   	 Web_zobrazovat_situace = ?,
+   	 Web_zobrazovat_aliasy = ?,
+   	 Zavod_cas_prematch = ?,
+   	 Zavod_cas_prezence = ?,
+   	 Zavod_cas_main = ?,
+   	 Zavod_cas_main_dopoledne = ?,
+   	 Zavod_cas_main_odpoledne = ?,
+   	 Zavod_misto = ?,
+   	 Zavod_misto_mapa = ?,
+   	 Zavod_poradatel = ?,
+   	 Zavod_poradatel_adresa = ?,
+   	 Zavod_match_director = ?,
+   	 Zavod_email_poradatel = ?,
+   	 Zavod_telefon_poradatel = ?,
+   	 Zavod_range_master = ?,
+   	 Zavod_email_range_master = ?,
+   	 Zavod_telefon_range_master = ?,
+   	 Zavod_stats = ?,
+   	 Zavod_email_stats = ?,
+   	 Zavod_telefon_stats = ?,
+   	 Zavod_hospodar = ?,
+   	 Zavod_email_hospodar = ?,
+   	 Zavod_telefon_hospodar = ?,
+   	 Zavod_email_from = ?,
+   	 Zavod_stages = ?,
+   	 Zavod_min_pocet_ran = ?,
+   	 Zavod_pocet_dni_na_platbu = ?,
+   	 Zavod_vysledky = ?,
+   	 Squad_main_max = ?,
+   	 Squad_prem_max = ?,
+   	 Payment_before = ?
+    WHERE Zavod_id = ?
+    ");
+        $stmt->bind_param(
+            "sssssssssssssssssssssssssssssssssssssssiiisiiss",
+            $_POST['Banka_ucet_CASTKA'],
+            $_POST['Banka_ucet_cislo'],
+            $_POST['Banka_ucet_kod'],
+            $_POST['Banka_nazev'],
+            $_POST['Banka_adresa'],
+            $_POST['Klub_web'],
+            $_POST['Zavod'],
+            $_POST['Zavod_datum'],
+            $_POST['Zavod_cas_registrace'],
+            $_POST['Zavod_zacatek_registrace'],
+            $_POST['Zavod_konec_registrace'],
+            $_POST['Zavod_registrace_pozastaveno'],
+            $_POST['Zavod_more_divisions'],
+            $_POST['Zavod_zobrazovat_sponzory'],
+            $_POST['Zavod_zbrojni_prukaz'],
+            $_POST['Web_zobrazovat_situace'],
+            $_POST['Web_zobrazovat_aliasy'],
+            $_POST['Zavod_cas_prematch'],
+            $_POST['Zavod_cas_prezence'],
+            $_POST['Zavod_cas_main'],
+            $_POST['Zavod_cas_main_dopoledne'],
+            $_POST['Zavod_cas_main_odpoledne'],
+            $_POST['Zavod_misto'],
+            $_POST['Zavod_misto_mapa'],
+            $_POST['Zavod_poradatel'],
+            $_POST['Zavod_poradatel_adresa'],
+            $_POST['Zavod_match_director'],
+            $_POST['Zavod_email_poradatel'],
+            $_POST['Zavod_telefon_poradatel'],
+            $_POST['Zavod_range_master'],
+            $_POST['Zavod_email_range_master'],
+            $_POST['Zavod_telefon_range_master'],
+            $_POST['Zavod_stats'],
+            $_POST['Zavod_email_stats'],
+            $_POST['Zavod_telefon_stats'],
+            $_POST['Zavod_hospodar'],
+            $_POST['Zavod_email_hospodar'],
+            $_POST['Zavod_telefon_hospodar'],
+            $_POST['Zavod_email_from'],
+            $_POST['Zavod_stages'],
+            $_POST['Zavod_min_pocet_ran'],
+            $_POST['Zavod_pocet_dni_na_platbu'],
+            $_POST['Zavod_vysledky'],
+            $_POST['Squad_main_max'],
+            $_POST['Squad_prem_max'],
+            $_POST['Payment_before'],
+            $table
+        );
     } else {
-        $query = "UPDATE ecbs5_match_config SET
-   		Banka_ucet_CASTKA='$_POST[Banka_ucet_CASTKA]',
-   		Klub_web='$_POST[Klub_web]',
-   		Zavod='$_POST[Zavod]',
-   		Zavod_datum='$_POST[Zavod_datum]',
-   		Zavod_cas_registrace='$_POST[Zavod_cas_registrace]',
-   		Zavod_zacatek_registrace='$_POST[Zavod_zacatek_registrace]',
-   		Zavod_konec_registrace='$_POST[Zavod_konec_registrace]',
-   		Zavod_registrace_pozastaveno='$_POST[Zavod_registrace_pozastaveno]',
-   		Zavod_more_divisions='$_POST[Zavod_more_divisions]',
-   		Zavod_zobrazovat_sponzory='$_POST[Zavod_zobrazovat_sponzory]',
-   		Zavod_zbrojni_prukaz='$_POST[Zavod_zbrojni_prukaz]',
-   		Web_zobrazovat_situace='$_POST[Web_zobrazovat_situace]',
-   		Web_zobrazovat_aliasy='$_POST[Web_zobrazovat_aliasy]',
-   		Zavod_cas_prematch='$_POST[Zavod_cas_prematch]',
-   		Zavod_cas_prezence='$_POST[Zavod_cas_prezence]',
-   		Zavod_cas_main='$_POST[Zavod_cas_main]',
-   		Zavod_cas_main_dopoledne='$_POST[Zavod_cas_main_dopoledne]',
-   		Zavod_cas_main_odpoledne='$_POST[Zavod_cas_main_odpoledne]',
-   		Zavod_misto='$_POST[Zavod_misto]',
-   		Zavod_misto_mapa='$_POST[Zavod_misto_mapa]',
-   		Zavod_poradatel='$_POST[Zavod_poradatel]',
-   		Zavod_poradatel_adresa='$_POST[Zavod_poradatel_adresa]',
-   		Zavod_match_director='$_POST[Zavod_match_director]',
-   		Zavod_email_poradatel='$_POST[Zavod_email_poradatel]',
-   		Zavod_telefon_poradatel='$_POST[Zavod_telefon_poradatel]',
-   		Zavod_range_master='$_POST[Zavod_range_master]',
-   		Zavod_email_range_master='$_POST[Zavod_email_range_master]',
-   		Zavod_telefon_range_master='$_POST[Zavod_telefon_range_master]',
-   		Zavod_stats='$_POST[Zavod_stats]',
-   		Zavod_email_stats='$_POST[Zavod_email_stats]',
-   		Zavod_telefon_stats='$_POST[Zavod_telefon_stats]',
-   		Zavod_hospodar='$_POST[Zavod_hospodar]',
-   		Zavod_email_hospodar='$_POST[Zavod_email_hospodar]',
-   		Zavod_telefon_hospodar='$_POST[Zavod_telefon_hospodar]',
-   		Zavod_email_from='$_POST[Zavod_email_from]',
-   		Zavod_stages='$_POST[Zavod_stages]',
-   		Zavod_min_pocet_ran='$_POST[Zavod_min_pocet_ran]',
-   		Zavod_pocet_dni_na_platbu='$_POST[Zavod_pocet_dni_na_platbu]',
-   		Zavod_vysledky='$_POST[Zavod_vysledky]',
-   		Squad_main_max='$_POST[Squad_main_max]',
-   		Squad_prem_max='$_POST[Squad_prem_max]',
-   		Payment_before='$_POST[Payment_before]'
-   	WHERE Zavod_id='$table'";
+        $stmt = $conn->prepare("
+	UPDATE ecbs5_match_config 
+        SET Banka_ucet_CASTKA = ?,
+     Klub_web = ?,
+     Zavod = ?,
+     Zavod_datum = ?,
+     Zavod_cas_registrace = ?,
+     Zavod_zacatek_registrace = ?,
+     Zavod_konec_registrace = ?,
+     Zavod_registrace_pozastaveno = ?,
+     Zavod_more_divisions = ?,
+     Zavod_zobrazovat_sponzory = ?,
+     Zavod_zbrojni_prukaz = ?,
+     Web_zobrazovat_situace = ?,
+     Web_zobrazovat_aliasy = ?,
+     Zavod_cas_prematch = ?,
+     Zavod_cas_prezence = ?,
+     Zavod_cas_main = ?,
+     Zavod_cas_main_dopoledne = ?,
+     Zavod_cas_main_odpoledne = ?,
+     Zavod_misto = ?,
+     Zavod_misto_mapa = ?,
+     Zavod_poradatel = ?,
+     Zavod_poradatel_adresa = ?,
+     Zavod_match_director = ?,
+     Zavod_email_poradatel = ?,
+     Zavod_telefon_poradatel = ?,
+     Zavod_range_master = ?,
+     Zavod_email_range_master = ?,
+     Zavod_telefon_range_master = ?,
+     Zavod_stats = ?,
+     Zavod_email_stats = ?,
+     Zavod_telefon_stats = ?,
+     Zavod_hospodar = ?,
+     Zavod_email_hospodar = ?,
+     Zavod_telefon_hospodar = ?,
+     Zavod_email_from = ?,
+     Zavod_stages = ?,
+     Zavod_min_pocet_ran = ?,
+     Zavod_pocet_dni_na_platbu = ?,
+     Zavod_vysledky = ?,
+     Squad_main_max = ?,
+     Squad_prem_max = ?,
+     Payment_before = ?
+    WHERE Zavod_id = ?
+    ");
+        $stmt->bind_param(
+            "sssssssssssssssssssssssssssssssssssiiisiiss",
+            $_POST['Banka_ucet_CASTKA'],
+            $_POST['Klub_web'],
+            $_POST['Zavod'],
+            $_POST['Zavod_datum'],
+            $_POST['Zavod_cas_registrace'],
+            $_POST['Zavod_zacatek_registrace'],
+            $_POST['Zavod_konec_registrace'],
+            $_POST['Zavod_registrace_pozastaveno'],
+            $_POST['Zavod_more_divisions'],
+            $_POST['Zavod_zobrazovat_sponzory'],
+            $_POST['Zavod_zbrojni_prukaz'],
+            $_POST['Web_zobrazovat_situace'],
+            $_POST['Web_zobrazovat_aliasy'],
+            $_POST['Zavod_cas_prematch'],
+            $_POST['Zavod_cas_prezence'],
+            $_POST['Zavod_cas_main'],
+            $_POST['Zavod_cas_main_dopoledne'],
+            $_POST['Zavod_cas_main_odpoledne'],
+            $_POST['Zavod_misto'],
+            $_POST['Zavod_misto_mapa'],
+            $_POST['Zavod_poradatel'],
+            $_POST['Zavod_poradatel_adresa'],
+            $_POST['Zavod_match_director'],
+            $_POST['Zavod_email_poradatel'],
+            $_POST['Zavod_telefon_poradatel'],
+            $_POST['Zavod_range_master'],
+            $_POST['Zavod_email_range_master'],
+            $_POST['Zavod_telefon_range_master'],
+            $_POST['Zavod_stats'],
+            $_POST['Zavod_email_stats'],
+            $_POST['Zavod_telefon_stats'],
+            $_POST['Zavod_hospodar'],
+            $_POST['Zavod_email_hospodar'],
+            $_POST['Zavod_telefon_hospodar'],
+            $_POST['Zavod_email_from'],
+            $_POST['Zavod_stages'],
+            $_POST['Zavod_min_pocet_ran'],
+            $_POST['Zavod_pocet_dni_na_platbu'],
+            $_POST['Zavod_vysledky'],
+            $_POST['Squad_main_max'],
+            $_POST['Squad_prem_max'],
+            $_POST['Payment_before'],
+            $table
+        );
     }
-
-    $result = $conn->query("$query");
-    if (!$result) {
+    $stmt->execute();
+    session_start();
+    if ($stmt->errno !== 0) {
         include './components/modal-warning.php';
         WarningModal(
             "danger",
@@ -123,14 +221,24 @@ if (isset($_GET['match_config'])) {
             "Kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba aktualizace databáze [$table]'>vývojáře</a> registračního systému.",
             "Zpět do administrace"
         );
-        //        exit();
+    } elseif ($stmt->affected_rows === 0) {
+        $_SESSION['toast'] = [
+            'type' => 'primary',
+            'message' => 'V nastavení závodu jste neprovedli žádné změny.'
+        ];
     } else {
-        header("refresh:0;url=index.php");
+        $_SESSION['toast'] = [
+            'type' => 'success',
+            'message' => 'Změny nastavení závodu byly úspěšně uloženy.'
+        ];
     }
-};
+    $stmt->close();
+    header("Location: index.php");
+    exit();
+}
 
 
-// PRIDANI NOVEHO ZAVODNIKA - HOTOVO REFACTORING
+// PRIDANI NOVEHO ZAVODNIKA
 if (isset($_GET['new_shooter'])) {
     $varsymbol = substr(rand(), 0, 4);
     $alias = trim(mb_convert_case($_POST['Alias'], MB_CASE_UPPER, "UTF-8")) . mb_convert_case($_POST['Divize_dalsi'], MB_CASE_UPPER);
@@ -184,6 +292,7 @@ if (isset($_GET['new_shooter'])) {
             "Zpět do administrace"
         );
     } else {
+
         // konecne registrujeme zavodnika
         $stmt = $conn->prepare("
 		INSERT INTO $table 
@@ -260,7 +369,6 @@ if (isset($_GET['new_shooter'])) {
         // Uprava terminu zaplaceni závodníka, co je zaregistrovan mene nez Zavod_pocet_dni_na_platbu dni pred prematchem
         $datumZavod = new DateTime($match_data['Zavod_datum']);
         $datumPrematch = (clone $datumZavod)->modify("-1 days");
-
         $datumRegistraceZavodnika = new DateTime();
         $datumRegistraceZavodnika->setTimestamp($line['DatReg']);
 
@@ -383,7 +491,7 @@ if (isset($_GET['new_shooter'])) {
 		UPDATE $table 
 		SET OdeslanRegMail = '1'
 		WHERE Mail = ? AND OdeslanRegMail IS NULL
-	");
+	        ");
             $stmt->bind_param(
                 "s",
                 $email
@@ -409,7 +517,7 @@ if (isset($_GET['new_shooter'])) {
 }
 
 
-// EDITACE ZAVODNIKA  - HOTOVO REFACTORING - TO-DO ZMĚNA SQUADU Z ČEKATELE
+// EDITACE ZAVODNIKA
 if (isset($_GET['edit_shooter'])) {
     $alias = trim(mb_convert_case($_POST['Alias'], MB_CASE_TITLE, "UTF-8"));
     $jmeno = trim(mb_convert_case($_POST['Jmeno'], MB_CASE_TITLE, "UTF-8"));
@@ -499,10 +607,8 @@ if (isset($_GET['edit_shooter'])) {
         );
     }
     $stmt->execute();
-    $affected = $stmt->affected_rows;
-    $stmt->close();
-
-    if ($affected == 0) {
+    session_start();
+    if ($stmt->errno !== 0) {
         include './components/modal-warning.php';
         WarningModal(
             "danger",
@@ -512,9 +618,21 @@ if (isset($_GET['edit_shooter'])) {
             "Kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba aktualizace databáze [$table]'>vývojáře</a> registračního systému.",
             "Zpět do administrace"
         );
+    } elseif ($stmt->affected_rows === 0) {
+        $_SESSION['toast'] = [
+            'type' => 'primary',
+            'message' => 'V nastavení závodníka jste neprovedli žádné změny.'
+        ];
     } else {
-        header("refresh:0;url=index.php");
+        $_SESSION['toast'] = [
+            'type' => 'success',
+            'message' => 'Změny závodníka byly úspěšně uloženy.'
+        ];
     }
+    $stmt->close();
+    header("Location: index.php");
+    exit();
+}
 
     // přesun čekatele do běžného squadu
     if (($_POST['Squad_old'] == "-2") and ($_POST['Squad_old'] != $_POST['Squad'])) {
@@ -596,7 +714,7 @@ if (isset($_GET['edit_shooter'])) {
         $to = $email;
         $subject = "Změna registrace " . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8');
         $message = str_replace("##STRELEC##", $STRELEC, $message);
-        $message=str_replace("##Squad##",$squad,$message);
+        $message = str_replace("##Squad##", $squad, $message);
         $message = str_replace("##VAR_SYMBOL##", $varsymbol, $message);
         $message = str_replace("##QR_LINK##", $qr_link, $message);
         $message = str_replace("##DatPay##", $paymentDeadline, $message);
@@ -612,38 +730,15 @@ if (isset($_GET['edit_shooter'])) {
                 "Závodník byl zaregistrován, pro odstranění problému s odesíláním kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba odeslani emailu'>vývojáře</a> registračního systému.",
                 "Zpět do administrace"
             );
-        } else {
-            // zapiseme do DB, ze registracni mail byl odeslan
-            $stmt = $conn->prepare("
-		UPDATE $table 
-		SET OdeslanRegMail = '1'
-		WHERE Mail = ? AND OdeslanRegMail IS NULL
-	");
-            $stmt->bind_param(
-                "s",
-                $email
-            );
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $stmt->close();
-            if ($result->num_rows === 0) {
-                include './components/modal-warning.php';
-                WarningModal(
-                    "danger",
-                    "Chyba databáze",
-                    "index.php",
-                    "Při vkládání do databáze došlo k chybě!",
-                    "Kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba aktualizace databáze [$table]'>vývojáře</a> registračního systému.",
-                    "Zpět do administrace"
-                );
-            } else {
-//                header("refresh:0;url=index.php");
-            }
         }
+        // konec přesun čekatele do běžného squadu
+        
+        // TO-DO vyřazení závodníka při editaci (vyřazení je přesun do squadu -9 a ponechání v DB)
     }
-}
 
-// MAZANI ZAVODNIKA - HOTOVO REFACTORING
+
+
+// MAZANI ZAVODNIKA
 if (isset($_GET['delete_shooter'])) {
     $line = getShooterData($conn, $table, $_POST['shooterID'], $_POST['shooterKEY']);
 
@@ -682,7 +777,7 @@ if (isset($_GET['delete_shooter'])) {
 }
 
 
-// VYRAZENI ZAVODNIKA - HOTOVO REFACTORING
+// VYRAZENI ZAVODNIKA TLAČÍTKEM V ADMINISTRACI
 if (isset($_GET['cancel_shooter'])) {
     $line = getShooterData($conn, $table, $_POST['shooterID'], $_POST['shooterKEY']);
 
@@ -734,7 +829,6 @@ if (isset($_GET['cancel_shooter'])) {
         $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
         // nice názvy pro mail
 
-
         $STRELEC .= "IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "\r\n";
         $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . "\r\n";
         $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
@@ -763,7 +857,7 @@ if (isset($_GET['cancel_shooter'])) {
 }
 
 
-// EVIDENCE UHRADY PLATBY  - HOTOVO REFACTORING
+// EVIDENCE UHRADY PLATBY
 if (isset($_GET['mark_paid'])) {
     $line = getShooterData($conn, $table, $_POST['shooterID'], $_POST['shooterKEY']);
 
@@ -841,7 +935,7 @@ if (isset($_GET['mark_paid'])) {
     }
 }
 
-// NOVY SQUAD - HOTOVO REFACTORING
+// NOVY SQUAD
 if (isset($_GET['new_squad'])) {
     $stmt = $conn->prepare("
         INSERT INTO $table_squads 
@@ -901,7 +995,7 @@ if (isset($_GET['delete_squad'])) {
     }
 }
 
-// NOVA DIVIZE - HOTOVO REFACTORING
+// NOVA DIVIZE
 if (isset($_GET['new_division'])) {
     $stmt = $conn->prepare("
         INSERT INTO $table_divisions 
@@ -961,7 +1055,7 @@ if (isset($_GET['delete_division'])) {
     }
 }
 
-// NOVA KATEGORIE  - HOTOVO REFACTORING
+// NOVA KATEGORIE
 if (isset($_GET['new_category'])) {
     $stmt = $conn->prepare("
         INSERT INTO $table_categories 
@@ -992,7 +1086,7 @@ if (isset($_GET['new_category'])) {
     }
 }
 
-// MAZANI KATEGORIE - HOTOVO REFACTORING
+// MAZANI KATEGORIE
 if (isset($_GET['delete_category'])) {
     $stmt = $conn->prepare("
         DELETE FROM $table_categories 
