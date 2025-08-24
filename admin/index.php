@@ -154,7 +154,6 @@ include_once("./include/categories.php");
 include_once("./include/divisions.php");
 include_once("./include/squads.php");
 include_once("./include/stages.php");
-include_once("./include/targets.php");
 include_once("./include/pass_values.php");
 ?>
 

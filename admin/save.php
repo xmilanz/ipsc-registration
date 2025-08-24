@@ -630,9 +630,7 @@ if (isset($_GET['edit_shooter'])) {
         ];
     }
     $stmt->close();
-    header("Location: index.php");
-    exit();
-}
+        header("Location: index.php");
 
     // přesun čekatele do běžného squadu
     if (($_POST['Squad_old'] == "-2") and ($_POST['Squad_old'] != $_POST['Squad'])) {
@@ -732,10 +730,83 @@ if (isset($_GET['edit_shooter'])) {
             );
         }
         // konec přesun čekatele do běžného squadu
-        
-        // TO-DO vyřazení závodníka při editaci (vyřazení je přesun do squadu -9 a ponechání v DB)
     }
 
+    // vyřazení závodníka při editaci (vyřazení je přesun do squadu -9 a ponechání v DB)
+    if ($_POST['Squad'] == "-9") {
+        $stmt = $conn->prepare("
+		SELECT * FROM $table
+		WHERE Prijmeni = ? and Jmeno = ? and  Mail = ?
+	    ");
+        $stmt->bind_param(
+            "sss",
+            $prijmeni,
+            $jmeno,
+            $email
+        );
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        $line = mysqli_fetch_array($result);
+        
+        $stmt = $conn->prepare("
+        UPDATE $table
+        SET SquadReg = ?,
+        Vyrazeno = ?,
+        VyrazenoIP = ?
+        WHERE Cislo = ? AND klic = ?
+        ");
+        $stmt->bind_param(
+            "sssii",
+            $_line['Squad_old'],
+            $dnes,
+            $ip,
+            $line['Cislo'],
+            $line['klic']
+        );
+        $stmt->execute();
+        $stmt->close();
+        // posilame mail zavodnikovi
+        // nice názvy pro mail
+        $ip = ($_SERVER["REMOTE_ADDR"] . " - admin");
+        $dnes = date_format(new DateTime(), "j.n.Y H:i");
+        $faktorLabels = [
+            "MIN" => "Minor",
+            "MAJ"  => "Major"
+        ];
+        $faktorLabel = $faktorLabels[$line['Faktor']] ?? htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8');
+
+        $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
+        $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
+        // nice názvy pro mail
+
+        $STRELEC .= "IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "\r\n";
+        $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . "\r\n";
+        $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
+        $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
+
+        $from_text = "";
+        $from = $match_data['Zavod_email_from'];
+        $to = $line['Mail'];
+        $subject = "Zrušení registrace závodníka " . $match_data['Zavod'];
+        $message = $email_text_vyrazeni_admin;
+        $message = str_replace("##STRELEC##", $STRELEC, $message);
+
+        $send_email = email($from_text, $from, $to, $subject, $message);
+        if (!$send_email) {
+            include './components/modal-warning.php';
+            WarningModal(
+                "danger",
+                "Chyba odeslání emailu",
+                "index.php",
+                "Při odeslání emailu závodníkovi došlo k chybě.",
+                "Závodník byl zaregistrován, pro odstranění problému s odesíláním kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba odeslani emailu'>vývojáře</a> registračního systému.",
+                "Zpět do administrace"
+            );
+        }
+    }
+}
 
 
 // MAZANI ZAVODNIKA

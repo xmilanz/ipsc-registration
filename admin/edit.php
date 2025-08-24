@@ -42,33 +42,9 @@ if ($ID > 0) {
     ];
     $faktorLabel = $faktorLabels[$line['Faktor']] ?? htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8');
 
-    //    $stmt = $conn->prepare("SELECT * FROM $table_squads WHERE Number = ?");
-    //    $stmt->bind_param("i", $line['Squad']);
-    //    $stmt->execute();
-    //    $result = $stmt->get_result();
-    //    $row = $result->fetch_assoc();
-    //    $stmt->close();
-    //    $nazev_squadu = $row['Name'];
-
     $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
     $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
     $nazev_squadu = getValueFromTable($conn, $table_squads, "Number", (int)$line['Squad'], "Name");
-
-    //    $stmt = $conn->prepare("SELECT * FROM $table_divisions WHERE Name = ?");
-    //    $stmt->bind_param("s", $line['Divize']);
-    //    $stmt->execute();
-    //    $result = $stmt->get_result();
-    //    $stmt->close();
-    //    $row = $result->fetch_assoc();
-    //    $nazev_divize = $row['Value'];
-
-    //    $stmt = $conn->prepare("SELECT * FROM $table_categories WHERE Name = ?");
-    //    $stmt->bind_param("s", $line['Kategorie']);
-    //    $stmt->execute();
-    //    $result = $stmt->get_result();
-    //    $stmt->close();
-    //    $row = $result->fetch_assoc();
-    //    $nazev_kategorie = $row['Value'];
 }
 ?>
 <div class="row">
