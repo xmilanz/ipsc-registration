@@ -527,6 +527,39 @@ if (isset($_GET['edit_shooter'])) {
     $mena = $match_data['Banka_ucet_MENA'];
     $dnes = date_format(new DateTime(), "j.n.Y H:i");
 
+    // potvrzeni vyrazeni zavodnika
+    $stmt = $conn->prepare("
+		SELECT * FROM $table
+		WHERE Prijmeni = ? and Jmeno = ? and  Mail = ?
+	    ");
+    $stmt->bind_param(
+        "sss",
+        $prijmeni,
+        $jmeno,
+        $email
+    );
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    $line = mysqli_fetch_array($result);
+
+    if ($_POST['Squad'] == "-9" && !isset($_POST['confirm_removal'])) {
+        include './components/modal-confirm.php';
+        ConfirmModal(
+            'danger',
+            'Vyřazení závodníka',
+            'save.php?edit_shooter=1',
+            $_POST + ['confirm_removal' => '1'],
+            "Opravdu chcete vyřadit závodníka " . htmlspecialchars($line['Jmeno']) . " " . htmlspecialchars($line['Prijmeni']) . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ")?",
+            "Závodník nebude odstraněn, ale přesunut do squadu VYŘAZENO (-9).",
+            'Vyřadit závodníka',
+            'index.php',
+            'Zrušit'
+        );
+        exit();
+    }
+
     if (($_POST['Staff'] == "VIP") or ($_POST['Staff'] == "RO") or ($_POST['Staff'] == "POM")) {
         $stmt = $conn->prepare("
 	UPDATE $table 
@@ -626,11 +659,11 @@ if (isset($_GET['edit_shooter'])) {
     } else {
         $_SESSION['toast'] = [
             'type' => 'success',
-            'message' => 'Změny závodníka byly úspěšně uloženy.'
+            'message' => 'Změny nastavení závodníka byly úspěšně uloženy.'
         ];
     }
     $stmt->close();
-        header("Location: index.php");
+    header("Location: index.php");
 
     // přesun čekatele do běžného squadu
     if (($_POST['Squad_old'] == "-2") and ($_POST['Squad_old'] != $_POST['Squad'])) {
@@ -749,7 +782,7 @@ if (isset($_GET['edit_shooter'])) {
         $stmt->close();
 
         $line = mysqli_fetch_array($result);
-        
+
         $stmt = $conn->prepare("
         UPDATE $table
         SET SquadReg = ?,
