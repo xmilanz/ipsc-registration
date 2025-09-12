@@ -1,6 +1,6 @@
     <?php if ($toast): ?>
         <div class="toast-container shadow position-fixed start-50 translate-middle-x toast-top-10">
-            <div class="toast text-bg-<?= htmlspecialchars($toast['type']) ?> border-0" role="alert" aria-live="assertive" aria-atomic="true"  data-bs-delay="4000">
+            <div class="toast text-bg-<?= htmlspecialchars($toast['type']) ?> border-0" role="alert" aria-live="assertive" aria-atomic="true"  data-bs-delay="2000">
                 <div class="d-flex">
                     <div class="toast-body fs-6 mt-1 mb-1 text-center">
                         <?= htmlspecialchars($toast['message']) ?>
@@ -17,7 +17,7 @@
             const toast = new bootstrap.Toast(toastEl);
             const progressBar = document.getElementById('toastProgress');
 
-            let duration = 3500; // ms
+            let duration = 1500; // ms
             let interval = 50; // ms
             let elapsed = 0;
 

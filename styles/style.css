@@ -12,46 +12,62 @@ body, html{
 	text-align: justify;
 }
 
-
-.header-logo {
-    position: relative;
-    display: inline-block;
-    max-width: 100%;
+.header {
+    border-top: 8px solid rgb(22, 22, 22);
 }
 
-.header-logo img {
-    max-width: 100%;
+.header-logo {
+    display: flex;
+    justify-content: space-between; /* levý a pravý kraj */
+    align-items: center;           /* zarovnání na střed vertikálně */
+    background-color: #fff;
+}
+
+.logo-left,
+.logo-right {
+    flex:1;
+    background-repeat: no-repeat;
+    background-size: contain;  /* aby se logo vešlo */
+    height: 90px;
+    width: auto;
+    margin: 5px;
+}
+
+.logo-left {
+    background-position: left center;
+    margin-left: 10px;
+}
+
+.logo-right {
+	background-image: url("../images/logo-header-dvc.png");
+    background-position: center right;
+}
+
+.text-center {
+    flex: auto;            /* vyplní prostor mezi logy */
+    text-align: center;
+}
+
+.text-center a:hover {
+    text-decoration: none;
+    color: #222;
 }
 
 .logo-text {
-	color: #222;
-	font-weight: bolder;
-	text-shadow: 3px 3px 6px gray;
-	font-size: 2.7em;
-	position: absolute;
-	left: 200px;
-	text-decoration: none;
+    color: #222;
+    font-weight: bolder;
+    text-shadow: 2px 2px 7px gray;
 }
 
-.text-over-image a:hover {text-decoration: none; color: black;}
-
-.text-over-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-	background-repeat: no-repeat;
-	text-align: center;
-    padding-top: 30px;
-    font-size: 1.2em;
-	height: 100%
+a.logo-text, a.card-link {
+    text-decoration: none;
+    color: #222;
 }
 
 #main{
     background-color: #F5F5F5;
     width:100%;
     min-height: 300px;
-/*    height:100%;*/
     padding: 20px;
     display: inline-block;
     box-sizing:border-box;
@@ -86,8 +102,6 @@ h4 {font-size: 16px; font-weight: bold; padding-top: 10px;}
 	border: 1px solid #dee2e6;
 }
 
-
-
 .cursor-pointer {
     cursor: pointer !important;
 }
@@ -107,7 +121,8 @@ h4 {font-size: 16px; font-weight: bold; padding-top: 10px;}
 	font-size: 1.2rem;
 	font-weight: normal !important;
 	background: linear-gradient(to bottom, transparent 80%, rgba(0, 0, 0, 0.15) 100%);
-	border-right: 1px solid #023266;
+	border-top: 1px solid #2A5A8E;
+    border-right: 1px solid #023266;
 	border-left: 1px solid #4878AC;
 }
 
@@ -129,7 +144,6 @@ a.nav-link.active, .nav-link:hover {
 .container {
     width: auto;
     margin: 0 auto;
-	padding: 0px 110px;
 }
 
 .article {
@@ -198,64 +212,14 @@ a.nav-link.active, .nav-link:hover {
 label.alias_validation {padding-bottom: 1rem;}
 
 
-
-/*----------------------------------------------
-	Responsive
------------------------------------------------*/
-
-@media screen and (max-width: 1200px)
-{
-	.banner {display:none;}
-	.text-over-image {
-		font-size: 1em;
-		background-size: 12%;
-	}
-}
-
-@media screen and (max-width: 991px)
-{
-	.banner {display:none;}
-	.text-over-image {
-		font-size: 0.7em;
-		padding-top: 20px;
-	}
-	.container, .container-sm {
-        max-width: 100% !important;
-		padding: 0px 50px;
-    }
-}
-
-@media screen and (max-width: 767px) {
-	.text-over-image {	background-image: none;	}
-	.header-logo {display: none;}
-
-	.container, .container-sm {
-        max-width: 100% !important;
-		    padding: 0px 20px;
-    }
-
-
-	.nav-item, .navbar {
-		background-image: none;
-		background-color: #2a5a8e !important;
-		border: 0px;
-		font-size: 2rem;
-	}
-	.dropdown-menu.show, .dropdown-menu {
-		 color: #ffffff;
-		 border: 0px;
-	}
-	a.nav-link {
-		 background-color: #2a5a8e !important;
-		 color: #ffffff !important;
-	}
-	img.registrovat-bkg {display: none;}
-
-}
 /*----------------------------------------------
 	DataTable a Bootstrap
 -----------------------------------------------*/
 
+.progress {
+    padding: 0px;
+    border-radius:0;
+}
 
 .table-bordered {
 border: 1px solid #dee2e6;
@@ -281,14 +245,11 @@ border: 1px solid #dee2e6;
     overflow-x: hidden;
 }
 
-
 .accordion-button:not(.collapsed) {
 	background-color: #e9ecef !important;
     font-weight: bold !important;
     color: #2a5a8e !important;
 	}
-
-
 
 
 /*----------------------------------------------
@@ -333,18 +294,56 @@ border: 1px solid #dee2e6;
   opacity: 1;
 }
 
-
 /*----------------------------------------------
 	Responsive
 -----------------------------------------------*/
 
-@media screen and (max-width: 1200px) {
-	
+@media only screen and (max-width: 768px) {
+    /* Extra small devices (phones, 600px and down) */
+    .container {
+      padding: 0 10px;
+    }
+    .logo-text {
+        font-size: 1.9em;
+    }
+    .logo-right {
+        flex: 0;
+    }
+    .nav-item, .navbar {
+        background: none;
+        border: none;
+    }
+    a.nav-link {
+        font-size: x-large;
+    }
 }
 
-@media screen and (max-width: 991px) {
-	
+@media only screen and (min-width: 768px) {
+    /* Large devices (laptops/desktops, 992px and up) */
+    .container {
+      padding: 0 10px;
+      flex: 1 !important;
+    }
+    .logo-text {
+        font-size: 2.1em;
+    }
 }
 
-@media screen and (max-width: 576px) {
+@media only screen and (min-width: 992px) {
+    /* Large devices (laptops/desktops, 992px and up) */
+    .container {
+      padding: 0 10px;
+    }
+    .logo-text {
+    font-size: 3em;
+}
+
+}
+
+@media only screen and (min-width: 1200px) {
+    /* Extra large devices (large laptops and desktops, 1200px and up) */
+    .container {
+      padding: 0 110px;
+    }
+
 }

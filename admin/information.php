@@ -43,7 +43,7 @@ if ($ID > 0) {
         $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
         $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
 
-        echo /*html*/ "
+        echo /* html */ "
 <div class='accordion' id='accordionInformation'>
   <div class='accordion-item'>
     <h2 class='accordion-header'>
@@ -52,46 +52,47 @@ if ($ID > 0) {
       </button>
     </h2>
     <div id='collapseOne' class='accordion-collapse collapse show' data-bs-parent='#accordionInformation'>
-      <div class='accordion-body'>
-            <div class='accordion-body'>
+        <div class='accordion-body'>
                 <div class='row pb-3'>
                     <div class='col-md-6'>
                         <label class='form-label pt-1'>Jméno</label>
                         <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . "'>
                     </div>
-
                     <div class='col-md-6'>
                        <label class='form-label pt-1'>Příjmení</label>
                        <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . "'>
                     </div>
                </div>
-
                <div class='row pb-3'>
-                    <div class='col-md-6'>
+                    <div class='col-md-4'>
                        <label class='form-label'>IPSC alias</label>
                        <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "'>
                     </div>
-
-                  <div class='col-md-6 " . (!empty($match_data['Zavod_zbrojni_prukaz']) ? '' : 'd-none') . "'>
-                     <label class='form-label pt-1'>Zbrojní průkaz</label>
-                     <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['ZP'], ENT_QUOTES, 'UTF-8') . "'>
-                  </div>
-               </div>
-
-               <div class='row pb-3'>
-                    <div class='col-md-6'>
-                       <label class='form-label'>E-mail</label>
+                    <div class='col-md-5'>
+                  <label class='form-label pt-1'>E-mail</label>
                        <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Mail'], ENT_QUOTES, 'UTF-8') . "'>
                     </div>
-                    <div class='col-md-6'>
-                       <label class='form-label'>Poznámka</label>
+                    <div class='col-md-3'>
+                    <label class='form-label'>Region</label>
+                    <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Region'], ENT_QUOTES, 'UTF-8') . "'>
+                    </div>
+                </div>
+                    
+                <div class='row pb-3'>
+                    <div class='col-md-6 " . (!empty($match_data['Zavod_zbrojni_prukaz']) ? '' : 'd-none') . "'>
+                       <label class='form-label pt-1'>Zbrojní průkaz</label>
+                       <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['ZP'], ENT_QUOTES, 'UTF-8') . "'>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-md-12'>
+                  <label class='form-label pt-1'>Poznámka</label>
                        <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Poznamka'], ENT_QUOTES, 'UTF-8') . "'>
                     </div>
                </div>
             </div>
-      </div>
+        </div>
     </div>
-  </div>
     <div class='accordion-item'>
          <h2 class='accordion-header'>
             <button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' aria-expanded='false' data-bs-target='#collapseTwo' aria-controls='collapseTwo'>
@@ -105,21 +106,17 @@ if ($ID > 0) {
                         <label class='form-label'>Číslo</label>
                         <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Cislo'], ENT_QUOTES, 'UTF-8') . "'>
                   </div>
-                  <div class='col-md-3'>
+                  <div class='col-md-3 " . ($line['Squad'] == '-9' ? 'd-none' : '') . "'>
                      <label class='form-label'>Squad</label>
                      <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Squad'], ENT_QUOTES, 'UTF-8') . "'>
                   </div>
-                  <div class='col-md-3 " . (empty($line['SquadReg']) ? 'd-none' : '') . "'>
-                     <label class='form-label'>Squad (reg)</label>
+                  <div class='col-md-5 " . (empty($line['SquadReg']) ? 'd-none' : '') . "'>
+                     <label class='form-label'>Squad před vyřazením</label>
                      <input readonly class='bg-light text-muted form-control'  value='" . htmlspecialchars($line['SquadReg'], ENT_QUOTES, 'UTF-8') . "'>
                   </div>
-                  <div class='col-md-4'>
+                  <div class='col-md-5'>
                      <label class='form-label'>Statut závodníka</label>
                      <input readonly class='bg-light text-dark form-control' value=$staffLabel>
-                  </div>
-                  <div class='col-md-3'>
-                        <label class='form-label'>Region</label>
-                        <input readonly class='bg-light text-dark form-control'  value='" . htmlspecialchars($line['Region'], ENT_QUOTES, 'UTF-8') . "'>
                   </div>
               </div>
               <div class='row pb-3'> 
@@ -214,6 +211,6 @@ if ($ID > 0) {
 </div>
 		";
     } else {
-        echo /*html*/ "<p class='text-danger'>Záznam nenalezen.</p>";
+        echo "<p class='text-danger'>Záznam nenalezen.</p>";
     }
 }

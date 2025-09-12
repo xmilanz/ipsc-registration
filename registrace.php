@@ -6,12 +6,9 @@ $paymentBeforeClass = empty($match_data['Payment_before']) ? 'd-none' : '';
 
 $zavodZbrojniPrukazRequired = !empty($match_data['Zavod_zbrojni_prukaz']) ? 'required' : '';
 $zavodZbrojniPrukazClass = !empty($match_data['Zavod_zbrojni_prukaz']) ? '' : 'd-none';
+
 $zavodMoreDivisionsRequired = !empty($match_data['Zavod_more_divisions']) ? 'required' : '';
 $zavodMoreDivisionsClass = !empty($match_data['Zavod_more_divisions']) ? '' : 'd-none';
-
-
-$zavodPrukazZbraneRequired = !empty($match_data['Zavod_prukaz_zbrane']) ? 'required' : '';
-$zavodPrukazZbraneClass = !empty($match_data['Zavod_prukaz_zbrane']) ? '' : 'd-none';
 
 $dnes = new DateTime();
 $datumZavod = new DateTime($match_data['Zavod_datum']);
@@ -42,11 +39,13 @@ echo "<h2 class='pb-3'> $reg_text </h2>";
 
 // Načtení squadů
 $nazev_squadu = $cislo_squadu = [];
-$result = $conn->query("SELECT * FROM " . $conn->real_escape_string($table_squads) . " WHERE Number >= -2");
-while ($row = $result->fetch_assoc()) {
-    $zkratkad = $row['Id'];
-    $nazev_squadu[$zkratkad] = $row['Name'];
-    $cislo_squadu[$zkratkad] = $row['Number'];
+$excludePrematch = ($match_data['Squad_prem_max'] == 0) ? "AND Number != 100" : "";
+$sql = "SELECT * FROM " . $conn->real_escape_string($table_squads) . " WHERE Number >= -2 $excludePrematch";
+$result = $conn->query($sql);
+while ($line = $result->fetch_assoc()) {
+    $zkratkad = $line['Id'];
+    $nazev_squadu[$zkratkad] = $line['Name'];
+    $cislo_squadu[$zkratkad] = $line['Number'];
 }
 
 // Výpis squadů
@@ -62,8 +61,14 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
     $stmt->close();
 
     $obsazenost = "<small> [obsazenost: " . $pocet . "/" . $match_data['Squad_main_max'] . "]</small>";
-
-
+    $obsazenostProcent = round(($pocet / $match_data['Squad_main_max']) * 100);
+    if ($obsazenostProcent < 50) {
+        $barClass = 'bg-success';
+    } elseif ($obsazenostProcent < 90) {
+        $barClass = 'bg-warning';
+    } else {
+        $barClass = 'bg-danger';
+    }
     if ($zkratka == 100) {
         echo "<h4>Prematch " . $datumPrematch->format('j.n.Y') . " ($match_data[Zavod_cas_prematch])</h4>";
     };
@@ -80,12 +85,22 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
     };
 
     echo "<div class='row my-3 mx-1 ms-2 border border-primary bg-white clearfix'>";
-    echo "<div class='caption fw-bold col h5 py-2 px-2'><span>$nazvy_squadu<small>" . ($zkratka > 100 ? $obsazenost : '') . "</small></span>";
+?>
+    <div class="progress" style="height: 4px;">
+        <div class="progress-bar <?= $barClass ?>" role="progressbar"
+            style="width: <?= $obsazenostProcent ?>%;"
+            aria-valuenow="<?= $obsazenostProcent ?>"
+            aria-valuemin="0" aria-valuemax="100">
+        </div>
+    </div>
+
+    <?php
+    echo "<div class='caption fw-bold col h5 py-2 px-2'><span>$nazvy_squadu" . ($zkratka > 100 ? $obsazenost : '') . "</span>";
 
     // Stav registrace, tlacitko
-    $disabledMatchBtn = "<button class='btn btn-outline-dark float-end' disabled>Pozastaveno</button>";
-    $enabledBtn = "<button class='btn btn-primary float-end' data-bs-toggle='collapse' href='#reg_form_$zkratkad'>Vybrat</button>";
-    $disabledBtn = "<button class='btn btn-danger float-end' disabled>Obsazeno</button>";
+    $disabledMatchBtn = "<button class='btn btn-outline-dark float-end mb-2' disabled>Pozastaveno</button>";
+    $enabledBtn = "<button class='btn btn-primary float-end mb-2' data-bs-toggle='collapse' href='#reg_form_$zkratkad'>Vybrat</button>";
+    $disabledBtn = "<button class='btn btn-danger float-end mb-2' disabled>Obsazeno</button>";
 
 
     if ($match_data['Zavod_registrace_pozastaveno'] == "on") {
@@ -104,13 +119,16 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
         $stmt->execute();
         $result_names = $stmt->get_result();
         while ($line = $result_names->fetch_assoc()) {
+            $datumZaplatit = new DateTime($line['DatPay']);
+            $datumPaymentWarn = (clone $datumZaplatit)->modify("-5 days");
 
-            if (($line['Zaplaceno'] == "on") and ($match_data['Payment_before'] == "on")) {
+            if (empty($match_config['Payment_before'])) {
+                echo "<span class=text-dark>";
+            } elseif ($line['Zaplaceno'] == "on") {
                 echo "<span class=text-success>";
-            };
-            if (($dnes >= date('Y-m-d', strtotime($line['DatPay'] . ' - 5 days')))  and $line['Squad'] >= 100 and $line['Zaplaceno'] != "on" and $line['ZaplatiNaMiste'] != "on") {
+            } elseif (($dnes >= $datumPaymentWarn)  and $line['Disciplina'] != "VYRAZENO" and $line['Zaplaceno'] != "on" and $line['ZaplatiNaMiste'] != "on") {
                 echo "<span class= text-danger>";
-            };
+            }
 
             // definice ikon 
             $serieIcon = "";
@@ -135,17 +153,17 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
 
     $tyden = (clone $datumZavod)->format('W');
     $varsymbol = "$tyden" . ($line[0] + 1);
-?>
+    ?>
     <div class="row">
         <div class="col-md-4">
-            <label for="Alias" class="form-label fw-bold">IPSC alias&nbsp;&nbsp;<a href="https://www.ipsc-tech.org/ics/hq/embdAliasAvail.aspx" target="_blank" data-bs-toggle="tooltip" title="Ověřte, zda není zadávaný alias již registrovaný."><button type="button" class="btn btn-outline-success btn-sm">Ověřit</button></a>&nbsp;&nbsp;<a href="https://www.ipsc-tech.org/ics/hq/embdAliasReg.aspx" target="_blank" data-bs-toggle="tooltip" title="Pokud ještě nemáte alias, zaregistrujte si jej."><button type="button" class="btn btn-outline-primary btn-sm">Vytvořit</button></a></label>
-            <input pattern=".{3,16}" class="form-control" type="text" name="Alias" id="Alias<?php echo "$zkratka"; ?>" placeholder="3-16 znaků, diakritiky a spec. znaků" onkeypress="return avoidspace(event)" onfocus="this.placeholder = ''" onblur="replaceChars(<?php echo $zkratka; ?>) " required>
+            <label for="Alias" class="form-label fw-bold">IPSC alias&nbsp;&nbsp;<a href="https://ipscresults.org/Mobile/AliasAvailability.html" target="_blank" data-bs-toggle="tooltip" title="Ověřte, zda není zadávaný alias již registrovaný."><button type="button" class="btn btn-outline-success btn-sm">Ověřit</button></a>&nbsp;&nbsp;<a href="https://ipscresults.org/Mobile/AliasRegistration.html" target="_blank" data-bs-toggle="tooltip" title="Pokud ještě nemáte alias, zaregistrujte si jej."><button type="button" class="btn btn-outline-primary btn-sm">Vytvořit</button></a></label>
+            <input pattern=".{3,16}" class="form-control" type="text" name="Alias" id="Alias<?= $zkratka ?>" placeholder="3-16 znaků, diakritiky a spec. znaků" onkeypress="return avoidspace(event)" onfocus="this.placeholder = ''" onblur="replaceChars(<?= $zkratka ?>) " required>
             <div class="invalid-feedback">Nevyplnili jste IPSC alias nebo má neplatnou délku (3-16 znaků)</div>
             <label class="alias_validation" data-error="Použili jste písmena s diakritikou nebo speciální znaky"></label>
         </div>
-        <div class="col-md-4 <?php echo "$zavodZbrojniPrukazClass"; ?>">
+        <div class="col-md-4 <?= $zavodZbrojniPrukazClass ?>">
             <label for="ZP" class="form-label mt-2">Zbrojní průkaz</label>
-            <input class="form-control" type="text" name="ZP" id="ZP<?php echo "$zkratka"; ?>" placeholder="formát AB 123 456" onfocus="this.placeholder = ''" onblur="this.placeholder = 'formát AB 123 456'" <?php echo "$zavodZbrojniPrukazRequired"; ?>>
+            <input class="form-control" type="text" name="ZP" id="ZP<?= $zkratka ?>" placeholder="formát AB 123 456" onfocus="this.placeholder = ''" onblur="this.placeholder = 'formát AB 123 456'" <?= $zavodZbrojniPrukazRequired ?>>
             <div class="invalid-feedback">Nevyplnili jste číslo zbrojního průkazu</div>
         </div>
         <div class="<?php if ($match_data['Zavod_zbrojni_prukaz'] == "on") {
@@ -158,17 +176,17 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
     <div class="row">
         <div class="col-md-3">
             <label for="Jmeno" class="form-label mt-3">Jméno</label>
-            <input class="form-control" type="text" name="Jmeno" id="Jmeno<?php echo "$zkratka"; ?>" onkeypress="return avoidspace(event)" placeholder="Jan" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Jan';replaceChars('<?php echo htmlspecialchars($zkratka, ENT_QUOTES, 'UTF-8') ?>')" required>
+            <input class="form-control" type="text" name="Jmeno" id="Jmeno<?= $zkratka ?>" onkeypress="return avoidspace(event)" placeholder="Jan" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Jan';replaceChars('<?= $zkratka ?>')" required>
             <div class="invalid-feedback">Nevyplnili jste jméno</div>
         </div>
         <div class="col-md-3">
             <label class="form-label mt-3">Příjmení</label>
-            <input class="form-control" type="text" name="Prijmeni" id="Prijmeni<?php echo "$zkratka"; ?>" onkeypress="return avoidspace(event)" onfocus="this.placeholder = ''" placeholder="Novák" onblur="this.placeholder = 'Novák';replaceChars('<?php echo htmlspecialchars($zkratka, ENT_QUOTES, 'UTF-8') ?>')" required>
+            <input class="form-control" type="text" name="Prijmeni" id="Prijmeni<?= $zkratka ?>" onkeypress="return avoidspace(event)" onfocus="this.placeholder = ''" placeholder="Novák" onblur="this.placeholder = 'Novák';replaceChars('<?= $zkratka ?>')" required>
             <div class="invalid-feedback">Nevyplnili jste příjmení</div>
         </div>
         <div class="col-md-2">
             <label class="form-label mt-3">Doplnění jména</label>
-            <select class="form-select" name="Prijmeni_stav" id="Prijmeni_stav<?php echo "$zkratka"; ?>">
+            <select class="form-select" name="Prijmeni_stav" id="Prijmeni_stav<?= $zkratka ?>">
                 <option value="" selected>-</option>
                 <option value=" ml.">ml.</option>
                 <option value=" st.">st.</option>
@@ -180,7 +198,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
                 <div class="input-group-prepend">
                     <div class="input-group-text">@</div>
                 </div>
-                <input class="form-control" type="Email" id="Email<?php echo "$zkratka"; ?>" name="Email" onfocus="this.placeholder = ''" onkeypress="return avoidspace(event)" placeholder="novak@mujemail.cz" onblur="replaceChars('<?php echo $zkratka; ?>')" required>
+                <input class="form-control" type="email" id="Email<?= $zkratka ?>" name="Email" onfocus="this.placeholder = ''" onkeypress="return avoidspace(event)" placeholder="novak@mujemail.cz" onblur="replaceChars('<?= $zkratka ?>')" required>
             </div>
             <div class="invalid-feedback">Nevyplnili jste email</div>
         </div>
@@ -189,7 +207,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
     <div class="row">
         <div class="col-md-2">
             <label for="Kategorie" class="form-label mt-3">Kategorie</label>
-            <select class="form-select" name="Kategorie" id="Kategorie<?php echo "$zkratka"; ?>" required>
+            <select class="form-select" name="Kategorie" id="Kategorie<?= $zkratka ?>" required>
                 <option value="" selected>--- vyberte ---</option>
                 <?php
                 $stmt = $conn->prepare("SELECT * from $table_categories");
@@ -205,7 +223,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
         </div>
         <div class="col-md-2">
             <label for="divize" class="form-label mt-3">Divize</label>
-            <select class="form-select" name="Divize" id="Divize<?php echo "$zkratka"; ?>" onchange="toggleDivizeMain(<?php echo $zkratka; ?>)" <?php echo "$zavodMoreDivisionsRequired"; ?>>
+            <select class="form-select" name="Divize" id="Divize<?= $zkratka ?>" onchange="toggleDivizeMain(<?= $zkratka ?>)" <?= $zavodMoreDivisionsRequired ?>>
                 <option value="" selected>--- vyberte ---</option>
                 <?php
                 $stmt = $conn->prepare("SELECT * from $table_divisions");
@@ -219,7 +237,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
             </select>
             <div class="invalid-feedback">Nevybrali jste divizi</div>
         </div>
-        <div class="col-md-2 <?php echo "$zavodMoreDivisionsClass"; ?>">
+        <div class="col-md-2 <?= $zavodMoreDivisionsClass ?>">
             <label for="divize_dalsi" class="form-label mt-3 mb-1 text-danger tooltip">
                 Další divize <i class="fa fa-question-circle" aria-hidden="true"></i>
                 <span class="tooltiptext">
@@ -234,7 +252,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
                     </span>
                 </span>
             </label>
-            <select class="form-select" name="Divize_dalsi" id="Divize_dalsi<?php echo "$zkratka"; ?>" onchange="toggleDivize(<?php echo $zkratka; ?>)" <?php echo "$zavodMoreDivisionsRequired"; ?>
+            <select class="form-select" name="Divize_dalsi" id="Divize_dalsi<?= $zkratka ?>" onchange="toggleDivize(<?= $zkratka ?>)" <?= $zavodMoreDivisionsRequired ?>>
                 <option value="" selected>--- vyberte ---</option>
                 <?php
                 $stmt = $conn->prepare("SELECT * from $table_divisions");
@@ -249,7 +267,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
         </div>
         <div class="col-md-2">
             <label for="Faktor" class="form-label mt-3">Faktor</label>
-            <select class="form-select" name="Faktor" id="Faktor<?php echo "$zkratka"; ?>" required>
+            <select class="form-select" name="Faktor" id="Faktor<?= $zkratka ?>" required>
                 <option value="" selected>--- vyberte ---</option>
                 <option value="MIN">Minor</option>
                 <option value="MAJ">Major</option>
@@ -258,7 +276,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
         </div>
         <div class="col-md-2">
             <label for="Region" class="form-label mt-3">Region</label>
-            <select class="form-select" name="Region" id="Region<?php echo "$zkratka"; ?>" required>
+            <select class="form-select" name="Region" id="Region<?= $zkratka ?>" required>
                 <option value="AUS">Austria</option>
                 <option value="CZE" selected>Czech Republic</option>
                 <option value="GER">Germany</option>
@@ -271,7 +289,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
         <div class="col-md-2">
             <label for="Staff" class="form-label mt-3">Staff</label>
             <select class="form-select" name=Staff>
-                <option value="PAY" selected>--- vyberte ---</option>
+                <option value="PAY" selected>Platící závodník</option>
                 <option value="RO">Rozhodčí</option>
                 <option value="POM">Pomocník</option>
             </select>
@@ -279,7 +297,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
     </div>
     <div class="col-12 mt-4 text-start">
         <div class="form-check ">
-            <input class="form-check-input" type="checkbox" id="souhlas<?php echo htmlspecialchars($zkratka, ENT_QUOTES, 'UTF-8'); ?>" required>
+            <input class="form-check-input" type="checkbox" id="souhlas<?= $zkratka ?>" required>
             Souhlasím s
             <a data-bs-toggle="collapse" href="#collapseRules" role="button" aria-expanded="false" aria-controls="collapseRules">pravidly registrace</a> a&nbsp;zpracováním osobních údajů.
             <div class="collapse" id="collapseRules">
@@ -292,8 +310,8 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
                         <li>Změny v registraci (např. náhrada závodníka při přenosu startovného) lze provést nejpozději v den prematche.</li>
                         <li>Přesuny závodníků mezi squady na základě jejich žádosti lze provést <b>nejpozději do 30 minut před oficiálním zahájením hlavního závodu.</b></li>
                         <li class="text-danger fw-bold">Protože jsou podklady pro zaplacení startovaného posílány emailem, zbavuje se závodník při zadání neplatné emailové adresy možnosti zúčastnit se závodu. Rovněž nebude moci být informován o případných změnách.</li>
-                        <li class="<?php echo $paymentBeforeClass; ?> ">Startovné se hradí tak, aby platba proběhla do <?php echo $match_data['Zavod_pocet_dni_na_platbu']; ?> dnů od registrace.<br>- u závodníků zaregistrovaných méně jak <?php echo $match_data['Zavod_pocet_dni_na_platbu']; ?> dní před závodem je třeba startovné zaplatit <strong>nejpozději jeden den před prematchem</strong></li>
-                        <li class="<?php echo $paymentBeforeClass; ?> ">V případě neuhrazení startovného v řádném termínu je registrace zrušena.<br>- neplatí pro organizátory, pomocníky a rozhodčí.</li>
+                        <li class="<?= $paymentBeforeClass ?>">Startovné se hradí tak, aby platba proběhla do <?= $match_data['Zavod_pocet_dni_na_platbu'] ?> dnů od registrace.<br>- u závodníků zaregistrovaných méně jak <?= $match_data['Zavod_pocet_dni_na_platbu'] ?> dní před závodem je třeba startovné zaplatit <strong>nejpozději jeden den před prematchem</strong></li>
+                        <li class="<?= $paymentBeforeClass ?>">V případě neuhrazení startovného v řádném termínu je registrace zrušena.<br>- neplatí pro organizátory, pomocníky a rozhodčí.</li>
                     </ul>
                 </div>
             </div>
@@ -311,8 +329,8 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
 - rozhodčí <i class='far fa-clock' style='font-size:14px'></i>
 - pomocník <i class='far fa-handshake' style='font-size:14px'></i>
 - VIP <i class='far fa-crown' style='font-size:12px'></i>
-<span class="<?php echo "$paymentBeforeClass"; ?> text-success">- zaplaceno nebo potvrzeno pořadatelem (pomocníci a rozhodčí)</span>
-<span class="<?php echo "$paymentBeforeClass"; ?> text-danger">- zbývá méně jak 5 dní do zaplacení</span>
+<span class="<?= $paymentBeforeClass ?> text-success">- zaplaceno nebo potvrzeno pořadatelem (pomocníci a rozhodčí)</span>
+<span class="<?= $paymentBeforeClass ?> text-danger">- zbývá méně jak 5 dní do zaplacení</span>
 </pre>
 
 <script type="text/javascript" src="./js/reg_form.js"></script>

@@ -15,14 +15,14 @@ $line = getShooterData($conn, $table, $shooterID, $shooterKEY);
 
 include './components/modal-warning-form.php';
 WarningModalForm(
-    "secondary",
+    "danger",
     "Vyřazení závodníka",
     "index.php",
     [
         "shooterID" => $shooterID,
         "shooterKEY" => $shooterKEY
     ],
-    "Opravdu chcete vyřadit závodníka " . htmlspecialchars($line['Jmeno']) . " " . htmlspecialchars($line['Prijmeni']) . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ")?",
+    "Opravdu chcete vyřadit závodníka<br>#" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno']) . " " . htmlspecialchars($line['Prijmeni']) . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ")?",
     "Závodník nebude odstraněn, ale přesunut do squadu VYŘAZENO (-9).",
     "./save.php?cancel_shooter",
     "Vyřadit závodníka"

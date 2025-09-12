@@ -146,7 +146,13 @@ $(function () {
         }
     });
 
-function avoidspace(event) {
-    var k = event ? event.which : window.event.keyCode;
-    if (k == 32) return false;
-}
+// open modal with spinner
+  $(document).ready(function(){
+    $('#myModal').modal('show');
+
+    $('form').on('submit', function(){
+      $('#spinner').show();
+//      $('.modal-footer button').prop('disabled', true); // deaktivace tlačítek
+    });
+  });
+

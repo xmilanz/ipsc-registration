@@ -1,5 +1,4 @@
 <?php
-// HOTOVO REDESIGN A REFACTORING 
 session_start();
 if (!isset($_SESSION['loggedin'])) {
     header('Location: ../index.php');
@@ -14,19 +13,6 @@ $shooterKEY = intval($_GET['KEY']);
 
 $line = getShooterData($conn, $table, $shooterID, $shooterKEY);
 
-//$stmt = $conn->prepare("
-//	SELECT * FROM $table 
-//	WHERE Cislo = ? AND klic = ?
-//	");
-//$stmt->bind_param(
-//    "ii",
-//    $shooterID,
-//    $shooterKEY
-//);
-//$stmt->execute();
-//$result = $stmt->get_result();
-//
-//$line = mysqli_fetch_array($result);
 include './components/modal-warning-form.php';
 WarningModalForm(
     "success",
@@ -36,7 +22,7 @@ WarningModalForm(
         "shooterID" => $shooterID,
         "shooterKEY" => $shooterKEY
     ],
-    "Opravdu chcete poslat závodníkovi " . htmlspecialchars($line['Jmeno']) . " " . htmlspecialchars($line['Prijmeni']) . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ") registrační mail?",
+    "Opravdu chcete poslat závodníkovi<br> #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno']) . " " . htmlspecialchars($line['Prijmeni']) . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ") registrační mail?",
     "Znovu pošleme registrační e-mail (informace o závodu,<br>QR kód pro zaplacení,...).",
     "./send.php?regmail",
     "Odeslat registrační mail"

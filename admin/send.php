@@ -12,7 +12,7 @@ require_once __DIR__ . '/../db/dbconn.php';
 require_once __DIR__ . '/../config/mail_texty.php';
 
 $stmt = $conn->prepare("
-SELECT * FROM ecbs5_match_config
+SELECT * FROM match_config
       WHERE Zavod_id = ?
    ");
 $stmt->bind_param(
@@ -45,22 +45,22 @@ if (isset($_GET['regmail'])) {
     $datumRegistraceZavodnika->setTimestamp($line['DatReg']);
 
     if ($datumRegistraceZavodnika >= $datumPrematch->modify("-$match_data[Zavod_pocet_dni_na_platbu] days")) {
-        $paymentDeadline = $datumZavod->modify("-2 days")->format('j.n.Y');
+        $paymentDeadline = $datumZavod->modify("-2 days")->format('d.m.Y');
     } else {
-        $paymentDeadline = (clone $datumRegistraceZavodnika)->modify("+$match_data[Zavod_pocet_dni_na_platbu] days")->format('j.n.Y');
+        $paymentDeadline = (clone $datumRegistraceZavodnika)->modify("+$match_data[Zavod_pocet_dni_na_platbu] days")->format('d.m.Y');
     }
 
     // podmínky pro volbu textu v závislosti na statutu závodníka
-    if ($match_data['Payment_before'] == "") {
-        $message = $email_registrace_zavod_bez_platby_predem_admin;
-    } elseif (($line['Staff'] == "VIP") or ($line['Staff'] == "RO") or ($line['Staff'] == "POM")) {
+    if (($line['Staff'] == "VIP") or ($line['Staff'] == "RO") or ($line['Staff'] == "POM")) {
         $message = $email_registrace_bez_platby_text_admin;
     } elseif ($line['ZaplatiNaMiste'] == "on") {
         $message = $email_registrace_platba_na_miste_admin;
+    } elseif ($match_data['Payment_before'] == 'on') {
+        $message = $email_registrace_platba_text_admin;
     } elseif ($line['Squad'] == "-2") {
         $message = $email_registrace_cekatel_text_admin;
     } else {
-        $message = $email_registrace_platba_text_admin;
+        $message = $email_registrace_zavod_bez_platby_predem_text_admin;
     }
 
     // priprava podkladu pro email zavodnikovi
@@ -94,7 +94,7 @@ if (isset($_GET['regmail'])) {
     ];
     $qr_link = 'https://api.paylibo.com/paylibo/generator/czech/image?' . http_build_query($qrParams);
 
-    $from_text = "";
+    $from_text = htmlspecialchars($match_data['Zavod_poradatel'], ENT_QUOTES, 'UTF-8');
     $from = $match_data['Zavod_email_from'];
     $to = $line['Mail'];
     $subject = "Registrace " . $match_data['Zavod'];
@@ -112,7 +112,7 @@ if (isset($_GET['regmail'])) {
             "Chyba odeslání emailu",
             "index.php",
             "Při odeslání emailu závodníkovi došlo k chybě.",
-            "Závodník byl zaregistrován, pro odstranění problému s odesíláním kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba odeslani emailu'>vývojáře</a> registračního systmu.",
+            "Pro odstranění problému s odesíláním kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba odeslani emailu'>vývojáře</a> registračního systmu.",
             "Zpět do administrace"
         );
     } else {
@@ -142,22 +142,9 @@ if (isset($_GET['payment_warn'])) {
     $datumRegistraceZavodnika->setTimestamp($line['DatReg']);
 
     if ($datumRegistraceZavodnika >= $datumPrematch->modify("-$match_data[Zavod_pocet_dni_na_platbu] days")) {
-        $paymentDeadline = $datumZavod->modify("-2 days")->format('j.n.Y');
+        $paymentDeadline = $datumZavod->modify("-2 days")->format('d.m.Y');
     } else {
-        $paymentDeadline = (clone $datumRegistraceZavodnika)->modify("+$match_data[Zavod_pocet_dni_na_platbu] days")->format('j.n.Y');
-    }
-
-    // podmínky pro volbu textu v závislosti na statutu závodníka
-    if ($match_data['Payment_before'] == "") {
-        $message = $email_registrace_zavod_bez_platby_predem_admin;
-    } elseif (($line['Staff'] == "VIP") or ($line['Staff'] == "RO") or ($line['Staff'] == "POM")) {
-        $message = $email_registrace_bez_platby_text_admin;
-    } elseif ($line['ZaplatiNaMiste'] == "on") {
-        $message = $email_registrace_platba_na_miste_admin;
-    } elseif ($line['Squad'] == "-2") {
-        $message = $email_registrace_cekatel_text_admin;
-    } else {
-        $message = $email_registrace_platba_text_admin;
+        $paymentDeadline = (clone $datumRegistraceZavodnika)->modify("+$match_data[Zavod_pocet_dni_na_platbu] days")->format('d.m.Y');
     }
 
     // priprava podkladu pro email zavodnikovi
@@ -172,11 +159,13 @@ if (isset($_GET['payment_warn'])) {
     $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
     // nice názvy pro mail
 
-    $STRELEC = "<strong>IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "</strong>" . "\r\n";
+    $STRELEC .= "<strong>IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "</strong>" . "\r\n";
     $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " [$link_cancel]\r\n";
     $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
     $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
     $STRELEC .= "Squad: $squad" . "\r\n\r\n";
+    $STRELEC .= "<i>Rozhodčí: $Rozhodci" . "\r\n";
+    $STRELEC .= "Pomocník: $Pomocnik</i>" . "\r\n";
 
     $qrParams = [
         'accountNumber' => $match_data['Banka_ucet_cislo'],
@@ -187,9 +176,10 @@ if (isset($_GET['payment_warn'])) {
         'message'       => $match_data['Zavod'],
         'size'          => 100
     ];
-    $qr_link = "https://api.paylibo.com/paylibo/generator/czech/image?accountNumber=$match_data[Banka_ucet_cislo]&bankCode=$match_data[Banka_ucet_kod]&amount=$match_data[Banka_ucet_CASTKA]&currency=$match_data[Banka_ucet_MENA]&vs=" . $varsymbol . "&message=$match_data[Zavod]&size=100";
+    $qr_link = 'https://api.paylibo.com/paylibo/generator/czech/image?' . http_build_query($qrParams);
 
-    $from_text = "";
+
+    $from_text = htmlspecialchars($match_data['Zavod_poradatel'], ENT_QUOTES, 'UTF-8');
     $from = $match_data['Zavod_email_from'];
     $to = $line['Mail'];
     $subject = "Chybějící platba " . $match_data['Zavod'];
@@ -198,7 +188,7 @@ if (isset($_GET['payment_warn'])) {
     $message = str_replace("##STRELEC##", $STRELEC, $message);
     $message = str_replace("##VAR_SYMBOL##", $varsymbol, $message);
     $message = str_replace("##QR_LINK##", $qr_link, $message);
-    $message = str_replace("##DatReg##", $datumRegistraceZavodnika->format('j.n.Y'), $message);
+    $message = str_replace("##DatReg##", $datumRegistraceZavodnika->format('d.m.Y'), $message);
     $message = str_replace("##DatPay##", $paymentDeadline, $message);
 
     $send_email = email($from_text, $from, $to, $subject, $message);
@@ -214,7 +204,7 @@ if (isset($_GET['payment_warn'])) {
 
         );
     } else {
-        $dnes = date_format(new DateTime(), "j.n.Y H:i");
+        $dnes = date_format(new DateTime(), "d.m.Y H:i");
         //zapiseme do DB, kdy byla urgence odeslana
         $stmt = $conn->prepare("
             	UPDATE $table 

@@ -61,7 +61,7 @@
 <H2>Kontrola IPSC aliasů zadaných při registraci od roku 2021</H2>
 <p>Tabulka obsahuje IPSC aliasy použité při registraci do <strong>jednotlivých kol</strong> Eggenberg CUPu od roku 2021.<br>
 <h6>
-<span class='text-danger'> Nejdůležitější je sice použít stejný IPSC alias v rámci jedné série, ale stejně je v zájmu každého závodníka používat stále stejný ;).</span> <br><br>Po kontrole prosím pošlete <u><a style="color:#2a5a8e;" href="mailto:<?php echo /*html*/ "$match_data[Zavod_email_stats]"; ?>?subject=Oprava registracnich udaju Eggenberg CUP">statistikovi</a></u> email s informací, <span class='text-danger'>který IPSC alias je správný (= zaregistrovaný)</span>.</h6/>
+<span class='text-danger'> Nejdůležitější je sice použít stejný IPSC alias v rámci jedné série, ale stejně je v zájmu každého závodníka používat stále stejný ;).</span> <br><br>Po kontrole prosím pošlete <u><a style="color:#2a5a8e;" href="mailto:<?= $match_data['Zavod_email_stats'] ?>?subject=Oprava registracnich udaju Eggenberg CUP">statistikovi</a></u> email s informací, <span class='text-danger'>který IPSC alias je správný (= zaregistrovaný)</span>.</h6/>
 <br>
 <div class="row">
    <div class="col-md-8">

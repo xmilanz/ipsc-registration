@@ -1,21 +1,19 @@
 <?php
 session_start();
+$toast = $_SESSION['toast'] ?? null;
+unset($_SESSION['toast']);
+
 if (!isset($_SESSION['loggedin'])) {
     header('Location: ../index.php');
     exit;
 }
-
-session_start();
-$toast = $_SESSION['toast'] ?? null;
-unset($_SESSION['toast']);
-
 require_once __DIR__ . '/../db/dbconn.php';
 
-$result = $conn->query("SELECT * from ecbs5_match_config where Zavod_id='$table' limit 1");
+$result = $conn->query("SELECT * from match_config where Zavod_id='$table' limit 1");
 if ($result->num_rows > 0) {
     $match_data = $result->fetch_array();
 } else {
-    echo "<pre class='text-warning text-center h4 m-5'>Závod neobsahuje žádná data.<br>Zkontrolujte záznam '$table' v tabulce 'ecbs5_match_config'</pre></h2>";
+    echo "<pre class='text-warning text-center h4 m-5'>Závod neobsahuje žádná data.<br>Zkontrolujte záznam '$table' v tabulce 'match_config'</pre></h2>";
 }
 
 require_once __DIR__ . '/../config/mail_texty.php';
@@ -25,15 +23,19 @@ $paymentBeforeClass = !empty($match_data['Payment_before']) ? '' : 'd-none';
 $poradatel = "";
 $sponzor = "";
 
-if (!empty($match_data['Zavod_poradatel']) && stripos($match_data['Zavod_poradatel'], 'EGGENBERG') !== false) {
-    $poradatel = "eggenberg";
-}
+if (!empty($match_data['Zavod_poradatel'])) {
+    $normalized = normalize($match_data['Zavod_poradatel']);
 
-if (!empty($match_data['Zavod_poradatel']) && stripos($match_data['Zavod_poradatel'], 'PELHŘIMOV') !== false) {
-    $poradatel = "pelhrimov";
+    if (strpos($normalized, 'pelhrimov') !== false) {
+        $poradatel = "pelhrimov";
+
+    } elseif (strpos($normalized, 'eggenberg') !== false) {
+        $poradatel = "eggenberg";
+    }
 }
 
 $registracePozastavena = !empty($match_data['Zavod_registrace_pozastaveno']) ? '' : 'd-none';
+$dnes = (new DateTime())->format("Y-m-d H:i:s");
 ?>
 
 <!doctype html>
@@ -43,9 +45,9 @@ $registracePozastavena = !empty($match_data['Zavod_registrace_pozastaveno']) ? '
     <meta http-equiv="Content-Language" content="cs">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="shortcut icon" href="../images/favicon.ico" />
-    <title>Administrace závodu <?php echo $match_data['Zavod']; ?></title>
+    <title>Administrace závodu <?= htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') ?></title>
     <link rel="stylesheet" type="text/css" href="../styles/style_admin.css">
-    <link rel="stylesheet" href="../styles/style_<?php echo "$poradatel" . ".css"; ?>">
+    <link rel="stylesheet" href="../styles/style_<?= "$poradatel" . ".css"; ?>">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed%3A400%2C700%7CArimo%3A400%2C700&#038;ver=eb423f0ac3bea64e1037184f3b727fe6" type="text/css" media="all" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -62,16 +64,15 @@ $registracePozastavena = !empty($match_data['Zavod_registrace_pozastaveno']) ? '
 </HEAD>
 
 <BODY>
-<?php require_once __DIR__ . '/components/toast.php'; ?>
+    <?php require_once __DIR__ . '/components/toast.php'; ?>
     <div class="container">
         <div class="header">
             <div class="header-logo">
-                <img src="../images/logo-header-dvc.png" alt="Logo">
-                <div class="text-over-image">
-                    <a class="logo-text" href="<?php echo $web_adresa_admin; ?>" target="_blank">
-                        <p>
-                            <?php echo "$match_data[Zavod] - administrace</a><br>";
-                            if ($match_data['Zavod_registrace_pozastaveno'] == "on") {
+                <div class="logo-left"></div>
+                <div class="text-center">
+                        <a class="logo-text" href="<?= $web_adresa_admin ?>" target="_blank">
+                            <?= htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') ?> - administrace</a><br>
+                            <?php if ($match_data['Zavod_registrace_pozastaveno'] == "on") {
                                 echo "<span class='text-danger tooltip '>[registrace je pozastavená]<span class='tooltiptext  lh-base'><strong>Spuštění registrace</strong> se provede v <span class='bg-success text-white' >Konfiguraci</span> - sekce <strong>Základní informace</strong></span></span>";
                             } elseif ($match_data['Payment_before'] == "on") {
                                 echo "<span class='text-danger tooltip '>[platba startovného $match_data[Zavod_pocet_dni_na_platbu] dnů od registrace]<span class='tooltiptext'>Startovné se platí před závodem, nejpozději do $match_data[Zavod_pocet_dni_na_platbu] dnů od provedení registrace.<br><br>Nezaplatí-li závodník do té doby, pošle se ráno upozornění na chybějící platbu.<br><br>Jestliže nezaplatí ani po tomto upozornění, je druhý den večer automaticky vyřazen.</span></span>";
@@ -79,8 +80,8 @@ $registracePozastavena = !empty($match_data['Zavod_registrace_pozastaveno']) ? '
                                 echo "<span class='text-danger tooltip '>[platba startovného na místě]<span class='tooltiptext'>Závodník platí v den závodu při prezenci <strong>nejpozději 30 minut před závodem</strong></span></span>";
                             }
                             ?>
-                        </p>
                 </div>
+                <div class="logo-right"></div>
             </div>
         </div>
 
@@ -91,7 +92,7 @@ $registracePozastavena = !empty($match_data['Zavod_registrace_pozastaveno']) ? '
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <button href="" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#ecbs5_match_configuration">Konfigurace</button>
+                        <button href="" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#match_configuration">Konfigurace</button>
                     </li>
 
                     <div class="dropdown" id="dropdownContainer1">
@@ -111,6 +112,6 @@ $registracePozastavena = !empty($match_data['Zavod_registrace_pozastaveno']) ? '
                         </div>
                     </div>
                 </ul>
-                <a class="btn btn-danger text-white" href="logout.php"><span class="text-decoration-underline"><?= $_SESSION['name'] ?></span> | <i class="fa fa-sign-out" style="font-size:15px"></i></a>
+                <button type="button" class="btn btn-dark text-white me-2" disabled><i class="fa fa-user pe-2" style="font-size:15px"></i><?= $_SESSION['name'] ?></button><a class="btn btn-danger text-white" href="logout.php"><span class="me-2">Odhlásit</span><i class="fa fa-sign-out" style="font-size:15px"></i></a>
             </div>
         </nav>

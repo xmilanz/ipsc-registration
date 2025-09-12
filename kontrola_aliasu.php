@@ -46,11 +46,11 @@
    }
    
    ?>
-<H2>Kontrola IPSC aliasů Eggenberg CUPu <?php echo /*html*/ "$current_year"; ?></H2>
+<H2>Kontrola IPSC aliasů Eggenberg CUPu <?= $current_year ?></H2>
 <p>Tabulka obsahuje IPSC aliasy použité při registraci do <strong>jednotlivých kol</strong> Eggenberg CUPu tohoto ročníku</p>
 <p>Pokud je vše v pořádku, můžete také prověřit, zda jste v minulých ročnících nepoužili jiný alias: <u><a href='./kontrola_aliasu_all.php'>IPSC aliasy od počátku věků</a></u>.</p>
 <h6>
-<span class='text-danger'>Pro vyhodnocení turnaje je nutné, aby závodník používal stejný alias.</span> Po kontrole prosím pošlete <u><a style="color:#2a5a8e;" href="mailto:<?php echo /*html*/ "$match_data[Zavod_email_stats]"; ?>?subject=Oprava registracnich udaju Eggeneberg CUP <?php echo /*html*/ "$current_year"; ?>">statistikovi</a></u> email s informací, <span class='text-danger'>který alias je správný (= zaregistrovaný na ipsc-tech.org)</span>.</h6/>
+<span class='text-danger'>Pro vyhodnocení turnaje je nutné, aby závodník používal stejný alias.</span> Po kontrole prosím pošlete <u><a style="color:#2a5a8e;" href="mailto:<?= $match_data['Zavod_email_stats'] ?>?subject=Oprava registracnich udaju Eggeneberg CUP <?= $current_year ?>">statistikovi</a></u> email s informací, <span class='text-danger'>který alias je správný (= zaregistrovaný na ipsc-tech.org)</span>.</h6/>
 <br>
 <div class="row">
    <div class="col-md-8">

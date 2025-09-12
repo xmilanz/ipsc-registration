@@ -1,18 +1,21 @@
 <?php
-//opcache_reset();
+opcache_reset();
 
 $dbcreateParam = $_SERVER['dbcreateParam'] ?? 'hlavni';
 $dbcreateTable = $_SERVER['dbcreateTable'] ?? '';
 
 switch ($dbcreateParam) {
-  case "hlavni":
-    $query="CREATE TABLE ".$dbcreateTable." (
+    case "hlavni":
+        $query = "CREATE TABLE " . $dbcreateTable . " (
     Cislo int(4)AUTO_INCREMENT PRIMARY KEY,
     Alias varchar(16),
     Prijmeni varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Jmeno varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci,
     ZP varchar(255),
+    CisloZbrane varchar(255),
     Region varchar(3),
+    Disciplina varchar(255),
+    DisciplinaReg varchar(255),
     Kategorie varchar(20),
     Divize varchar(3),
     Faktor varchar(3),
@@ -37,11 +40,11 @@ switch ($dbcreateParam) {
     Mena varchar(3),
     Zavod varchar(25)
     )";
-	runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
-  break;
+        runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
+        break;
 
-  case "nastaveni":
-    $query="CREATE TABLE ".$dbcreateTable." (
+    case "nastaveni":
+        $query = "CREATE TABLE " . $dbcreateTable . " (
     parId int(4)AUTO_INCREMENT PRIMARY KEY,
     parName varchar(20) UNIQUE not null,
     parValue varchar(50),
@@ -49,68 +52,69 @@ switch ($dbcreateParam) {
 	parNote1 varchar(100) DEFAULT NULL,
 	parNote2 varchar(100) DEFAULT NULL
     )";
-	runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
-	$query="INSERT into $dbcreateTable (parName,parValueI) VALUES ('dbver',1)";
-	runQuery($query, "Tabulka [$dbcreateTable] byla aktualizována");
-  break;
+        runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
+        $query = "INSERT into $dbcreateTable (parName,parValueI) VALUES ('dbver',1)";
+        runQuery($query, "Tabulka [$dbcreateTable] byla aktualizována");
+        break;
 
-  case "ecbs5_match_config":
-    $query="CREATE TABLE ecbs5_match_config (
+    case "match_config":
+        $query = "CREATE TABLE match_config (
     Zavod_id varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci,
-    Zavod varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Eggenberg CUP 202X - X. kolo',
+    Zavod varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Nazev zavodu',
     Zavod_datum varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Zavod_cas_registrace varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '18:00:00',
-    Zavod_zacatek_registrace int(3) DEFAULT '10',
-    Zavod_konec_registrace int(3) DEFAULT '10',
+    Zavod_zacatek_registrace int(3) DEFAULT '30',
+    Zavod_konec_registrace int(3) DEFAULT '2',
     Zavod_registrace_pozastaveno varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
-    Zavod_more_divisions varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'on',
-    Zavod_zbrojni_prukaz varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'on',
-    Zavod_zobrazovat_sponzory varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'on',
+    Zavod_more_divisions varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    Zavod_zbrojni_prukaz varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    Zavod_prukaz_zbrane varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    Zavod_zobrazovat_sponzory varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
     Web_zobrazovat_situace varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'on',
     Web_zobrazovat_aliasy varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'on',
     Zavod_cas_prematch varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '13:00 - 17:00',
     Zavod_cas_prezence varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '8:00 - 9:00',
     Zavod_cas_main varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '9:00 - 15:00',
-    Zavod_cas_main_dopoledne varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '9:00 - 12:00',
-    Zavod_cas_main_odpoledne varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '12:30 - 15:00',
-    Zavod_misto varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
-    Zavod_misto_mapa varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    Zavod_cas_main_dopoledne varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+    Zavod_cas_main_odpoledne varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+    Zavod_misto varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Misto konani zavodu',
+    Zavod_misto_mapa varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Odkaz na mapu',
     Zavod_poradatel varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT 'Klub praktické střelby EGGENBERG',
-    Zavod_poradatel_adresa varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Heydukova 514/23, České Budějovice 7, 370 01 České Budějovice',
-    Zavod_match_director varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT 'Jan Hátle',
-    Zavod_email_poradatel varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'jan.hatle1@gmail.com',
-    Zavod_telefon_poradatel varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '+420 724 521 364',
-    Zavod_range_master varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Ondřej Bárta',
-    Zavod_email_range_master varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci,
-    Zavod_telefon_range_master varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '+420 777 154 158',
-    Zavod_stats varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Milan Žídek',
-    Zavod_email_stats varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'statistik@kps-eggenberg.cz',
-    Zavod_telefon_stats varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci,
-    Zavod_hospodar varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Antonín Liška',
-    Zavod_email_hospodar varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'antoni.liska@seznam.cz',
-    Zavod_telefon_hospodar varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '+420 777 286 040',
+    Zavod_poradatel_adresa varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Adresa',
+    Zavod_match_director varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT 'poradatel',
+    Zavod_email_poradatel varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'email poradatele',
+    Zavod_telefon_poradatel varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '+420 420 123 456 789',
+    Zavod_range_master varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'range master',
+    Zavod_email_range_master varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'email range mastera',
+    Zavod_telefon_range_master varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '+420 123 456 789',
+    Zavod_stats varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'statistik',
+    Zavod_email_stats varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'email statistika',
+    Zavod_telefon_stats varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '+420 420 123 456 789',
+    Zavod_hospodar varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'hospodar',
+    Zavod_email_hospodar varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'email hospodare',
+    Zavod_telefon_hospodar varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '+420 420 123 456 789',
     Zavod_email_from varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'registrace@kps-eggenberg.cz',
     Zavod_stages int(2) DEFAULT '8',
-    Zavod_min_pocet_ran int(3),
+    Zavod_min_pocet_ran int(3)DEFAULT '0',
     Zavod_pocet_dni_na_platbu int(2) DEFAULT '10',
     Zavod_vysledky varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'https://www.ipsc.zone/v2/results.php',
-    Squad_prem_max int(3) DEFAULT '30',
+    Squad_prem_max int(3) DEFAULT '10',
     Squad_main_max int(3) DEFAULT '10',
-    Banka_ucet_CASTKA int(3),
+    Banka_ucet_CASTKA int(3) DEFAULT '0',
     Banka_ucet_MENA varchar(3) DEFAULT 'CZK',
-    Banka_ucet_cislo varchar(20) DEFAULT '296257146',
-    Banka_ucet_kod varchar(4) DEFAULT '0300',
-    Banka_nazev varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Československá obchodní banka, a. s.',
-    Banka_adresa varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'Praha 5, Radlická 333/150, PSČ 150 57',
-    Klub_web varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'https://www.kps-eggenberg.cz',
+    Banka_ucet_cislo varchar(20) DEFAULT '12345678',
+    Banka_ucet_kod varchar(4) DEFAULT '0000',
+    Banka_nazev varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'nazev banky',
+    Banka_adresa varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'adresa banky',
+    Klub_web varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'webove stranky klubu',
     Payment_before varchar(2) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'on',
     PRIMARY KEY (Zavod_id)
     )";
-	runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
-  break;
+        runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
+        break;
 
-  case "site_admins":
-    $query="CREATE TABLE site_admins (
+    case "site_admins":
+        $query = "CREATE TABLE site_admins (
     id int(4)AUTO_INCREMENT PRIMARY KEY,
     username varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci,
     password varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
@@ -118,17 +122,17 @@ switch ($dbcreateParam) {
     firstname varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci,
     lastname varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci
     )";
-	runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
-  break;
+        runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
+        break;
 
-  case "divisions":
-    $query="CREATE TABLE ".$dbcreateTable." (
+    case "divisions":
+        $query = "CREATE TABLE " . $dbcreateTable . " (
     Id int(4)AUTO_INCREMENT PRIMARY KEY,
     Name varchar(4) UNIQUE not null,
     Value varchar(50) UNIQUE not null
     )";
-	runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
-    $query="insert into $dbcreateTable (Name,Value) values
+        runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
+        $query = "insert into $dbcreateTable (Name,Value) values
 	('PRD', 'Production'),
 	('STD', 'Standard'),
 	('OPN', 'Open'),
@@ -144,17 +148,17 @@ switch ($dbcreateParam) {
 	('MRS', 'Mini Rifle Standard'),
 	('MRO', 'Mini Rifle Open');
 	";
-	runQuery($query, "Tabulka [$dbcreateTable] byla aktualizována");
-  break;
+        runQuery($query, "Tabulka [$dbcreateTable] byla aktualizována");
+        break;
 
-  case "categories":
-    $query="CREATE TABLE ".$dbcreateTable." (
+    case "categories":
+        $query = "CREATE TABLE " . $dbcreateTable . " (
     Id int(4)AUTO_INCREMENT PRIMARY KEY,
     Name varchar(16) UNIQUE not null,
     Value varchar(50) UNIQUE not null
     )";
-	runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
-    $query="insert into $dbcreateTable (Name,Value) values
+        runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
+        $query = "insert into $dbcreateTable (Name,Value) values
 	('REGULAR', 'Regular (18 - 49)'),
 	('SENIOR', 'Senior (50 - 59)'),
 	('SSENIOR', 'Super Senior (60 - 69)'),
@@ -164,17 +168,17 @@ switch ($dbcreateParam) {
 	('JUNIOR', 'Junior (14 - 17)'),
 	('SJUNIOR', 'Super Junior (mladší 14 let)');
 	";
-	runQuery($query, "Tabulka [$dbcreateTable] byla aktualizována");
-  break;
+        runQuery($query, "Tabulka [$dbcreateTable] byla aktualizována");
+        break;
 
-  case "squads":
-    $query="CREATE TABLE ".$dbcreateTable." (
+    case "squads":
+        $query = "CREATE TABLE " . $dbcreateTable . " (
     Id int(4)AUTO_INCREMENT PRIMARY KEY,
     Number varchar(3) UNIQUE not null,
     Name varchar(50) UNIQUE not null
     )";
-	runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
-    $query="insert into $dbcreateTable (Number,Name) values
+        runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
+        $query = "insert into $dbcreateTable (Number,Name) values
 	('-9', 'VYŘAZENO'),
 	('-2', 'Čekatelé'),
 	('100', 'Prematch'),
@@ -187,8 +191,24 @@ switch ($dbcreateParam) {
 	('107', 'Squad 107'),
 	('108', 'Squad 108');
 	";
-	runQuery($query, "Tabulka [$dbcreateTable] byla aktualizována");
-  break;
-}
+        runQuery($query, "Tabulka [$dbcreateTable] byla aktualizována");
+        break;
 
-?>
+//    case "disciplines":
+//        $query = "CREATE TABLE " . $dbcreateTable . " (
+//    Id int(4)AUTO_INCREMENT PRIMARY KEY,
+//    Name varchar(25) UNIQUE not null,
+//    Value varchar(100),
+//    Description varchar(255)
+//    )";
+//        runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
+//        $query = "insert into $dbcreateTable (Name,Value,Description) values
+//	('MaO-OPAK', 'MaO opakovací', 'opakovací nebo samonabíjecí se zásobníkem ráže .22 LR'),
+//	('MaO-STD', 'MaO STANDARD', 'libovolná malorážka, ráže .22 LR, povinnost nabíjet do zásobníku, hlaveň bez doplňků, sklopný bipod, bez zadní podpěry a kabátů...'),
+//	('MaO-OPN', 'MaO OPEN', 'libovolná malorážka, ráže .22 LR, bez omezení'),
+//	('MaO-VZD', 'Vzduchovka', 'libovolná vzduchovka bez omezení'),
+//	('VeO', 'Velkorážná puška odstřelovací', 'libovolná, náboj s centrálním zápalem od ráže .223, bez omezení')
+//	";
+//        runQuery($query, "Tabulka [$dbcreateTable] byla aktualizována");
+//        break;
+}

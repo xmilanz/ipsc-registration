@@ -92,7 +92,7 @@ if (isset($_GET['registrovat'])) {
                 "registrace.php",
                 "<div class='col-12 fw-bolder text-danger'>Závodník $jmeno $prijmeni ($alias) už je zaregistrovaný",
                 "Buď vás už někdo zaregistroval nebo jste použili stejné jméno, příjmení a IPSC&nbsp;alias jako jiný závodník.<br>V případě, že jste zadali skutečně váš zaregistrovaný IPSC alias, <br>kontaktujte <a href='mailto:$match_data[Zavod_email_poradatel]?subject=Neúspěšná registrace - duplicitní IPSC alias, prijmeni a jmeno'>pořadatele</a> nebo <a href='mailto:$match_data[Zavod_email_stats]?subject=Neúspěšná registrace - duplicitní IPSAC alias, prijmeni a jmeno'>statistika</a>.<br>Pokud jste zadali alias <strong>nezaregistrovaný na IPSC-TECH.ORG</strong>, <br>použijte tento <a href='https://ipscresults.org/Mobile/AliasRegistration.html' target='_new'>odkaz</a> a&nbsp;zaregistrujte se.<br>Pro odlišení napište za příjmení $prijmeni nějaký další znak<br><small> nebo z nabídky zvolte <b>ml./st.</b></small>
-            <p class='text-danger text-center mb-3 fst-italic'>Kombinaci <mark>Jméno Příjmení (ALIAS)</mark> byste měli používat v průběhu celé série závodu.</p>",
+                            <p class='text-danger text-center mb-3 fst-italic'>Kombinaci <mark>Jméno Příjmení (ALIAS)</mark> byste měli používat v průběhu celé série závodu.</p>",
                 "Kliknutím na tlačítko <kbd>Zpět na registraci</kbd> se vraťte na registraci.",
                 "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'registrace.php';\">Zpět na registraci</button>"
             );
@@ -107,7 +107,7 @@ if (isset($_GET['registrovat'])) {
                 "registrace.php",
                 "<div class='col-12 fw-bolder text-danger'>Závodník aliasem $alias už je zaregistrovaný",
                 "V případě, že jste zadali skutečně váš zaregistrovaný IPSC alias, <br>kontaktujte <a href='mailto:$match_data[Zavod_email_poradatel]?subject=Neúspěšná registrace - duplicitní IPSC alias'>pořadatele</a> nebo <a href='mailto:$match_data[Zavod_email_stats]?subject=Neúspěšná registrace - duplicitní alias'>statistika</a>.<br>Pokud jste zadali alias <strong>nezaregistrovaný na IPSC-TECH.ORG</strong>, <br>použijte tento <a href='https://ipscresults.org/Mobile/AliasRegistration.html' target='_new'>odkaz</a> a&nbsp;zaregistrujte se.<br>
-            <p class='text-danger text-center mb-3 fst-italic'>V průběhu celé série závodu byste měli používat stále stejný <mark>IPSC alias</mark>.</p>",
+                            <p class='text-danger text-center mb-3 fst-italic'>V průběhu celé série závodu byste měli používat stále stejný <mark>IPSC alias</mark>.</p>",
                 "Kliknutím na tlačítko <kbd>Zpět na registraci</kbd> se vraťte na registraci.",
                 "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'registrace.php';\">Zpět na registraci</button>"
             );
@@ -188,6 +188,7 @@ if (isset($_GET['registrovat'])) {
             $datumPrematch = (clone $datumZavod)->modify("-1 days");
             $datumRegistraceZavodnika = new DateTime();
             $datumRegistraceZavodnika->setTimestamp($line['DatReg']);
+
             if ($datumRegistraceZavodnika >= $datumPrematch->modify("-$match_data[Zavod_pocet_dni_na_platbu] days")) {
                 $paymentDeadline = $datumZavod->modify("-2 days")->format('j.m.Y');
             } else {
@@ -276,25 +277,23 @@ if (isset($_GET['registrovat'])) {
             ];
             $qr_link = 'https://api.paylibo.com/paylibo/generator/czech/image?' . http_build_query($qrParams);
 
-            $from_text = "";
+            $from_text = htmlspecialchars($match_data['Zavod_poradatel'], ENT_QUOTES, 'UTF-8');
             $from = htmlspecialchars($match_data['Zavod_email_from'], ENT_QUOTES, 'UTF-8');
             $to = $email;
             $subject = "Registrace " . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8');
             $dnes = date_format(new DateTime(), "j.n.Y H:i");
             $mena = $match_data['Banka_ucet_MENA'];
 
-            if ($match_data['Payment_before'] == "") {
-                $message = $email_registrace_zavod_bez_platby_predem;
-            } elseif (($line['Staff'] == "RO") or ($line['Staff'] == "POM")) {
+            if (($line['Staff'] == "VIP") or ($line['Staff'] == "RO") or ($line['Staff'] == "POM")) {
                 $message = $email_registrace_bez_platby_text;
                 $stmt = $conn->prepare("
-        		UPDATE $table 
-        		SET Zaplaceno = 'on',
-                Castka = '0',
-                Mena = ?, 
-                DatumZaplaceni = ?
-                WHERE Cislo = ? and klic = ?
-        	    ");
+		    UPDATE $table 
+		    SET Zaplaceno = 'on',
+            Castka = '0',
+            Mena = ?, 
+            DatumZaplaceni = ?
+            WHERE Cislo = ? and klic = ?
+	       ");
                 $stmt->bind_param(
                     "ssii",
                     $mena,
@@ -306,8 +305,10 @@ if (isset($_GET['registrovat'])) {
                 $stmt->close();
             } elseif ($line['Squad'] == "-2") {
                 $message = $email_registrace_cekatel_text;
-            } else {
+            } elseif ($match_data['Payment_before'] == 'on') {
                 $message = $email_registrace_platba_text;
+            } else {
+                $message = $email_registrace_zavod_bez_platby_predem;
             }
 
             $message = str_replace("##STRELEC##", $STRELEC, $message);
@@ -339,16 +340,27 @@ if (isset($_GET['registrovat'])) {
                 );
                 $stmt->execute();
                 $stmt->close();
-            };
-        };
-    };
+            }
+        }
+    }
 }
 
-// VYRAZENI ZAVODNIKA - OPTIMALIZACE DOKONCENA
+// VYRAZENI ZAVODNIKA
 if (isset($_GET['cancel_shooter'])) {
     $ip = ($_SERVER["REMOTE_ADDR"]);
 
     $line = getShooterData($conn, $table, $_POST['shooterID'], $_POST['shooterKEY']);
+
+    // nice názvy pro mail
+    $faktorLabels = [
+        "MIN" => "Minor",
+        "MAJ"  => "Major"
+    ];
+    $faktorLabel = $faktorLabels[$line['Faktor']] ?? htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8');
+
+    $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
+    $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
+    // nice názvy pro mail
 
     if (!$line) {
         include './components/modal-warning.php';
@@ -403,23 +415,12 @@ if (isset($_GET['cancel_shooter'])) {
         );
     }
     // posilame mail zavodnikovi
-    // nice názvy pro mail
-    $faktorLabels = [
-        "MIN" => "Minor",
-        "MAJ"  => "Major"
-    ];
-    $faktorLabel = $faktorLabels[$line['Faktor']] ?? htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8');
-
-    $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
-    $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
-    // nice názvy pro mail
-
     $STRELEC .= "IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "\r\n";
     $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . "\r\n";
     $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
     $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
 
-    $from_text = "";
+    $from_text = htmlspecialchars($match_data['Zavod_poradatel'], ENT_QUOTES, 'UTF-8');
     $from = htmlspecialchars($match_data['Zavod_email_from'], ENT_QUOTES, 'UTF-8');
     $to = htmlspecialchars($line['Mail'], ENT_QUOTES, 'UTF-8');
     $subject = "Zrušení registrace závodníka " . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8');
@@ -427,4 +428,15 @@ if (isset($_GET['cancel_shooter'])) {
     $message = str_replace("##STRELEC##", $STRELEC, $message);
 
     $send_email = email($from_text, $from, $to, $subject, $message);
+    if (!$send_email) {
+        include './components/modal-warning.php';
+        WarningModal(
+            "Chyba odeslání emailu",
+            "index.php",
+            "<div class='col-12 fw-bolder text-danger'>Při odeslání emailu došlo k chybě!",
+            "Závodník je vyřazený. Kontaktujte <a href='mailto:" . htmlspecialchars($line['Zavod_email_poradatel'], ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba odeslani emailu na [$email]'>pořadatele závodu</a>.",
+            "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'index.php';\">Zpět</button>"
+        );
+        exit;
+    }
 }

@@ -12,11 +12,12 @@ require_once __DIR__ . '/../db/dbconn.php';
 require_once __DIR__ . '/../config/mail_texty.php';
 
 $conn = new mysqli($db_host, $db_login, $db_pass, $db_dtb);
+
 // KONFIGRACE ZAVODU 
 if (isset($_GET['match_config'])) {
     if ($match_data['Payment_before'] == "on") {
         $stmt = $conn->prepare("
-	UPDATE ecbs5_match_config 
+	UPDATE match_config 
         SET Banka_ucet_CASTKA = ?,
    	 Banka_ucet_cislo = ?,
    	 Banka_ucet_kod = ?,
@@ -117,7 +118,7 @@ if (isset($_GET['match_config'])) {
         );
     } else {
         $stmt = $conn->prepare("
-	UPDATE ecbs5_match_config 
+	UPDATE match_config 
         SET Banka_ucet_CASTKA = ?,
      Klub_web = ?,
      Zavod = ?,
@@ -304,7 +305,7 @@ if (isset($_GET['new_shooter'])) {
             $alias,
             $prijmeni,
             $jmeno,
-            $linep,
+            $zp,
             $varsymbol,
             $_POST['Region'],
             $email,
@@ -373,9 +374,9 @@ if (isset($_GET['new_shooter'])) {
         $datumRegistraceZavodnika->setTimestamp($line['DatReg']);
 
         if ($datumRegistraceZavodnika >= $datumPrematch->modify("-$match_data[Zavod_pocet_dni_na_platbu] days")) {
-            $paymentDeadline = $datumZavod->modify("-2 days")->format('j.n.Y');
+            $paymentDeadline = $datumZavod->modify("-2 days")->format('d.m.Y');
         } else {
-            $paymentDeadline = (clone $datumRegistraceZavodnika)->modify("+$match_data[Zavod_pocet_dni_na_platbu] days")->format('j.n.Y');
+            $paymentDeadline = (clone $datumRegistraceZavodnika)->modify("+$match_data[Zavod_pocet_dni_na_platbu] days")->format('d.m.Y');
         }
 
         $tyden = str_replace(' ', '', htmlspecialchars($match_data['Zavod_datum'], ENT_QUOTES, 'UTF-8'));
@@ -398,7 +399,7 @@ if (isset($_GET['new_shooter'])) {
         $stmt->close();
 
         $varsymbol = $varsymbol_new;
-        $dnes = date_format(new DateTime(), "j.n.Y H:i");
+        $dnes = date_format(new DateTime(), "d.m.Y H:i");
         $mena = $match_data['Banka_ucet_MENA'];
         $link_cancel = "<a href='$web_adresa_admin/zrus_ucast.php?id=$line[Cislo]&klic=$line[klic]'><strong>zrušit účast</strong></a>";
 
@@ -431,21 +432,26 @@ if (isset($_GET['new_shooter'])) {
         } else {
             $message = $email_registrace_platba_text_admin_novy_zavodnik;
         }
-
+        
         // priprava podkladu pro email zavodnikovi
-
         // nice názvy pro mail
         $faktorLabels = [
             "MIN" => "Minor",
             "MAJ"  => "Major"
         ];
+        
         $faktorLabel = $faktorLabels[$line['Faktor']] ?? htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8');
-
+        
+        $squadLabels = [
+            "-2" => "Čekatel",
+            "100"  => "Prematch"
+        ];
+        $squadLabel = $squadLabels[$line['Squad']] ?? htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8');
+        
         $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
         $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
         // nice názvy pro mail
-
-
+        
         $STRELEC .= "<strong>IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "</strong>" . "\r\n";
         $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " [$link_cancel]\r\n";
         $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
@@ -465,7 +471,7 @@ if (isset($_GET['new_shooter'])) {
         ];
         $qr_link = 'https://api.paylibo.com/paylibo/generator/czech/image?' . http_build_query($qrParams);
 
-        $from_text = "";
+        $from_text = htmlspecialchars($match_data['Zavod_poradatel'], ENT_QUOTES, 'UTF-8');
         $from = htmlspecialchars($match_data['Zavod_email_from'], ENT_QUOTES, 'UTF-8');
         $to = $email;
         $subject = "Registrace " . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8');
@@ -519,13 +525,13 @@ if (isset($_GET['new_shooter'])) {
 
 // EDITACE ZAVODNIKA
 if (isset($_GET['edit_shooter'])) {
-    $alias = trim(mb_convert_case($_POST['Alias'], MB_CASE_TITLE, "UTF-8"));
+    $alias = trim(mb_convert_case($_POST['Alias'], MB_CASE_UPPER, "UTF-8"));
     $jmeno = trim(mb_convert_case($_POST['Jmeno'], MB_CASE_TITLE, "UTF-8"));
     $prijmeni = trim(mb_convert_case($_POST['Prijmeni'], MB_CASE_TITLE, "UTF-8")) . $_POST['Prijmeni_stav'] . '';
     $zp = trim($_POST['ZP']);
     $email = trim($_POST['Mail']);
     $mena = $match_data['Banka_ucet_MENA'];
-    $dnes = date_format(new DateTime(), "j.n.Y H:i");
+    $dnes = date_format(new DateTime(), "d.m.Y H:i");
 
     // potvrzeni vyrazeni zavodnika
     $stmt = $conn->prepare("
@@ -551,7 +557,7 @@ if (isset($_GET['edit_shooter'])) {
             'Vyřazení závodníka',
             'save.php?edit_shooter=1',
             $_POST + ['confirm_removal' => '1'],
-            "Opravdu chcete vyřadit závodníka " . htmlspecialchars($line['Jmeno']) . " " . htmlspecialchars($line['Prijmeni']) . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ")?",
+            "Opravdu chcete vyřadit závodníka #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno']) . " " . htmlspecialchars($line['Prijmeni']) . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ")?",
             "Závodník nebude odstraněn, ale přesunut do squadu VYŘAZENO (-9).",
             'Vyřadit závodníka',
             'index.php',
@@ -691,12 +697,12 @@ if (isset($_GET['edit_shooter'])) {
         $datumRegistraceZavodnika->setTimestamp($line['DatReg']);
 
         if ($datumRegistraceZavodnika >= $datumPrematch->modify("-$match_data[Zavod_pocet_dni_na_platbu] days")) {
-            $paymentDeadline = $datumZavod->modify("-2 days")->format('j.n.Y');
+            $paymentDeadline = $datumZavod->modify("-2 days")->format('d.m.Y');
         } else {
-            $paymentDeadline = (clone $datumRegistraceZavodnika)->modify("+$match_data[Zavod_pocet_dni_na_platbu] days")->format('j.n.Y');
+            $paymentDeadline = (clone $datumRegistraceZavodnika)->modify("+$match_data[Zavod_pocet_dni_na_platbu] days")->format('d.m.Y');
         }
 
-        $dnes = date_format(new DateTime(), "j.n.Y H:i");
+        $dnes = date_format(new DateTime(), "d.m.Y H:i");
         $mena = $match_data['Banka_ucet_MENA'];
         $varsymbol = $line['VarSym'];
         $squad = $line['Squad'];
@@ -740,7 +746,7 @@ if (isset($_GET['edit_shooter'])) {
         ];
         $qr_link = 'https://api.paylibo.com/paylibo/generator/czech/image?' . http_build_query($qrParams);
 
-        $from_text = "";
+        $from_text = htmlspecialchars($match_data['Zavod_poradatel'], ENT_QUOTES, 'UTF-8');
         $from = htmlspecialchars($match_data['Zavod_email_from'], ENT_QUOTES, 'UTF-8');
         $to = $email;
         $subject = "Změna registrace " . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8');
@@ -780,6 +786,8 @@ if (isset($_GET['edit_shooter'])) {
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();
+        
+        $ip = ($_SERVER["REMOTE_ADDR"] . " - admin");
 
         $line = mysqli_fetch_array($result);
 
@@ -800,26 +808,25 @@ if (isset($_GET['edit_shooter'])) {
         );
         $stmt->execute();
         $stmt->close();
-        // posilame mail zavodnikovi
+
+        // příprava mailu zavodnikovi
         // nice názvy pro mail
-        $ip = ($_SERVER["REMOTE_ADDR"] . " - admin");
-        $dnes = date_format(new DateTime(), "j.n.Y H:i");
         $faktorLabels = [
             "MIN" => "Minor",
             "MAJ"  => "Major"
         ];
         $faktorLabel = $faktorLabels[$line['Faktor']] ?? htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8');
-
+        
         $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
         $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
         // nice názvy pro mail
-
+        
         $STRELEC .= "IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "\r\n";
         $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . "\r\n";
         $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
         $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
 
-        $from_text = "";
+        $from_text = htmlspecialchars($match_data['Zavod_poradatel'], ENT_QUOTES, 'UTF-8');
         $from = $match_data['Zavod_email_from'];
         $to = $line['Mail'];
         $subject = "Zrušení registrace závodníka " . $match_data['Zavod'];
@@ -875,7 +882,7 @@ if (isset($_GET['delete_shooter'])) {
         $from = htmlspecialchars($match_data['Zavod_email_from'], ENT_QUOTES, 'UTF-8');
         $to = htmlspecialchars($match_data['Zavod_email_stats'], ENT_QUOTES, 'UTF-8');
         $subject = htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - smazání závodníka #" . $_POST['shooterID'];
-        $message = "V administraci závodu <strong>" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . "</strong> byl smazán závodník: " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ")." . "\r\n";
+        $message = "V administraci závodu <strong>" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . "</strong> byl smazán závodník: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ")." . "\r\n";
         $send_email = email($from_text, $from, $to, $subject, $message);
     }
 }
@@ -885,7 +892,7 @@ if (isset($_GET['delete_shooter'])) {
 if (isset($_GET['cancel_shooter'])) {
     $line = getShooterData($conn, $table, $_POST['shooterID'], $_POST['shooterKEY']);
 
-    $dnes = date_format(new DateTime(), "j.n.Y H:i");
+    $dnes = date_format(new DateTime(), "d.m.Y H:i");
     $ip = ($_SERVER["REMOTE_ADDR"] . " - admin");
 
     $stmt = $conn->prepare("
@@ -920,8 +927,8 @@ if (isset($_GET['cancel_shooter'])) {
         );
     } else {
         header("refresh:0;url=index.php");
-        // posilame mail zavodnikovi
 
+        // příprava mailu zavodnikovi
         // nice názvy pro mail
         $faktorLabels = [
             "MIN" => "Minor",
@@ -938,7 +945,7 @@ if (isset($_GET['cancel_shooter'])) {
         $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
         $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
 
-        $from_text = "";
+        $from_text = htmlspecialchars($match_data['Zavod_poradatel'], ENT_QUOTES, 'UTF-8');
         $from = $match_data['Zavod_email_from'];
         $to = $line['Mail'];
         $subject = "Zrušení registrace závodníka " . $match_data['Zavod'];
@@ -965,7 +972,7 @@ if (isset($_GET['cancel_shooter'])) {
 if (isset($_GET['mark_paid'])) {
     $line = getShooterData($conn, $table, $_POST['shooterID'], $_POST['shooterKEY']);
 
-    $dnes = date_format(new DateTime(), "j.n.Y H:i");
+    $dnes = date_format(new DateTime(), "d.m.Y H:i");
 
     $stmt = $conn->prepare("
     UPDATE $table 
@@ -998,8 +1005,8 @@ if (isset($_GET['mark_paid'])) {
         );
     } else {
         header("refresh:0;url=index.php");
-        // posilame mail zavodnikovi
 
+        // příprava mailu zavodnikovi
         // nice názvy pro mail
         $faktorLabels = [
             "MIN" => "Minor",
@@ -1015,9 +1022,9 @@ if (isset($_GET['mark_paid'])) {
         $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . "\r\n";
         $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
         $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
-        $STRELEC .= "Squad: #" . $line['Squad'] . "\r\n";
+        $STRELEC .= "Squad: " . $line['Squad'] . "\r\n";
 
-        $from_text = "";
+        $from_text = htmlspecialchars($match_data['Zavod_poradatel'], ENT_QUOTES, 'UTF-8');
         $from = $match_data['Zavod_email_from'];
         $to = $line['Mail'];
         $subject = "Evidence platby " . $match_data['Zavod'];

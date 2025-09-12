@@ -35,7 +35,7 @@ $stmt->close();
                 echo "<TR>";
                 echo "<TD>";
                 echo
-                htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . "</TD><TD>" . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . "</TD><TD>" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "</TD><TD>" . htmlspecialchars($line['Divize'], ENT_QUOTES, 'UTF-8') . "</TD><TD>" . htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8') . "</TD><TD>" . htmlspecialchars($line['Kategorie'], ENT_QUOTES, 'UTF-8') . "</TD><TD>" . htmlspecialchars($line['Squad'], ENT_QUOTES, 'UTF-8') . "</TD></TD>";
+                htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . "</TD><TD>" . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . "</TD><TD>" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "</TD><TD>" . htmlspecialchars($line['Divize'], ENT_QUOTES, 'UTF-8') . "</TD><TD>" . htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8') . "</TD><TD>" . htmlspecialchars($line['Kategorie'], ENT_QUOTES, 'UTF-8') . "</TD><TD>" . htmlspecialchars($line['Squad'], ENT_QUOTES, 'UTF-8') . "</TD>";
                 echo "</TR>";
             }
             ?>

@@ -12,40 +12,41 @@ if ($conn->connect_error) {
 }
 $conn->set_charset('utf8mb4');
 
-$result = $conn->query("SELECT * from ecbs5_match_config where Zavod_id='$table' limit 1");
-if ($result->num_rows > 0) {$match_data = $result->fetch_array();}
+$result = $conn->query("SELECT * from match_config where Zavod_id='$table' limit 1");
+if ($result->num_rows > 0) {
+    $match_data = $result->fetch_array();
+}
 
 ensureTable($conn, $table_nastaveni, 'nastaveni', $table . '_nastaveni');
 ensureTable($conn, $table, 'hlavni', $table);
-ensureTable($conn, 'ecbs5_match_config', 'ecbs5_match_config');
+ensureTable($conn, 'match_config', 'match_config');
 ensureTable($conn, $table_divisions, 'divisions', $table . '_divisions');
 ensureTable($conn, $table_categories, 'categories', $table . '_categories');
 ensureTable($conn, $table_squads, 'squads', $table . '_squads');
 ensureTable($conn, 'site_admins', 'site_admins');
+//ensureTable($conn, $table_disciplines, 'disciplines', $table . '_disciplines');
 
-// insert záznamu pro $table do ecbs5_match_config, pokud ještě neexistuje
+// insert záznamu pro $table do match_config, pokud ještě neexistuje
 $safeTableId = $conn->real_escape_string($table);
-$check = $conn->query("SELECT Zavod_id FROM ecbs5_match_config WHERE Zavod_id='$safeTableId'");
+$check = $conn->query("SELECT Zavod_id FROM match_config WHERE Zavod_id='$safeTableId'");
 if ($check && $check->num_rows === 0) {
-    $stmt = $conn->prepare("INSERT INTO ecbs5_match_config (Zavod_id) VALUES (?)");
+    $stmt = $conn->prepare("INSERT INTO match_config (Zavod_id) VALUES (?)");
     $stmt->bind_param("s", $table);
     $stmt->execute();
     $stmt->close();
-//    echo "<pre class='text-success>Závod '$table' byl přidán do tabulky ecbs5_match_config</pre>";
 
-	$stmt = $conn->prepare("
-		UPDATE ecbs5_match_config
+    $stmt = $conn->prepare("
+		UPDATE match_config
 		SET Zavod_datum = DATE_FORMAT(CURDATE(),'%d.%m.%Y')
 		WHERE Zavod_id = ?
 	");
-	$stmt->bind_param(
-		"s",
-		$table
-	);
-	$stmt->execute();
-	$affected = $stmt->affected_rows;
-	$stmt->close();
-//    echo "<pre class='text-success>Datum závodu '$table' byl nastaven na dnešní datum. Je V administraci je potřeba nastavit skutečný datum.</pre>";
+    $stmt->bind_param(
+        "s",
+        $table
+    );
+    $stmt->execute();
+    $affected = $stmt->affected_rows;
+    $stmt->close();
 }
 
 $migrations = [
@@ -62,7 +63,3 @@ foreach ($migrations as $version => $script) {
         require $script;
     }
 }
-
-
-
-?>

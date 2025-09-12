@@ -27,7 +27,7 @@ S pozdravem
 Výpis z pravidel registrace
 Po připsání platby na účet již nelze startovné vrátit, v souladu s pravidly závodu je však možné jej přenést na jiného závodníka, <strong>nejpozději však v den prematche.</strong>
 Registrace se uzavírá 2 dny před konáním závodu.
-Pořadatelé si vyhrazují právo zařadit závodníků do jednotlivých směn za účelem zajištění hladkého průběhu závodu.
+Pořadatelé si vyhrazují právo zařadit závodníky do jednotlivých směn za účelem zajištění hladkého průběhu závodu.
 </i></small>
 ";
 
@@ -51,7 +51,7 @@ S pozdravem
 ------
 Výpis z pravidel registrace
 Registrace se uzavírá 2 dny před konáním závodu.
-Pořadatelé si vyhrazují právo zařadit závodníků do jednotlivých směn za účelem zajištění hladkého průběhu závodu.
+Pořadatelé si vyhrazují právo zařadit závodníky do jednotlivých směn za účelem zajištění hladkého průběhu závodu.
 </i></small>
 ";
 
@@ -76,7 +76,7 @@ S pozdravem
 ------
 Výpis z pravidel registrace
 Registrace se uzavírá 2 dny před konáním závodu.
-Pořadatelé si vyhrazují právo zařadit závodníků do jednotlivých směn za účelem zajištění hladkého průběhu závodu.
+Pořadatelé si vyhrazují právo zařadit závodníky do jednotlivých směn za účelem zajištění hladkého průběhu závodu.
 </i></small>
 ";
 
@@ -126,7 +126,7 @@ S pozdravem
 ------
 Výpis z pravidel registrace
 Registrace se uzavírá 2 dny před konáním závodu.
-Pořadatelé si vyhrazují právo zařadit závodníků do jednotlivých směn za účelem zajištění hladkého průběhu závodu.
+Pořadatelé si vyhrazují právo zařadit závodníky do jednotlivých směn za účelem zajištění hladkého průběhu závodu.
 </i></small>
 ";
 
@@ -190,7 +190,7 @@ S pozdravem
 Výpis z pravidel registrace
 Po připsání platby na účet již nelze startovné vrátit, v souladu s pravidly závodu je však možné jej přenést na jiného závodníka, <strong>nejpozději však v den prematche.</strong>
 Registrace se uzavírá 2 dny před konáním závodu.
-Pořadatelé si vyhrazují právo zařadit závodníků do jednotlivých směn za účelem zajištění hladkého průběhu závodu.
+Pořadatelé si vyhrazují právo zařadit závodníky do jednotlivých směn za účelem zajištění hladkého průběhu závodu.
 </i></small>
 ";
 
@@ -213,7 +213,7 @@ S pozdravem
 ------
 Výpis z pravidel registrace
 Registrace se uzavírá 2 dny před konáním závodu.
-Pořadatelé si vyhrazují právo zařadit závodníků do jednotlivých směn za účelem zajištění hladkého průběhu závodu.
+Pořadatelé si vyhrazují právo zařadit závodníky do jednotlivých směn za účelem zajištění hladkého průběhu závodu.
 </i></small>
 ";
 
@@ -418,6 +418,30 @@ S pozdravem
 ------
 Výpis z pravidel registrace
 Přesuny závodníků mezi squady na základě jejich žádosti je možné provádět <strong>nejpozději do 30 minut před oficiálním zahájením hlavního závodu</strong>.
+</i></small>
+";
+
+// TO-DO - implemetovat do admin/send.php conditions
+$email_registrace_zavod_bez_platby_predem_text_admin="Dobrý den,
+
+znovu Vám posíláme registrační email závodu <strong>". htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . "</strong> (" . htmlspecialchars($match_data['Zavod_misto'], ENT_QUOTES, 'UTF-8') . ").
+Datum závodu: ".$match_data['Zavod_datum'].".
+
+##STRELEC##
+
+V souladu s pravidly registrace se startovné " . (($match_data['Banka_ucet_CASTKA'] == 0) ? '(částka podle registrovaných kategorií dle propozic)' : $match_data['Banka_ucet_CASTKA'] . ' ' . $match_data['Banka_ucet_MENA']) . " platí před závodem na místě.
+
+Nemůžete-li se z nějakých důvodů zůčastnit závodu, neprodleně nás informujte v odpovědi na tento email nebo kliněte na odkaz <strong>\"zrušit účast\"</strong> vedle svého jména. Uvolníte tak místo dalším zájemcům.
+
+Další informace o závodu najdete na adrese <a href='$web_adresa_admin'>$web_adresa_admin</a>
+
+S pozdravem
+<strong>".$match_data['Zavod_poradatel']."</strong>
+<i><small>
+------
+Výpis z pravidel registrace
+Registrace se uzavírá 2 dny před konáním závodu.
+Pořadatelé si vyhrazují právo zařadit závodníky do jednotlivých směn za účelem zajištění hladkého průběhu závodu.
 </i></small>
 ";
 

@@ -3,35 +3,22 @@ include("./header.php");
 $shooterID = intval($_GET['id']);
 $shooterKEY = intval($_GET['klic']);
 
-//$stmt = $conn->prepare("
-//	SELECT * FROM $table 
-//	WHERE Cislo = ? AND klic = ?
-//	");
-//$stmt->bind_param(
-    //    "ii",
-    //    $shooterID,
-    //    $shooterKEY
-    //);
-    //$stmt->execute();
-    //$result = $stmt->get_result();
-    
-    // NELZE DOHLEDAT ZAVODNIKA
-    if ($result->num_rows === 0) {
-        include './components/modal-warning.php';
-        WarningModal(
-            "Vyřazení závodníka",
-            "index.php",
-            "<div class='col-12 fw-bolder text-danger'>Nelze dohledat závodníka v databázi",
-            "Kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba dohledání zavodnika'>pořadatele závodu</a>.",
-            "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'index.php';\">Zavřít</button>"
-        );
-        exit;
-    }
-    
-    // ZÁVODNÍK UŽ JE VYŘAZENÝ (Squad je -9)
 $line = getShooterData($conn, $table, $shooterID, $shooterKEY);
-//$line = mysqli_fetch_array($result);
 
+// NELZE DOHLEDAT ZAVODNIKA
+if (!$line) {
+    include './components/modal-warning.php';
+    WarningModal(
+        "Vyřazení závodníka",
+        "index.php",
+        "<div class='col-12 fw-bolder text-danger'>Nelze dohledat závodníka v databázi",
+        "Kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba dohledání zavodnika'>pořadatele závodu</a>.",
+        "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'index.php';\">Zavřít</button>"
+    );
+    exit;
+}
+
+// ZÁVODNÍK UŽ JE VYŘAZENÝ (Squad je -9)
 if ($line['Squad'] == '-9') {
     include './components/modal-warning.php';
     WarningModal(
