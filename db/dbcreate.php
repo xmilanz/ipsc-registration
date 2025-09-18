@@ -1,5 +1,4 @@
 <?php
-opcache_reset();
 
 $dbcreateParam = $_SERVER['dbcreateParam'] ?? 'hlavni';
 $dbcreateTable = $_SERVER['dbcreateTable'] ?? '';
@@ -194,21 +193,4 @@ switch ($dbcreateParam) {
         runQuery($query, "Tabulka [$dbcreateTable] byla aktualizována");
         break;
 
-//    case "disciplines":
-//        $query = "CREATE TABLE " . $dbcreateTable . " (
-//    Id int(4)AUTO_INCREMENT PRIMARY KEY,
-//    Name varchar(25) UNIQUE not null,
-//    Value varchar(100),
-//    Description varchar(255)
-//    )";
-//        runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
-//        $query = "insert into $dbcreateTable (Name,Value,Description) values
-//	('MaO-OPAK', 'MaO opakovací', 'opakovací nebo samonabíjecí se zásobníkem ráže .22 LR'),
-//	('MaO-STD', 'MaO STANDARD', 'libovolná malorážka, ráže .22 LR, povinnost nabíjet do zásobníku, hlaveň bez doplňků, sklopný bipod, bez zadní podpěry a kabátů...'),
-//	('MaO-OPN', 'MaO OPEN', 'libovolná malorážka, ráže .22 LR, bez omezení'),
-//	('MaO-VZD', 'Vzduchovka', 'libovolná vzduchovka bez omezení'),
-//	('VeO', 'Velkorážná puška odstřelovací', 'libovolná, náboj s centrálním zápalem od ráže .223, bez omezení')
-//	";
-//        runQuery($query, "Tabulka [$dbcreateTable] byla aktualizována");
-//        break;
 }

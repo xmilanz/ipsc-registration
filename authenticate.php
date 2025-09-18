@@ -5,19 +5,20 @@ session_start();
 if (empty($_POST['username']) || empty($_POST['password'])) {
     exit('Zadejte jméno a heslo');
 }
-if ($stmt = $conn->prepare('SELECT id, password FROM site_admins WHERE username = ?')) {
+if ($stmt = $conn->prepare('SELECT id, password, role FROM site_admins WHERE username = ?')) {
     $stmt->bind_param('s', $_POST['username']);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
-        $stmt->bind_result($id, $password);
+        $stmt->bind_result($id, $password, $role);
         $stmt->fetch();
         if (password_verify($_POST['password'], $password)) {
             session_regenerate_id();
             $_SESSION['loggedin'] = TRUE;
             $_SESSION['name'] = $_POST['username'];
             $_SESSION['id'] = $id;
+            $_SESSION['role'] = $role;
             header('Location: ./admin/index.php');
         } else {
             include './components/modal-warning.php';

@@ -7,6 +7,12 @@ $table_divisions=$table."_divisions";
 $table_categories=$table."_categories";
 $table_squads=$table."_squads";
 
+$admin_roles = array(
+    "admin" => "přístup ke všem funkcím registračního systému", 
+    "editor" => "nastavení závodu; správa závodníků; správa squadů, kategorií a divizí; export do PractiScore", 
+    "vievew" => "zobrazení informací o závodníkovi; tisk seznamu závodníků, export seznamu do Excelu a PDF; export do PractiScore"
+);
+
 $db_host="host";
 $db_login="login";
 $db_pass="password";

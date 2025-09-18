@@ -16,6 +16,13 @@ if ($result->num_rows > 0) {
     echo "<pre class='text-warning text-center h4 m-5'>Závod neobsahuje žádná data.<br>Zkontrolujte záznam '$table' v tabulce 'match_config'</pre></h2>";
 }
 
+$stmt = $conn->prepare("SELECT firstname,lastname FROM site_admins WHERE username = ?");
+$stmt->bind_param("s", $_SESSION['name']);
+$stmt->execute();
+$result = $stmt->get_result();
+$stmt->close();
+$line = mysqli_fetch_assoc($result);
+
 require_once __DIR__ . '/../config/mail_texty.php';
 $paymentBeforeClass = !empty($match_data['Payment_before']) ? '' : 'd-none';
 
@@ -28,7 +35,6 @@ if (!empty($match_data['Zavod_poradatel'])) {
 
     if (strpos($normalized, 'pelhrimov') !== false) {
         $poradatel = "pelhrimov";
-
     } elseif (strpos($normalized, 'eggenberg') !== false) {
         $poradatel = "eggenberg";
     }
@@ -70,48 +76,80 @@ $dnes = (new DateTime())->format("Y-m-d H:i:s");
             <div class="header-logo">
                 <div class="logo-left"></div>
                 <div class="text-center">
-                        <a class="logo-text" href="<?= $web_adresa_admin ?>" target="_blank">
-                            <?= htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') ?> - administrace</a><br>
-                            <?php if ($match_data['Zavod_registrace_pozastaveno'] == "on") {
-                                echo "<span class='text-danger tooltip '>[registrace je pozastavená]<span class='tooltiptext  lh-base'><strong>Spuštění registrace</strong> se provede v <span class='bg-success text-white' >Konfiguraci</span> - sekce <strong>Základní informace</strong></span></span>";
-                            } elseif ($match_data['Payment_before'] == "on") {
-                                echo "<span class='text-danger tooltip '>[platba startovného $match_data[Zavod_pocet_dni_na_platbu] dnů od registrace]<span class='tooltiptext'>Startovné se platí před závodem, nejpozději do $match_data[Zavod_pocet_dni_na_platbu] dnů od provedení registrace.<br><br>Nezaplatí-li závodník do té doby, pošle se ráno upozornění na chybějící platbu.<br><br>Jestliže nezaplatí ani po tomto upozornění, je druhý den večer automaticky vyřazen.</span></span>";
-                            } else {
-                                echo "<span class='text-danger tooltip '>[platba startovného na místě]<span class='tooltiptext'>Závodník platí v den závodu při prezenci <strong>nejpozději 30 minut před závodem</strong></span></span>";
-                            }
-                            ?>
+                    <a class="logo-text" href="<?= $web_adresa_admin ?>" target="_blank">
+                        <?= htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') ?> - administrace</a><br>
+                    <?php if ($match_data['Zavod_registrace_pozastaveno'] == "on") {
+                        echo "<span class='text-danger tooltip '>[registrace je pozastavená]<span class='tooltiptext  lh-base'><strong>Spuštění registrace</strong> se provede v <span class='bg-success text-white' >Konfiguraci</span> - sekce <strong>Základní informace</strong></span></span>";
+                    } elseif ($match_data['Payment_before'] == "on") {
+                        echo "<span class='text-danger tooltip '>[platba startovného $match_data[Zavod_pocet_dni_na_platbu] dnů od registrace]<span class='tooltiptext'>Startovné se platí před závodem, nejpozději do $match_data[Zavod_pocet_dni_na_platbu] dnů od provedení registrace.<br><br>Nezaplatí-li závodník do té doby, pošle se ráno upozornění na chybějící platbu.<br><br>Jestliže nezaplatí ani po tomto upozornění, je druhý den večer automaticky vyřazen.</span></span>";
+                    } else {
+                        echo "<span class='text-danger tooltip '>[platba startovného na místě]<span class='tooltiptext'>Závodník platí v den závodu při prezenci <strong>nejpozději 30 minut před závodem</strong></span></span>";
+                    }
+                    ?>
                 </div>
                 <div class="logo-right"></div>
             </div>
         </div>
-
         <nav class="navbar navbar-expand-lg navbar-fixed-top bg-dark">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <button href="" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#match_configuration">Konfigurace</button>
-                    </li>
+                    <?php if ($_SESSION['role'] === 'viewer'): ?>
+                        <li class="nav-item">
+                            <button type='button' class='btn btn-primary' onclick="window.location.href = 'export.php'">Export do PractiScore</button>
+                        </li>
+                    <?php endif; ?>
 
-                    <div class="dropdown" id="dropdownContainer1">
-                        <button class="btn btn-dark dropdown-toggle mx-2" id="dropdownButton1">Závodníci</button>
-                        <div class="custom-dropdown" id="customDropdown1">
-                            <a href="" data-bs-toggle="modal" data-bs-target="#new_shooter">Nový závodník</a>
-                            <a href="export.php">Export do PractiScore</a>
+                    <?php if ($_SESSION['role'] === 'admin' or  $_SESSION['role'] === 'editor'): ?>
+                        <li class="nav-item">
+                            <button href="" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#match_configuration">Konfigurace</button>
+                        </li>
+                        <div class="dropdown" id="dropdownContainer1">
+                            <button class="btn btn-dark dropdown-toggle mx-2" id="dropdownButton1">Závodníci</button>
+                            <div class="custom-dropdown" id="customDropdown1">
+                                <a href="" data-bs-toggle="modal" data-bs-target="#new_shooter">Nový závodník</a>
+                                <a href="export.php">Export do PractiScore</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="dropdown" id="dropdownContainer2">
-                        <button class="btn btn-dark dropdown-toggle mx-2" id="dropdownButton2">Nastavení závodu</button>
-                        <div class="custom-dropdown" id="customDropdown2">
-                            <a href="" data-bs-toggle="modal" data-bs-target="#manage_squads">Squady</a>
-                            <a href="" data-bs-toggle="modal" data-bs-target="#manage_divisions">Divize</a>
-                            <a href="" data-bs-toggle="modal" data-bs-target="#manage_categories">Kategorie</a>
-                            <a href="" data-bs-toggle="modal" data-bs-target="#upload_stages">Nahrání situací</a>
+                        <div class="dropdown" id="dropdownContainer2">
+                            <button class="btn btn-dark dropdown-toggle mx-2" id="dropdownButton2">Nastavení závodu</button>
+                            <div class="custom-dropdown" id="customDropdown2">
+                                <?php if ($_SESSION['role'] === 'admin'): ?>
+                                    <a href="" data-bs-toggle="modal" data-bs-target="#manage_users">Uživatelé</a>
+                                <?php endif; ?>
+                                <a href="" data-bs-toggle="modal" data-bs-target="#manage_squads">Squady</a>
+                                <a href="" data-bs-toggle="modal" data-bs-target="#manage_divisions">Divize</a>
+                                <a href="" data-bs-toggle="modal" data-bs-target="#manage_categories">Kategorie</a>
+                                <a href="" data-bs-toggle="modal" data-bs-target="#upload_stages">Nahrání situací</a>
+                            </div>
                         </div>
-                    </div>
+                    <?php endif; ?>
                 </ul>
-                <button type="button" class="btn btn-dark text-white me-2" disabled><i class="fa fa-user pe-2" style="font-size:15px"></i><?= $_SESSION['name'] ?></button><a class="btn btn-danger text-white" href="logout.php"><span class="me-2">Odhlásit</span><i class="fa fa-sign-out" style="font-size:15px"></i></a>
+                <button type="button" class="btn btn-dark custom me-2"
+                    id="userInfoBtn"
+                    data-bs-toggle="popover"
+                    data-bs-html="true"
+                    data-bs-placement="bottom"
+                    data-bs-title="Uživatel"
+                    data-bs-content="
+                        <dl class='row text-start'>
+                            <dt class='col-4 text-end text-start pe-0'><strong>username:</strong></dt>
+                                <dd class='col-8 ps-2'><?= $_SESSION['name'] ?></dd>
+                            <dt class='col-4 text-end text-start pe-0'><strong>role:</strong></dt>
+                                <dd class='col-8 ps-2'><?= $_SESSION['role'] ?></dd>
+                            <dt class='col-4 text-end text-start pe-0'><strong>oprávnění:</strong></dt>
+                                <dd class='col-8 ps-2'><?= $admin_roles[$_SESSION['role']] ?></dd>
+                        </dl>
+                ">
+                    <i class="fa fa-user pe-1" style="font-size:15px"></i>
+                    <span class="text-dashed"><?= $line['lastname'] . " " . $line['firstname']  ?></span>
+                </button>
+                <button class="btn btn-danger text-white btn-labeled" onclick="window.location.href = 'logout.php'">
+                    <span class="btn-label "><i class="fa fa-sign-out" style="font-size:15px"></i></span>Odhlásit</span>
+                </button>
+
+                
             </div>
         </nav>

@@ -80,6 +80,11 @@ a.logo-text, a.card-link {
     box-sizing:border-box;
 }
 
+.text-dashed {
+    border-bottom: 1px dashed #999 !important;
+    display: inline !important;
+}
+
 /* seznam závodníků */
 th.sorting, th.sorting.dtfc-fixed-left {background-color: #2375d2 !important; font-size: 13px; }
 
@@ -132,6 +137,11 @@ button.modal_info_shooter {
 
 }
 
+td.save-cell {
+    width: 160px;
+    text-align: center;
+}
+
 /* print preview */
 table.print, td.print {border: 1px solid black !important;}
 th.print {background-color: #dee2e6 !important; }
@@ -150,19 +160,6 @@ th.print {background-color: #dee2e6 !important; }
 /*----------------------------------------------
 	Responsive
 -----------------------------------------------*/
-
-@media screen and (max-width: 1200px) {
-	
-}
-
-@media screen and (max-width: 991px) {
-	
-}
-
-
-@media screen and (max-width: 767px) {
-	
-}
 
 /*----------------------------------------------
 	DataTable
@@ -206,15 +203,26 @@ nav.navbar.navbar-expand-lg {padding: 10px;}
 
 .accordion-body {background-color: #f5f5f5;}
 
-
 .form-check-input {
     margin-right: 5px;
 }
 
-
 .toast-top-10 {
   top: 10px;
   z-index: 1080;
+}
+
+.btn-label {
+    position: relative;
+    left: -10px;
+    display: inline-block;
+    padding: 6px 12px;
+    background: rgba(0,0,0,0.15);
+    border-radius: 3px 0 0 3px;
+}
+.btn-labeled {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 
@@ -265,6 +273,8 @@ nav.navbar.navbar-expand-lg {padding: 10px;}
 	Tooltip
 -----------------------------------------------*/
 
+
+
 .tooltip {
   cursor: help;
   position: relative !important;
@@ -311,3 +321,8 @@ nav.navbar.navbar-expand-lg {padding: 10px;}
 -----------------------------------------------*/
 
 .form-control {height: auto !important;}
+
+
+.btn.btn-dark.custom:hover {
+    background-color: #212529;
+}

@@ -13,6 +13,8 @@ require_once __DIR__ . '/../config/mail_texty.php';
 
 $conn = new mysqli($db_host, $db_login, $db_pass, $db_dtb);
 
+
+
 // KONFIGRACE ZAVODU 
 if (isset($_GET['match_config'])) {
     if ($match_data['Payment_before'] == "on") {
@@ -238,6 +240,117 @@ if (isset($_GET['match_config'])) {
     exit();
 }
 
+// PRIDANI NOVEHO UZIVATELE - TO-DO - omezení přístupu uživatele na konkrétní závod
+if (isset($_GET['new_user'])) {
+    $username = $_POST['Username'] ?? '';
+    $password = $_POST['Heslo'] ?? '';
+    $jmeno = $_POST['Jmeno'] ?? '';
+    $prijmeni = $_POST['Prijmeni'] ?? '';
+    $email = $_POST['Mail'] ?? '';
+    $role = $_POST['Role'] ?? 'viewer';
+
+    if ($username && $password && isValidPassword($password)) {
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+
+        $stmt = $conn->prepare("INSERT INTO site_admins (username, email, password, firstname, lastname, role) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssss", $username, $email,  $hash, $jmeno, $prijmeni, $role);
+        $stmt->execute();
+        $stmt->close();
+    } else {
+        $_SESSION['toast'] = [
+            'type' => 'warning',
+            'message' => 'Heslo musí mít 8–16 znaků, obsahovat číslo a speciální znak.'
+        ];
+        header("Location: index.php?users");
+        exit();
+    }
+    if ($affected === 0) {
+        include './components/modal-warning.php';
+        WarningModal(
+            "danger",
+            "Chyba databáze",
+            "index.php",
+            "Při vkládání do databáze došlo k chybě!",
+            "Kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba aktualizace databáze [$table]'>vývojáře</a> registračního systému.",
+            "Zpět do administrace"
+        );
+    } else {
+        $_SESSION['toast'] = [
+            'type' => 'success',
+            'message' => 'Uživatel byl úspěšně přidán.'
+        ];
+        header("Location: index.php?users");
+        //pri odešleme uživateli mail
+        $UZIVATEL .= "Jméno pro přihlášení:" . $username  . "\r\n";
+        $UZIVATEL .= "Heslo: pošle administrátor jinou cestou \r\n";
+        $UZIVATEL .= "Role: " . $role ." " . $admin_roles[$role] . "\r\n";
+
+        $from_text = htmlspecialchars($match_data['Zavod_poradatel'], ENT_QUOTES, 'UTF-8');
+        $from = htmlspecialchars($match_data['Zavod_email_from'], ENT_QUOTES, 'UTF-8');
+        $to = $email;
+        $subject = htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - vytvoření uživatele " . $username;
+        $message = "$email_admin_novy_uzivatel";
+        $message = str_replace("##UZIVATEL##", $UZIVATEL, $message);
+        $send_email = email($from_text, $from, $to, $subject, $message);
+    }
+}
+
+
+// MAZANI UZIVATELE  - TO-DO - ADMIN NELZE SMAZAT
+if (isset($_GET['delete_user'])) {
+
+    $stmt = $conn->prepare("
+		SELECT username, firstname, lastname, email FROM site_admins
+		WHERE username = ?
+	 ");
+    $stmt->bind_param(
+        "s",
+        $_GET['username']
+    );
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+    $line = mysqli_fetch_assoc($result);
+
+
+    $stmt = $conn->prepare("
+        DELETE FROM site_admins
+        WHERE username = ?
+	");
+    $stmt->bind_param(
+        "s",
+        $_GET['username']
+    );
+    $stmt->execute();
+    $affected = $stmt->affected_rows;
+    $stmt->close();
+
+    if ($affected == 0) {
+        include './components/modal-warning.php';
+        WarningModal(
+            "danger",
+            "Chyba databáze",
+            "index.php",
+            "Při vkládání do databáze došlo k chybě!",
+            "Kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba aktualizace databáze [$table]'>vývojáře</a> registračního systému.",
+            "Zpět do administrace"
+        );
+    } else {
+        $_SESSION['toast'] = [
+            'type' => 'danger',
+            'message' => 'Uživatel byl smazán.'
+        ];
+        header("Location: index.php?users");
+
+        //pri smazani uživatele odešleme statistikovi mail
+        $from = htmlspecialchars($match_data['Zavod_email_from'], ENT_QUOTES, 'UTF-8');
+        $to = htmlspecialchars($match_data['Zavod_email_stats'], ENT_QUOTES, 'UTF-8');
+        $subject = htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - smazání uživatele " . $_GET['username'];
+        $message = "V administraci závodu <strong>" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . "</strong> byl smazán uživatel: " . htmlspecialchars($line['firstname'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['lastname'], ENT_QUOTES, 'UTF-8') . " - " . htmlspecialchars($line['email'], ENT_QUOTES, 'UTF-8') . "\r\n";
+        $send_email = email($from_text, $from, $to, $subject, $message);
+    }
+}
+
 
 // PRIDANI NOVEHO ZAVODNIKA
 if (isset($_GET['new_shooter'])) {
@@ -432,26 +545,26 @@ if (isset($_GET['new_shooter'])) {
         } else {
             $message = $email_registrace_platba_text_admin_novy_zavodnik;
         }
-        
+
         // priprava podkladu pro email zavodnikovi
         // nice názvy pro mail
         $faktorLabels = [
             "MIN" => "Minor",
             "MAJ"  => "Major"
         ];
-        
+
         $faktorLabel = $faktorLabels[$line['Faktor']] ?? htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8');
-        
+
         $squadLabels = [
             "-2" => "Čekatel",
             "100"  => "Prematch"
         ];
         $squadLabel = $squadLabels[$line['Squad']] ?? htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8');
-        
+
         $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
         $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
         // nice názvy pro mail
-        
+
         $STRELEC .= "<strong>IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "</strong>" . "\r\n";
         $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " [$link_cancel]\r\n";
         $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
@@ -516,6 +629,10 @@ if (isset($_GET['new_shooter'])) {
                     "Zpět do administrace"
                 );
             } else {
+                $_SESSION['toast'] = [
+                    'type' => 'success',
+                    'message' => 'Závodník byl úspěšně přidán a registrační email odeslán.'
+                ];
                 header("refresh:0;url=index.php");
             }
         }
@@ -646,7 +763,6 @@ if (isset($_GET['edit_shooter'])) {
         );
     }
     $stmt->execute();
-    session_start();
     if ($stmt->errno !== 0) {
         include './components/modal-warning.php';
         WarningModal(
@@ -767,6 +883,11 @@ if (isset($_GET['edit_shooter'])) {
                 "Závodník byl zaregistrován, pro odstranění problému s odesíláním kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba odeslani emailu'>vývojáře</a> registračního systému.",
                 "Zpět do administrace"
             );
+        } else {
+            $_SESSION['toast'] = [
+                'type' => 'success',
+                'message' => 'Čekatel byl přesunut do běžného squadu.'
+            ];
         }
         // konec přesun čekatele do běžného squadu
     }
@@ -786,7 +907,7 @@ if (isset($_GET['edit_shooter'])) {
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();
-        
+
         $ip = ($_SERVER["REMOTE_ADDR"] . " - admin");
 
         $line = mysqli_fetch_array($result);
@@ -816,11 +937,11 @@ if (isset($_GET['edit_shooter'])) {
             "MAJ"  => "Major"
         ];
         $faktorLabel = $faktorLabels[$line['Faktor']] ?? htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8');
-        
+
         $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
         $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
         // nice názvy pro mail
-        
+
         $STRELEC .= "IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "\r\n";
         $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . "\r\n";
         $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
@@ -877,6 +998,10 @@ if (isset($_GET['delete_shooter'])) {
             "Zpět do administrace"
         );
     } else {
+        $_SESSION['toast'] = [
+            'type' => 'danger',
+            'message' => 'Závodník byl smazán.'
+        ];
         header("refresh:0;url=index.php");
         //pri smazani zavodnika odešleme statistikovi mail
         $from = htmlspecialchars($match_data['Zavod_email_from'], ENT_QUOTES, 'UTF-8');
@@ -886,7 +1011,6 @@ if (isset($_GET['delete_shooter'])) {
         $send_email = email($from_text, $from, $to, $subject, $message);
     }
 }
-
 
 // VYRAZENI ZAVODNIKA TLAČÍTKEM V ADMINISTRACI
 if (isset($_GET['cancel_shooter'])) {
@@ -963,6 +1087,11 @@ if (isset($_GET['cancel_shooter'])) {
                 "Závodník byl zaregistrován, pro odstranění problému s odesíláním kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba odeslani emailu'>vývojáře</a> registračního systému.",
                 "Zpět do administrace"
             );
+        } else {
+            $_SESSION['toast'] = [
+                'type' => 'danger',
+                'message' => 'Závodník byl vyřazen.'
+            ];
         }
     }
 }
@@ -1042,6 +1171,11 @@ if (isset($_GET['mark_paid'])) {
                 "Závodník byl zaregistrován, pro odstranění problému s odesíláním kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba odeslani emailu'>vývojáře</a> registračního systému.",
                 "Zpět do administrace"
             );
+        } else {
+            $_SESSION['toast'] = [
+                'type' => 'success',
+                'message' => 'Informace o platbě zaevidována.'
+            ];
         }
     }
 }
@@ -1073,6 +1207,10 @@ if (isset($_GET['new_squad'])) {
             "Zpět do administrace"
         );
     } else {
+        $_SESSION['toast'] = [
+            'type' => 'success',
+            'message' => 'Squad byl úspěšně přidán.'
+        ];
         header("Location: index.php?squads");
     }
 }
@@ -1102,6 +1240,10 @@ if (isset($_GET['delete_squad'])) {
             "Zpět do administrace"
         );
     } else {
+        $_SESSION['toast'] = [
+            'type' => 'danger',
+            'message' => 'Squad byl smazán.'
+        ];
         header("Location: index.php?squads");
     }
 }
@@ -1133,6 +1275,10 @@ if (isset($_GET['new_division'])) {
             "Zpět do administrace"
         );
     } else {
+        $_SESSION['toast'] = [
+            'type' => 'success',
+            'message' => 'Divize byla úspěšně přidána'
+        ];
         header("Location: index.php?divisions");
     }
 }
@@ -1162,6 +1308,10 @@ if (isset($_GET['delete_division'])) {
             "Zpět do administrace"
         );
     } else {
+        $_SESSION['toast'] = [
+            'type' => 'danger',
+            'message' => 'Divize byla smazána.'
+        ];
         header("Location: index.php?divisions");
     }
 }
@@ -1193,6 +1343,10 @@ if (isset($_GET['new_category'])) {
             "Zpět do administrace"
         );
     } else {
+        $_SESSION['toast'] = [
+            'type' => 'success',
+            'message' => 'Kategorie byla úspěšně přidána.'
+        ];
         header("Location: index.php?categories");
     }
 }
@@ -1222,8 +1376,35 @@ if (isset($_GET['delete_category'])) {
             "Zpět do administrace"
         );
     } else {
+        $_SESSION['toast'] = [
+            'type' => 'danger',
+            'message' => 'Kategorie byl smazána.'
+        ];
         header("Location: index.php?categories");
     }
+}
+
+if (isset($_POST['update'])) {
+    $table = $_POST['table'];
+    $field = $_POST['field'];
+    $id = intval($_POST['id']);
+    $value = $_POST['value'];
+
+    // Povolené tabulky a pole
+    $allowedTables = [
+        'site_admins' => ['username', 'email', 'role', 'firstname', 'lastname'],
+        $table_squads => ['Number', 'Name'],
+        $table_divisions => ['Name', 'Value'],
+        $table_categories => ['Name', 'Value']
+    ];
+
+    if (array_key_exists($table, $allowedTables) && in_array($field, $allowedTables[$table])) {
+        $stmt = $conn->prepare("UPDATE `$table` SET `$field` = ? WHERE id = ?");
+        $stmt->bind_param("si", $value, $id);
+        $stmt->execute();
+        $stmt->close();
+    }
+    exit;
 }
 ?>
 

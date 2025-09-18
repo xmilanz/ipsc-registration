@@ -1,6 +1,5 @@
 <?php
 session_start();
-// If the user is not logged in redirect to the login page...
 if (!isset($_SESSION['loggedin'])) {
     header('Location: ../index.php');
     exit;
@@ -8,22 +7,33 @@ if (!isset($_SESSION['loggedin'])) {
 
 require_once __DIR__ . '/../db/dbconn.php';
 
-//if (file_exists('./db/dbconn.php')) {
-//    include './db/dbconn.php';
-//} elseif (file_exists('../db/dbconn.php')) {
-//    include '../db/dbconn.php';
-//}
-
 header('Content-Type: text/csv');
 header('Content-Disposition: attachment; filename="'.$table.'-shooters-practiscore.csv"');
 header('Pragma: no-cache');
 header('Expires: 0');
 
-$query = "select Alias,Cislo,Jmeno,Prijmeni,Mail,Squad,Divize,Faktor,Kategorie,Zaplaceno,Region from $table where Squad >= 0 ORDER BY Cislo;";
-$strelci = mysql_query($query);
+$stmt = $conn->prepare("
+		SELECT
+	Alias,
+	Cislo,
+	Jmeno,
+	Prijmeni,
+	Mail,
+	Squad,
+	Divize,
+	Faktor,
+	Kategorie,
+	Zaplaceno,
+	Region
+		 FROM $table 
+		 WHERE Squad >= 0 
+		 ORDER BY Cislo
+	");
+$stmt->execute();
+$result = $stmt->get_result();
 $csvData = "IPSC#,Shooter#,First Name,Last Name,Email,Squad,Division,PF,Class,Categories,Checkins,Team,Country\r\n";
 
-while ($z = mysql_fetch_array($strelci)) {
+while ($z = mysqli_fetch_array($result)) {
 	switch ($z['Divize']) {
 		case "PRD": $z['Divize'] = "Production"; break;
 		case "PDO": $z['Divize'] = "Production Optics"; break;

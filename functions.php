@@ -166,3 +166,19 @@ function getValueFromTable($conn, $table, $whereColumn, $whereValue, $returnColu
         return null; // pokud nic nenajde
     }
 }
+
+function hasRole(string $role): bool {
+    return isset($_SESSION['role']) && $_SESSION['role'] === $role;
+}
+
+function hasAnyRole(array $roles): bool {
+    return isset($_SESSION['role']) && in_array($_SESSION['role'], $roles);
+}
+
+function isValidPassword($password) {
+    $length = strlen($password);
+    $hasNumber = preg_match('/\d/', $password);
+    $hasSpecial = preg_match('/[\W_]/', $password); // \W = non-word char, _ included
+
+    return ($length >= 8 && $length <= 16 && $hasNumber && $hasSpecial);
+}

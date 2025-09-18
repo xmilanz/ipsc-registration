@@ -17,6 +17,33 @@
   }, false);
 })();
 
+
+function normalizeInput(value, field) {
+  let output = value.trim();
+
+  switch (field) {
+    case 'Alias':
+      output = output.normalize("NFD").replace(/[^a-zA-ZáÁčČďĎéÉěĚíÍňŇóÓřŘšŠťŤúÚůŮýÝžŽ]/g, "").toLowerCase();
+      break;
+    case 'Jmeno':
+      output = output.replace(/[^a-zA-ZáÁčČďĎéÉěĚíÍňŇóÓřŘšŠťŤúÚůŮýÝžŽ]/g, "");
+      break;
+    case 'Prijmeni':
+      output = output.replace(/[^a-zA-ZáÁčČďĎéÉěĚíÍňŇóÓřŘšŠťŤúÚůŮýÝžŽ0-9]/g, "");
+      break;
+    case 'Mail':
+    case 'email':
+      output = output.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9@\.]/g, "").toLowerCase();
+      break;
+    default:
+      // Pro ostatní pole můžeš přidat další pravidla
+      break;
+  }
+
+  return output;
+}
+
+
 function replaceChars() {
 	var aliasInput = document.getElementById(`Alias`);
 	if (aliasInput) {

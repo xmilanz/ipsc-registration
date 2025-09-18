@@ -116,6 +116,10 @@ if (isset($_GET['regmail'])) {
             "Zpět do administrace"
         );
     } else {
+        $_SESSION['toast'] = [
+            'type' => 'success',
+            'message' => 'Registrační email byl odeslán.'
+        ];
         header("refresh:0;url=index.php");
         // informace o emailu zaslaneho z administrace se do databaze nezapisuje
     }
@@ -232,6 +236,10 @@ if (isset($_GET['payment_warn'])) {
             );
         } else {
             header("refresh:0;url=index.php");
+            $_SESSION['toast'] = [
+                'type' => 'success',
+                'message' => 'Urgence platby byla odeslána.'
+            ];
         }
     }
 }

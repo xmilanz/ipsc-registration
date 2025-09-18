@@ -513,4 +513,18 @@ U závodníků zaregistrovaných méně jak 10 dní před závodem je třeba sta
 V případě neuhrazení startovného v řádném termínu bude Vaše registrace zrušena (neplatí pro organizátory, pomocníky a rozhodčí).
 </i></small>
 ";
+
+$email_admin_novy_uzivatel="Dobrý den,
+
+administrátor vám vytvořil uživatelský účet pro přístup do administrace závodu <strong>". htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . "</strong> (" . htmlspecialchars($match_data['Zavod_misto'], ENT_QUOTES, 'UTF-8') . ").
+
+
+##UZIVATEL##
+
+Do administrace se přihlašte pomocí uživatelského jména a hesla na adrese <a href='$web_adresa_admin'>$web_adresa_admin/</a>
+
+S pozdravem
+<strong>".$match_data['Zavod_poradatel']."</strong>
+";
+
 ?>
