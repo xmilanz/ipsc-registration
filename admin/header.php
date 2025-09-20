@@ -63,6 +63,7 @@ $dnes = (new DateTime())->format("Y-m-d H:i:s");
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- dataTable https://datatables.net/download/ -->
     <script type="text/javascript" src="./js/datatable_conf.js"></script>
     <link href="https://cdn.datatables.net/v/bs5/jszip-3.10.1/dt-2.2.1/b-3.2.1/b-colvis-3.2.1/b-html5-3.2.0/b-print-3.2.0/cr-2.0.4/date-1.5.5/r-3.0.3/sb-1.8.1/sp-2.3.3/datatables.min.css" rel="stylesheet">
@@ -149,7 +150,5 @@ $dnes = (new DateTime())->format("Y-m-d H:i:s");
                 <button class="btn btn-danger text-white btn-labeled" onclick="window.location.href = 'logout.php'">
                     <span class="btn-label "><i class="fa fa-sign-out" style="font-size:15px"></i></span>Odhlásit</span>
                 </button>
-
-                
             </div>
         </nav>

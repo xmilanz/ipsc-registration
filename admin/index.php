@@ -1,6 +1,5 @@
 <?php
 include "header.php";
-$admin = ['milan.zidek'];
 
 ?>
 <div id="main">
@@ -176,7 +175,7 @@ $admin = ['milan.zidek'];
                         echo "<td class='functions'>";
         ?>
                         <div class="btn-group" role="group">
-                            <?php if ($_SESSION['role'] === 'admin' or  $_SESSION['role'] === 'editor'): ?>
+                            <?php if ($_SESSION['role'] === 'admin' ||  $_SESSION['role'] === 'editor'): ?>
                                 <button data-id="<?= $line['Cislo'] ?>" href="#edit_shooter"
                                     class="modal_edit_shooter btn text-secondary"
                                     data-bs-toggle="modal" title="Upravit závodníka">
@@ -194,59 +193,56 @@ $admin = ['milan.zidek'];
                                 data-bs-toggle="modal" title="Informace o závodníkovi">
                                 <i class="fas fa-info-circle"></i> Info
                             </button>
-                            <?php if ($line['Squad'] != "-9" || in_array($_SESSION['name'], $admin)): ?> <!-- není zaplaceno nebo platí na místě nebo už je vyřazen -->
-                                <?php if ($_SESSION['role'] === 'admin' or  $_SESSION['role'] === 'editor'): ?>
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn text-secondary" data-bs-toggle="dropdown" aria-expanded="false" title="Další akce">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <?php if ($line['Zaplaceno'] != "on" && $line['NaMiste'] != "on" && $line['Squad'] != "-9" && $line['Squad'] != "-2"): ?> <!-- není zaplaceno nebo platí na místě nebo už je vyřazen -->
-                                                <li>
-                                                    <button class="dropdown-item modal_payment_warn <?= $paymentBeforeClass ?>"
-                                                        data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['Klic'] ?>"
-                                                        href="#payment_warn" data-bs-toggle="modal"
-                                                        data-bs-backdrop="static" data-bs-keyboard="false">
-                                                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>
-                                                        Upozornění na nezaplacení
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button class="dropdown-item modal_payment_save <?= $paymentBeforeClass ?>"
-                                                        data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['Klic'] ?>"
-                                                        href="#payment_save" data-bs-toggle="modal"
-                                                        data-bs-backdrop="static" data-bs-keyboard="false">
-                                                        <i class="fas fa-check-circle text-success me-2"></i>
-                                                        Označit jako zaplaceno
-                                                    </button>
-                                                </li>
-                                            <?php endif; ?>
-                                            <?php if ($line['Squad'] != "-9"): ?> <!-- není už vyřazen -->
-                                                <li>
-                                                    <button class="dropdown-item modal_cancel_shooter"
-                                                        data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['Klic'] ?>"
-                                                        href="#cancel_shooter" data-bs-toggle="modal"
-                                                        data-bs-backdrop="static" data-bs-keyboard="false">
-                                                        <i class="fas fa-minus-circle text-danger me-2"></i>
-                                                        Vyřadit závodníka
-                                                    </button>
-                                                </li>
-                                            <?php endif; ?>
-                                            <!--?php if (in_array($_SESSION['name'], $admin)): ?-->
-                                            <?php if ($_SESSION['role'] === 'admin'): ?>
-                                                <li>
-                                                    <button class="dropdown-item modal_delete_shooter"
-                                                        data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['Klic'] ?>"
-                                                        href="#delete_shooter" data-bs-toggle="modal"
-                                                        data-bs-backdrop="static" data-bs-keyboard="false">
-                                                        <i class="fas fa-trash-alt text-danger me-2"></i>
-                                                        Smazat závodníka
-                                                    </button>
-                                                </li>
-                                            <?php endif; ?>
-                                        </ul>
-                                    </div>
-                                <?php endif; ?>
+                            <?php if (($_SESSION['role'] === 'admin') || ($line['Squad'] != "-9" && $_SESSION['role'] === 'editor')): ?>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn text-secondary" data-bs-toggle="dropdown" aria-expanded="false" title="Další akce">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <?php if ($line['Zaplaceno'] != "on" && $line['NaMiste'] != "on" && $line['Squad'] != "-9" && $line['Squad'] != "-2"): ?> <!-- není zaplaceno nebo platí na místě nebo už je vyřazen -->
+                                            <li>
+                                                <button class="dropdown-item modal_payment_warn <?= $paymentBeforeClass ?>"
+                                                    data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['Klic'] ?>"
+                                                    href="#payment_warn" data-bs-toggle="modal"
+                                                    data-bs-backdrop="static" data-bs-keyboard="false">
+                                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                                    Upozornění na nezaplacení
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button class="dropdown-item modal_payment_save <?= $paymentBeforeClass ?>"
+                                                    data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['Klic'] ?>"
+                                                    href="#payment_save" data-bs-toggle="modal"
+                                                    data-bs-backdrop="static" data-bs-keyboard="false">
+                                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                                    Označit jako zaplaceno
+                                                </button>
+                                            </li>
+                                        <?php endif; ?>
+                                        <?php if ($line['Squad'] != "-9"): ?> <!-- není už vyřazen -->
+                                            <li>
+                                                <button class="dropdown-item modal_cancel_shooter"
+                                                    data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['Klic'] ?>"
+                                                    href="#cancel_shooter" data-bs-toggle="modal"
+                                                    data-bs-backdrop="static" data-bs-keyboard="false">
+                                                    <i class="fas fa-minus-circle text-danger me-2"></i>
+                                                    Vyřadit závodníka
+                                                </button>
+                                            </li>
+                                        <?php endif; ?>
+                                        <?php if ($_SESSION['role'] === 'admin'): ?>
+                                            <li>
+                                                <button class="dropdown-item modal_delete_shooter"
+                                                    data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['Klic'] ?>"
+                                                    href="#delete_shooter" data-bs-toggle="modal"
+                                                    data-bs-backdrop="static" data-bs-keyboard="false">
+                                                    <i class="fas fa-trash-alt text-danger me-2"></i>
+                                                    Smazat závodníka
+                                                </button>
+                                            </li>
+                                        <?php endif; ?>
+                                    </ul>
+                                </div>
                             <?php endif; ?>
                         </div>
                         </td>
@@ -321,7 +317,6 @@ include_once("./include/pass_values.php");
 </script>
 <script type="text/javascript" src="./js/admin_scripts.js"></script>
 <script type="text/javascript" src="./js/admin_reg_form.js"></script>
-
 
 </BODY>
 

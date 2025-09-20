@@ -521,7 +521,7 @@ administrátor vám vytvořil uživatelský účet pro přístup do administrace
 
 ##UZIVATEL##
 
-Do administrace se přihlašte pomocí uživatelského jména a hesla na adrese <a href='$web_adresa_admin'>$web_adresa_admin/</a>
+Do administrace se přihlašte pomocí uživatelského jména a hesla na adrese <a href='$web_adresa_admin'>$web_adresa_admin/login.php</a>
 
 S pozdravem
 <strong>".$match_data['Zavod_poradatel']."</strong>

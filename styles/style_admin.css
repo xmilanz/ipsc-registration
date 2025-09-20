@@ -226,6 +226,12 @@ nav.navbar.navbar-expand-lg {padding: 10px;}
 }
 
 
+/* login area - user */ 
+.btn.btn-dark.custom:hover {
+    background-color: #212529;
+}
+
+
 /*----------------------------------------------
   Datepicker
 -----------------------------------------------*/
@@ -322,7 +328,3 @@ nav.navbar.navbar-expand-lg {padding: 10px;}
 
 .form-control {height: auto !important;}
 
-
-.btn.btn-dark.custom:hover {
-    background-color: #212529;
-}

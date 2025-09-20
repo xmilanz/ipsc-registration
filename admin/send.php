@@ -235,11 +235,11 @@ if (isset($_GET['payment_warn'])) {
                 "Zpět do administrace"
             );
         } else {
-            header("refresh:0;url=index.php");
             $_SESSION['toast'] = [
                 'type' => 'success',
                 'message' => 'Urgence platby byla odeslána.'
             ];
+            header("refresh:0;url=index.php");
         }
     }
 }

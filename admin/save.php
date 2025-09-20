@@ -1378,7 +1378,7 @@ if (isset($_GET['delete_category'])) {
     } else {
         $_SESSION['toast'] = [
             'type' => 'danger',
-            'message' => 'Kategorie byl smazána.'
+            'message' => 'Kategorie byla smazána.'
         ];
         header("Location: index.php?categories");
     }
