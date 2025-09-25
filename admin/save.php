@@ -13,8 +13,6 @@ require_once __DIR__ . '/../config/mail_texty.php';
 
 $conn = new mysqli($db_host, $db_login, $db_pass, $db_dtb);
 
-
-
 // KONFIGRACE ZAVODU 
 if (isset($_GET['match_config'])) {
     if ($match_data['Payment_before'] == "on") {
@@ -283,7 +281,7 @@ if (isset($_GET['new_user'])) {
         //pri odešleme uživateli mail
         $UZIVATEL .= "Jméno pro přihlášení:" . $username  . "\r\n";
         $UZIVATEL .= "Heslo: pošle administrátor jinou cestou \r\n";
-        $UZIVATEL .= "Role: " . $role ." " . $admin_roles[$role] . "\r\n";
+        $UZIVATEL .= "Role: " . $role . " " . $admin_roles[$role] . "\r\n";
 
         $from_text = htmlspecialchars($match_data['Zavod_poradatel'], ENT_QUOTES, 'UTF-8');
         $from = htmlspecialchars($match_data['Zavod_email_from'], ENT_QUOTES, 'UTF-8');
@@ -296,8 +294,35 @@ if (isset($_GET['new_user'])) {
 }
 
 
-// MAZANI UZIVATELE  - TO-DO - ADMIN NELZE SMAZAT
+// MAZANI UZIVATELE
 if (isset($_GET['delete_user'])) {
+
+    // Získání role uživatele, který má být smazán
+    $stmt = $conn->prepare("SELECT role FROM site_admins WHERE username = ?");
+    $stmt->bind_param("s", $_GET['username']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    $userData = mysqli_fetch_assoc($result);
+
+    // Pokud uzivatel admin, zkontrolujeme, kolik jich zbývá
+    if ($userData['role'] === 'admin') {
+        $stmt = $conn->prepare("SELECT COUNT(*) as pocet FROM site_admins WHERE role = 'admin'");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        $adminCount = mysqli_fetch_assoc($result)['pocet'];
+        if ($adminCount <= 1) {
+            $_SESSION['toast'] = [
+                'type' => 'danger',
+                'message' => 'Nelze smazat posledního administrátora!'
+            ];
+            header("Location: index.php?users");
+            exit;
+        }
+    }
 
     $stmt = $conn->prepare("
 		SELECT username, firstname, lastname, email FROM site_admins
@@ -311,7 +336,6 @@ if (isset($_GET['delete_user'])) {
     $result = $stmt->get_result();
     $stmt->close();
     $line = mysqli_fetch_assoc($result);
-
 
     $stmt = $conn->prepare("
         DELETE FROM site_admins
