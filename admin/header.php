@@ -136,12 +136,18 @@ $dnes = (new DateTime())->format("Y-m-d H:i:s");
                     data-bs-title="Uživatel"
                     data-bs-content="
                         <dl class='row text-start'>
-                            <dt class='col-4 text-end text-start pe-0'><strong>username:</strong></dt>
+                            <dt class='col-4 text-end text-start pe-0'><strong>login:</strong></dt>
                                 <dd class='col-8 ps-2'><?= $_SESSION['name'] ?></dd>
+                            <dt class='col-4 text-end text-start pe-0'><strong>jméno:</strong></dt>
+                                <dd class='col-8 ps-2'><?= $line['firstname'] . " " . $line['lastname']  ?></dd>
+                            <dt class='col-4 text-end text-start pe-0'><strong>e-mail:</strong></dt>
+                                <dd class='col-8 ps-2'><?= $line['email'] ?></dd>
                             <dt class='col-4 text-end text-start pe-0'><strong>role:</strong></dt>
                                 <dd class='col-8 ps-2'><?= $_SESSION['role'] ?></dd>
                             <dt class='col-4 text-end text-start pe-0'><strong>oprávnění:</strong></dt>
                                 <dd class='col-8 ps-2'><?= $admin_roles[$_SESSION['role']] ?></dd>
+                            <dt class='col-4 text-end text-start pe-0'><strong>IP adresa:</strong></dt>
+                                <dd class='col-8 ps-2'><?= $_SERVER['REMOTE_ADDR']; ?></dd>
                         </dl>
                 ">
                     <i class="fa fa-user pe-1" style="font-size:15px"></i>
