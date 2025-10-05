@@ -81,6 +81,10 @@ a.logo-text, a.card-link {
     box-sizing:border-box;
 }
 
+.version{ 
+    float: right;
+}
+
 
 /*----------------------------------------------
 	Elements
@@ -240,8 +244,8 @@ border: 1px solid #dee2e6;
 }
 
 .modal-body {
-    max-height: 75vh;.
-    overflow-y: auto;.
+    max-height: 75vh;
+    overflow-y: auto;
     overflow-x: hidden;
 }
 
@@ -280,7 +284,7 @@ border: 1px solid #dee2e6;
   z-index: 1;
   top: -10px;
   opacity: 0;
-  transition: opacity 0.5s;
+  transition: opacity 0.5;
 }
 
 .tooltiptext ul { 
@@ -316,6 +320,13 @@ border: 1px solid #dee2e6;
     a.nav-link {
         font-size: x-large;
     }
+    #footer {
+        text-align: center;
+    }
+    .version { 
+    float: none;
+    }
+}
 }
 
 @media only screen and (min-width: 768px) {
