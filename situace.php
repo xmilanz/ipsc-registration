@@ -20,10 +20,6 @@ include "./header.php";
         </div>
     </div>
 </div>
-<span class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" data-bs-title="Disabled tooltip">
-  <button class="btn btn-primary" type="button" disabled>Disabled button</button>
-</span>
-<button type="button" class="btn btn-primary" data-bs-toggle="tooltip" title="Hooray!">Hover over me!</button>        
 <script>
     $('.portfolio-menu ul li').click(function() {
         $('.portfolio-menu ul li').removeClass('active');
