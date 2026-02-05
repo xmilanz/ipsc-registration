@@ -26,7 +26,7 @@ $stmt->close();
 $match_data = mysqli_fetch_array($result);
 
 // REGISTRACNI MAIL ODESLANY Z ADMINISTRACE
-if (isset($_GET['regmail'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['regmail'])) {
     $line = getShooterData($conn, $table, $_POST['shooterID'], $_POST['shooterKEY']);
 
     $squad = $line['Squad'];
@@ -127,7 +127,7 @@ if (isset($_GET['regmail'])) {
 
 
 // URGENCE PLATBY
-if (isset($_GET['payment_warn'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['payment_warn'])) {
     $line = getShooterData($conn, $table, $_POST['shooterID'], $_POST['shooterKEY']);
 
     $squad = $line['Squad'];

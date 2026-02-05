@@ -45,8 +45,11 @@ if (($match_data['Zavod_registrace_pozastaveno'] ?? '') === "on") {
                 <dd class="col-8 ps-2"><?= htmlspecialchars($match_data['Zavod_poradatel'], ENT_QUOTES, 'UTF-8') ?></dd>
                 <dt class="col-4 text-end text-start pe-0">Místo:</dt>
                 <dd class="col-8 ps-2"><?= htmlspecialchars($match_data['Zavod_misto'], ENT_QUOTES, 'UTF-8'); ?>&nbsp;&nbsp;<a href='<?= htmlspecialchars($match_data['Zavod_misto_mapa'], ENT_QUOTES, 'UTF-8'); ?>' target='_blank' rel='noopener'><i class='fas fa-crosshairs text-dark'></i></a></dd>
+                <dt class="col-4 text-end text-start pe-0">Placení:</dt>
+                <dd class="col-8 ps-2"><?= empty($match_data['Payment_before']) ? 'na místě' : 'do 10 dnů od registrace' ?></dd>
                 <dt class="col-4 text-end text-start pe-0">Startovné:</dt>
-                <dd class="col-8 ps-2"><?= ($match_data['Banka_ucet_CASTKA'] == 0 ? 'dle propozic ' . $platba_na_miste : $match_data['Banka_ucet_CASTKA'] . ' ' . $match_data['Banka_ucet_MENA'] . ' ' . $platba_na_miste); ?></dd>
+                <dd class="col-8 ps-2"><?= $match_data['Banka_ucet_CASTKA'] . " " . $match_data['Banka_ucet_MENA']; ?></dd>
+
             </dl>
         </div>
     </div>
@@ -145,9 +148,17 @@ if (($match_data['Zavod_registrace_pozastaveno'] ?? '') === "on") {
                 <h3>Časový plán</h3>
             </div>
             <table class="<?php if ($match_data['Zavod_registrace_pozastaveno'] == "on") echo "d-none"; ?> table table-borderless m-2">
-                <tr class="<?php if (empty($match_data['Squad_prem_max'])) echo "d-none"; ?>"><td><strong>Prematch</strong></td><td><?= "$denPrematch " . $datumPrematch->format('j.n.Y') . "" ?></td><td><?= htmlspecialchars($match_data['Zavod_cas_prematch'], ENT_QUOTES, 'UTF-8') ?></td></tr>
-			<tr><td><strong>Prezence</strong></td><td><?= "$denZavod " . $datumZavod->format('j.n.Y') . "" ?></td><td><?= htmlspecialchars($match_data['Zavod_cas_prezence'], ENT_QUOTES, 'UTF-8') ?></td></tr>
-			<tr class=" <?php if (!empty($match_data['Zavod_cas_main_dopoledne']) and !empty($match_data['Zavod_cas_main_odpoledne'])) echo "d-none"; ?>">
+                <tr class="<?php if (empty($match_data['Squad_prem_max'])) echo "d-none"; ?>">
+                    <td><strong>Prematch</strong></td>
+                    <td><?= "$denPrematch " . $datumPrematch->format('j.n.Y') . "" ?></td>
+                    <td><?= htmlspecialchars($match_data['Zavod_cas_prematch'], ENT_QUOTES, 'UTF-8') ?></td>
+                </tr>
+                <tr>
+                    <td><strong>Prezence</strong></td>
+                    <td><?= "$denZavod " . $datumZavod->format('j.n.Y') . "" ?></td>
+                    <td><?= htmlspecialchars($match_data['Zavod_cas_prezence'], ENT_QUOTES, 'UTF-8') ?></td>
+                </tr>
+                <tr class=" <?php if (!empty($match_data['Zavod_cas_main_dopoledne']) and !empty($match_data['Zavod_cas_main_odpoledne'])) echo "d-none"; ?>">
                     <td><strong>Závod</strong></td>
                     <td><?= "$denZavod " . $datumZavod->format('j.n.Y') . "" ?></td>
                     <td><?= htmlspecialchars($match_data['Zavod_cas_main'], ENT_QUOTES, 'UTF-8') ?></td>
@@ -216,7 +227,7 @@ while ($row = $result->fetch_assoc()) {
             <ul class="pb-3 text-start">
                 <li>V souladu s pravidlem 6.6.2 je účast v prematchi omezena na organizátory, rozhodčí, pomocníky a sponzory.</li>
                 <li>Rozhodčí a pomocníci se registrují po dohodě s RM nebo MD</li>
-                <li>Registrace se uzavírá 3 dny před konáním hlavního závodu.</li>
+                <li>Registrace se uzavírá <?= $match_data['Zavod_konec_registrace']; ?> dny před konáním hlavního závodu (<?= $datumZavod->modify("-$match_data[Zavod_konec_registrace] days")->format('j.n.Y'); ?>).</li>
                 <li>Pořadatelé si vyhrazují právo dodatečně měnit zařazení závodníků do squadů za účelem zajištění hladkého průběhu závodu.</li>
                 <li><strong>Změny v registraci</strong> (např. náhrada závodníka při přenosu startovného) lze provést nejpozději v den prematche.</li>
                 <li>Přesuny závodníků mezi squady na základě jejich žádosti lze provést nejpozději do 30 minut před oficiálním zahájením hlavního závodu.</li>
@@ -235,7 +246,7 @@ while ($row = $result->fetch_assoc()) {
             </div>
             <ul class="pb-3 text-start">
                 <li>Startovné uhraďte tak, aby platba proběhla do <?= $match_data['Zavod_pocet_dni_na_platbu'] ?> dnů od registrace.<br>
-                    - <span class="text-danger">u závodníků zaregistrovaných méně jak <?= $match_data['Zavod_pocet_dni_na_platbu'] ?> dní před závodem je třeba startovné zaplatit <b>nejpozději jeden den před prematchem</b></span>
+                    - <span class="text-danger">u závodníků zaregistrovaných méně jak <?= $match_data['Zavod_pocet_dni_na_platbu'] ?> dní před závodem je třeba startovné zaplatit <b>nejpozději jeden den před prematchem</b> (<?= $datumPrematch->modify("-1 days")->format('j.n.Y') ?>)</span>
                 <li>V případě neuhrazení startovného v řádném termínu je registrace zrušena.<br>
                     <i>- neplatí pro organizátory, pomocníky a rozhodčí</i>
                 <li><b>Startovné je nevratné, lze jej přenést na jiného závodníka.
@@ -282,7 +293,7 @@ while ($row = $result->fetch_assoc()) {
                                     </ul>
                                 </li>
                                 <li>Jméno, příjmení, datum narození, telefonní číslo, e-mailovou adresu a fotografie a videa z průběhu akce je nutné zpracovat:
-                                    <ol type=\"a\">
+                                    <ol type='a'>
                                         <li>za účelem registrace, evidence a vyhodnocení závodů který organizuje Správce.</li>
                                         <li>pro marketingové účely Správce, tj. zejména zveřejňování informací o průběžné činnosti Správce.</li>
                                     </ol>

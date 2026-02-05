@@ -24,6 +24,7 @@ WarningModalForm(
     ],
     "Závodník #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno']) . " " . htmlspecialchars($line['Prijmeni']) . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ") zaplatil.",
     "Zaevidujeme platbu a pošleme závodníkovi potvrzení.",
-    "./save.php?mark_paid",
+    "./save.php",
+    "mark_paid",
     "Zaevidovat platbu"
 );

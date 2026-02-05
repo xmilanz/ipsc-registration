@@ -1,12 +1,23 @@
 <?php
 include "./header.php";
+session_start();
 
 // NOVA REGISTRACE
-if (isset($_GET['registrovat'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrovat'])) {
 
+    // --- kontrola CSRF tokenu ---
+    if (!isset($_POST['token'], $_SESSION['token']) || $_POST['token'] !== $_SESSION['token']) {
+        http_response_code(403);
+        exit('Neplatný CSRF token.');
+    }
+    // token po použití zneplatníme
+    unset($_SESSION['token']);
+    // --- honeypot (robots) ---
+    if (!empty($_POST['gender'])) {
+        exit('Spam detekován.');
+    }
     // zkontrolovat max pocet ve squadu 
     $_POST['Squad'] == 100 ? $squad_max = $match_data['Squad_prem_max'] : $squad_max = $match_data['Squad_main_max'];
-
     $stmt = $conn->prepare("
 		SELECT Count(Prijmeni) FROM $table
 		WHERE Squad = ?
@@ -32,13 +43,16 @@ if (isset($_GET['registrovat'])) {
         );
         exit;
     } else {
-        $varsymbol = substr(rand(), 0, 4);
         $alias = trim(mb_convert_case($_POST['Alias'], MB_CASE_UPPER, "UTF-8")) . mb_convert_case($_POST['Divize_dalsi'], MB_CASE_UPPER);
         $jmeno = trim(mb_convert_case($_POST['Jmeno'], MB_CASE_TITLE, "UTF-8"));
         $prijmeni = trim(mb_convert_case($_POST['Prijmeni'], MB_CASE_TITLE, "UTF-8")) . mb_convert_case($_POST['Divize_dalsi'], MB_CASE_UPPER) . $_POST['Prijmeni_stav'] . '';
-        $ip = $_SERVER["REMOTE_ADDR"];
-        $zp = trim($_POST['ZP']);
         $email = trim($_POST['Email']);
+        $ip = $_SERVER["REMOTE_ADDR"];
+        $op = normalizePrukaz($_POST['ObcanskyPrukaz'] ?? '');
+        $zo = isset($_POST['ZbrojniOpravneni']) ? 'on' : '';
+        $staff = $_POST['Staff'] ?? '';
+        $varsymbol = rand(1000, 9999);
+        $klic = rand(1000, 9999);
 
         empty($_POST['Divize']) ? $divize = substr($_POST['Divize_dalsi'], 1) : $divize = $_POST['Divize'];
 
@@ -117,15 +131,16 @@ if (isset($_GET['registrovat'])) {
             // konecne registrujeme zavodnika
             $stmt = $conn->prepare("
 		    INSERT INTO $table 
-		    (Alias,Prijmeni,Jmeno,ZP,VarSym,Region,Mail,Kategorie,Divize,Faktor,DatReg,RegistraceIP,Squad,Staff,Zavod)
-		    VALUES (?, ?, ?, NULLIF(?,''), ?, ?, ?, ?, ?, ?, ?, ?, ?, NULLIF(?,''),?)
+		    (Alias,Prijmeni,Jmeno,ObcanskyPrukaz, ZbrojniOpravneni, VarSym,Region,Mail,Kategorie,Divize,Faktor,DatReg,RegistraceIP,Squad,Staff,klic,Zavod)
+		    VALUES (?, ?, ?, NULLIF(?,''), NULLIF(?,''), ?, ?, ?, ?, ?, ?, ?, ?, ?, NULLIF(?,''),?,?)
 	");
             $stmt->bind_param(
-                "ssssisssssssiss",
+                "sssssisssssssisis",
                 $alias,
                 $prijmeni,
                 $jmeno,
-                $zp,
+                $op,
+                $zo,
                 $varsymbol,
                 $_POST['Region'],
                 $email,
@@ -136,11 +151,13 @@ if (isset($_GET['registrovat'])) {
                 $ip,
                 $_POST['Squad'],
                 $_POST['Staff'],
+                $klic,
                 $table
             );
             $stmt->execute();
             $affected = $stmt->affected_rows;
             $stmt->close();
+            $cislo = $conn->insert_id;
 
             if ($affected === 0) {
                 include './components/modal-warning.php';
@@ -154,19 +171,11 @@ if (isset($_GET['registrovat'])) {
                 exit;
             }
 
-            $stmt = $conn->prepare("
-		UPDATE $table 
-		SET klic = FLOOR(10 + (RAND(Cislo) * 9000))
-		WHERE klic is null or klic=0
-	");
-            $stmt->execute();
-            $stmt->close();
-
             // posilame potvrzeni registrace a platebni udaje zavodnihovi vcetne  odkazu na spravu ucasti (zruseni)
             $stmt = $conn->prepare("
-		SELECT * FROM $table
-		WHERE Prijmeni = ? and Jmeno = ? and VarSym = ? and  Mail = ?
-	");
+		        SELECT * FROM $table
+		        WHERE Prijmeni = ? and Jmeno = ? and VarSym = ? and  Mail = ?
+                ");
             $stmt->bind_param(
                 "ssis",
                 $prijmeni,
@@ -194,9 +203,9 @@ if (isset($_GET['registrovat'])) {
             } else {
                 $paymentDeadline = (clone $datumRegistraceZavodnika)->modify("+$match_data[Zavod_pocet_dni_na_platbu] days")->format('j.m.Y');
             }
-            $tyden = str_replace(' ', '', htmlspecialchars($match_data['Zavod_datum'], ENT_QUOTES, 'UTF-8'));
-            $tyden = intval(date("W", strtotime($tyden)));
-            $varsymbol_new = "$tyden" . ($line['Cislo']);
+
+            $tyden = intval(date("W", strtotime($match_data['Zavod_datum'])));
+            $varsymbol_new = sprintf("%02d%04d", $tyden, $cislo);
 
             $stmt = $conn->prepare("
     		UPDATE $table 
@@ -214,7 +223,9 @@ if (isset($_GET['registrovat'])) {
             $stmt->execute();
             $stmt->close();
 
+
             $varsymbol = $varsymbol_new;
+            $CastkaZaplatit = (($line['Staff'] == "RO") or ($line['Staff'] == "POM")) ? '0'  : number_format($match_data['Banka_ucet_CASTKA'], 2, ',', ' ');
             // nice názvy pro mail
             $faktorLabels = [
                 "MIN" => "Minor",
@@ -233,6 +244,7 @@ if (isset($_GET['registrovat'])) {
             $STRELEC_SQUAD = "Squad: $squad";
             $STRELEC_RO = "Rozhodčí: $Rozhodci";
             $STRELEC_POM = "Pomocník: $Pomocnik";
+            $STRELEC_CASTKA = "Částka: $CastkaZaplatit  " . $match_data['Banka_ucet_MENA'] . "";
             $STRELEC_VS = "Variabilní symbol: $varsymbol";
             $link_cancel = "<a href='" . htmlspecialchars($web_adresa, ENT_QUOTES, 'UTF-8') . "/zrus_ucast.php?id=" . rawurlencode($line['Cislo']) . "&klic=" . rawurlencode($line['klic']) . "'><strong>zrušit účast</strong></a>";
 
@@ -243,10 +255,11 @@ if (isset($_GET['registrovat'])) {
                 "<div class='col-12 fw-bolder text-danger'>Zaregistrovali jsme závodníka s těmito údaji<br>
                 <div class='font-monospace d-inline-block text-start mt-2'>
                     $STRELEC_ALIAS<br>
-                    $STRELEC_SHOOTER<br>
+                    $STRELEC_SHOOTER<br><br>
+                    $STRELEC_SQUAD<br>
                     $STRELEC_DIVISION<br>
-                    $STRELEC_CATEGORY<br>
-                    $STRELEC_SQUAD<br><br>
+                    $STRELEC_CATEGORY<br><br>
+                    $STRELEC_CASTKA<br>
                     $STRELEC_RO<br>
                     $STRELEC_POM
                 </div>
@@ -346,7 +359,7 @@ if (isset($_GET['registrovat'])) {
 }
 
 // VYRAZENI ZAVODNIKA
-if (isset($_GET['cancel_shooter'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_shooter'])) {
     $ip = ($_SERVER["REMOTE_ADDR"]);
 
     $line = getShooterData($conn, $table, $_POST['shooterID'], $_POST['shooterKEY']);

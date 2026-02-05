@@ -7,6 +7,7 @@ function WarningModalForm(
     string $Message = '',
     string $ExtraInfo = '',
     string $FormActionURL = '',
+    string $FormAction = '',
     string $SubmitLabel = 'Potvrdit',
     string $CancelLabel = 'Zrušit'
 ): void {
@@ -16,10 +17,10 @@ function WarningModalForm(
     $WarnHeader = htmlspecialchars($Header, ENT_QUOTES, 'UTF-8');
     $WarnCloseHref = htmlspecialchars($CloseHref, ENT_QUOTES, 'UTF-8');
     $WarnActionURL = htmlspecialchars($FormActionURL, ENT_QUOTES, 'UTF-8');
-    $WarnMessage = $Message;         // HTML (např. obsah s jménem),
-    $WarnExtraInfo = $ExtraInfo;     // HTML (např. poznámka, ikona)
+    $WarnAction = htmlspecialchars($FormAction, ENT_QUOTES, 'UTF-8');
+    $WarnMessage = $Message;
+    $WarnExtraInfo = $ExtraInfo;
 
-    // Hlavička
     echo "
         <div class='modal-header bg-$WarnColor text-center'>
             <h4 class='modal-title text-white w-100 fw-bold py-2'>$WarnHeader</h4><br>
@@ -36,16 +37,17 @@ function WarningModalForm(
         echo "<input type='hidden' name='$safeName' value='$safeValue'>";
     }
 
-    // Obsah
     echo "
         <div class='col-12 mb-2 fw-bolder text-$WarnColor'>
             $WarnMessage
         </div>
-        <div class='col-12 text-center mb-3'>
-            <i class='far fa-info-circle pe-2' style='font-size:16px'></i><i>$WarnExtraInfo</i>
+        <div class='col-12 text-center'>
+            <div class='bd-callout-info m-1'>
+                <i class='far fa-info-circle pe-2' style='font-size:12px'></i><i>$WarnExtraInfo</i>
+            </div>
         </div>
         <div class='modal-footer border-top-0 col-12'>
-            <button type='submit' class='btn btn-$WarnColor'>$SubmitLabel</button>
+            <button type='submit'  name='$WarnAction' class='btn btn-$WarnColor'>$SubmitLabel</button>
             <button type='button' class='btn btn-outline-dark' onclick=\"window.location.href = '$WarnCloseHref';\">$CancelLabel</button>
         </div>
             </form>

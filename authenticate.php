@@ -35,7 +35,7 @@ if ($stmt = $conn->prepare('SELECT id, password, role FROM site_admins WHERE use
         WarningModal(
             "Přihlášení do administrace závodu",
             "login.php",
-            "<div class='col-12 fw-bolder text-danger'>Chyba autentizace - uživatel '" . htmlspecialchars($_POST['username']) . "' neexistuje.",
+            "<div class='col-12 fw-bolder text-danger'>Chyba autentizace.",
             "Zadejte správné uživatelské jméno a heslo a zkuste to znovu.",
             "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'login.php';\">Zpět na přihlášení</button>"
         );

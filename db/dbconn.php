@@ -24,7 +24,6 @@ ensureTable($conn, $table_divisions, 'divisions', $table . '_divisions');
 ensureTable($conn, $table_categories, 'categories', $table . '_categories');
 ensureTable($conn, $table_squads, 'squads', $table . '_squads');
 ensureTable($conn, 'site_admins', 'site_admins');
-//ensureTable($conn, $table_disciplines, 'disciplines', $table . '_disciplines');
 
 // insert záznamu pro $table do match_config, pokud ještě neexistuje
 $safeTableId = $conn->real_escape_string($table);

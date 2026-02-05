@@ -24,6 +24,7 @@ $stmt = $conn->prepare("
 	Faktor,
 	Kategorie,
 	Zaplaceno,
+	Staff,
 	Region
 		 FROM $table 
 		 WHERE Squad >= 0 

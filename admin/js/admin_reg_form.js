@@ -95,3 +95,4 @@ function toggleDivizeMain() {
         pidivDalsi.disabled = false;
     }
 }
+

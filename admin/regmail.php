@@ -24,6 +24,7 @@ WarningModalForm(
     ],
     "Opravdu chcete poslat závodníkovi<br> #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno']) . " " . htmlspecialchars($line['Prijmeni']) . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ") registrační mail?",
     "Znovu pošleme registrační e-mail (informace o závodu,<br>QR kód pro zaplacení,...).",
-    "./send.php?regmail",
+    "./send.php",
+    "regmail",
     "Odeslat registrační mail"
 );

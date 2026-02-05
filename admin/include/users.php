@@ -12,17 +12,19 @@
                             <tr>
                                 <th>Uživatel</th>
                                 <th>Heslo</th>
-                                <th>Email</th>
-                                <th>Příjmení</th>
+                                <th>E-mail</th>
+													
                                 <th>Jméno</th>
+                                <th>Příjmení</th>
                                 <th style="width:90px;" class="text-center">Role</th>
-                                <th style="width:100px;" colspan="3" class="text-center">Akce</th>
+                                <th>Pořadatel</th>
+                                <th colspan="3" class="text-center">Akce</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
                             $i = 0;
-                            $stmt = $conn->prepare("SELECT id, username, email, lastname, firstname, role FROM site_admins ORDER BY id ASC");
+                            $stmt = $conn->prepare("SELECT id, username, email, lastname, firstname, role, organizer FROM site_admins ORDER BY id");
                             $stmt->execute();
                             $result_names = $stmt->get_result();
                             while ($line = $result_names->fetch_assoc()) {
@@ -30,29 +32,32 @@
                                 <tr>
                                     <td><?= htmlspecialchars($line['username']) ?></td>
                                     <td></td>
-                                    <td class="editable"  data-table="site_admins" data-field="email" data-id="<?= $line['id'] ?>"><?= htmlspecialchars($line['email']) ?></td>
-                                    <td class="editable"  data-table="site_admins" data-field="lastname" data-id="<?= $line['id'] ?>"><?= htmlspecialchars($line['lastname']) ?></td>
-                                    <td class="editable"  data-table="site_admins" data-field="firstname" data-id="<?= $line['id'] ?>"><?= htmlspecialchars($line['firstname']) ?></td>
-                                    <td class="editable text-center" data-table="site_admins" data-field="role" data-id="<?= $line['id'] ?>">
-                                        <?= htmlspecialchars($line['role']) ?>
-                                    </td>
+                                    <td class="editable" data-table="site_admins" data-field="email" data-id="<?= $line['id'] ?>"><?= htmlspecialchars($line['email']) ?></td>
+																																													 
+                                    <td class="editable" data-table="site_admins" data-field="firstname" data-id="<?= $line['id'] ?>"><?= htmlspecialchars($line['firstname']) ?></td>
+                                    <td class="editable" data-table="site_admins" data-field="lastname" data-id="<?= $line['id'] ?>"><?= htmlspecialchars($line['lastname']) ?></td>
+                                    <td class="editable text-center" data-table="site_admins" data-field="role" data-id="<?= $line['id'] ?>"><?= htmlspecialchars($line['role']) ?></td>
+                                    <td class="editable text-center" data-table="site_admins" data-field="organizer" data-id="<?= $line['id'] ?>"><?= htmlspecialchars($line['organizer']) ?></td>
+										 
                                     <td class="save-cell" data-id="<?= $line['id'] ?>">
                                         <button class="btn btn-sm btn-success me-1" disabled><i class="bi bi-check-lg"></i></button>
                                         <button class="btn btn-sm btn-secondary" disabled><i class="bi bi-x-lg"></i></button>
-                                        <a class="btn btn-sm btn-danger ms-2" href="./save.php?delete_user&username=<?= $line['username'] ?>"><i class="bi bi-trash3 me-1"></i>Smazat</a>
+                                        <!--a class="btn btn-sm btn-danger ms-2 " href="./save.php?delete_user&username=<?= $line['username'] ?>"><i class="bi bi-trash3 mx-2"></i></a>-->
+                                        <form action="./save.php" method="POST" class="d-inline"> <input type="hidden" name="delete_user" value="1"> <input type="hidden" name="username" value="<?= $line['username'] ?>"> <button type="submit" class="btn btn-sm btn-danger ms-2"> <i class="bi bi-trash3 mx-2"></i> </button> </form>
                                     </td>
                                 </tr>
                             <?php
                                 $i++;
                             }
                             ?>
-                            <form class="needs-validation" method="post" action="./save.php?new_user" onsubmit="return validatePassword()" validate>
+                            <form class="needs-validation" method="post" action="./save.php" onsubmit="return validatePassword()" validate>
                                 <tr>
                                     <td><input class="form-control" type="text" name="Username" id="Username" placeholder="jan.novak" onfocus="this.placeholder = ''" onblur="this.placeholder = 'jan.novak';replaceChars()" required></td>
                                     <td><input class="form-control" type="password" name="Heslo" id="Heslo" class="form-control" required></td>
                                     <td><input class="form-control" type="email" id="Mail" name="Mail" onfocus="this.placeholder = ''" onblur="this.placeholder='novak@mujemail.cz';replaceChars()" placeholder="novak@mujemail.cz" value="" required></td>
-                                    <td><input class="form-control" type="text" name="Prijmeni" id="Prijmeni" placeholder="Novák" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Novák';replaceChars()" required></td>
+																																																									 
                                     <td><input class="form-control" type="text" name="Jmeno" id="Jmeno" placeholder="Jan" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Jan';replaceChars()" required></td>
+                                    <td><input class="form-control" type="text" name="Prijmeni" id="Prijmeni" placeholder="Novák" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Novák';replaceChars()" required></td>
                                     <td>
                                         <select name="Role" id="Role" class="form-select" required>
                                             <option value="admin">admin</option>
@@ -60,8 +65,14 @@
                                             <option value="viewer">viewer</option>
                                         </select>
                                     </td>
+                                    <td>
+                                        <select name="Organizer" id="Organizer" class="form-select" required>
+                                            <option value="all">all</option>
+                                            <option value="prachatice">Prachatice</option>
+                                        </select>
+                                    </td>
                                     <td colspan="3" class="text-center">
-                                        <button type="submit" class="btn btn-sm btn-primary px-5 py-2"><i class="bi bi-plus-circle me-1"></i>Přidat</button>
+                                        <button type="submit" name="new_user" class="btn btn-sm btn-primary px-4 py-2"><i class="bi bi-plus-circle me-1"></i>Přidat</button>
                                     </td>
                                 </tr>
                             </form>
@@ -82,7 +93,7 @@
                                         <dt class="col-1 text-end pe-0">editor</dt>
                                         <dd class="col-11 ps-3"><?= $admin_roles['editor'] ?></dd>
                                         <dt class="col-1 text-end pe-0">viewer</dt>
-                                        <dd class="col-11 ps-3"><?= $admin_roles['vievew'] ?></dd>
+                                        <dd class="col-11 ps-3"><?= $admin_roles['viewer'] ?></dd>
                                     </dl>
                                 </div>
                             </div>

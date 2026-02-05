@@ -17,6 +17,8 @@ if ($result->num_rows > 0) {
 
 require_once __DIR__ . '/config/mail_texty.php';
 
+$paymentBeforeClass = empty($match_data['Payment_before']) ? 'd-none' : '';
+
 $dnes = (new DateTime())->format("Y-m-d H:i:s");
 $datumZavod = new DateTime($match_data['Zavod_datum']);
 $datumPrematch = (clone $datumZavod)->modify("-1 days");
@@ -48,7 +50,6 @@ if (!empty($match_data['Zavod_poradatel'])) {
     if (strpos($normalized, 'pelhrimov') !== false) {
         $poradatel = "pelhrimov";
         $sponzor = "<a href='http://www.jankruta.cz/' target='_blank'><img src='./images/jan_kruta.gif' width='30%' class='img-thumbnail mb-3 mx-auto d-block' alt='Jan Krůta'></a>";
-
     } elseif (strpos($normalized, 'eggenberg') !== false) {
         $poradatel = "eggenberg";
         $sponzor = "<a href='https://www.mujnuz.cz/' target='_blank'><img src='./images/mujnuz.png' class='img-thumbnail mb-3 mx-auto d-block' alt='Můj nůž.cz'></a>";
@@ -80,6 +81,7 @@ $registracePozastavena = !empty($match_data['Zavod_registrace_pozastaveno']) ? '
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.js"></script>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -93,7 +95,7 @@ $registracePozastavena = !empty($match_data['Zavod_registrace_pozastaveno']) ? '
                 <div class="logo-right"></div>
             </div>
         </div>
-        
+
         <nav class="navbar navbar-expand-md sticky-top navbar-dark">
             <a href="index.php"><span class="fas fa-home navbar-toggler my-3" style="font-size:2rem"></span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
@@ -103,7 +105,7 @@ $registracePozastavena = !empty($match_data['Zavod_registrace_pozastaveno']) ? '
                 <ul class="navbar-nav fw-bold">
                     <li class="nav-item"><a class="nav-link" href="./">Propozice</a></li>
                     <li class="nav-item"><a class="nav-link" href="./registrace.php">Registrace</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./zavodnici.php">Závodníci</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./prehledy.php">Přehledy</a></li>
                     <li class="nav-item <?= $zobrazovatSituace ?>"><a class="nav-link" href="./situace.php">Situace</a></li>
                     <li class="nav-item <?= $zobrazovatAliasy ?>"><a class="nav-link" href="./kontrola_aliasu.php">IPSC aliasy</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?= htmlspecialchars($match_data['Zavod_vysledky'] ?? '#', ENT_QUOTES, 'UTF-8'); ?>">Výsledky</a></li>
@@ -111,6 +113,6 @@ $registracePozastavena = !empty($match_data['Zavod_registrace_pozastaveno']) ? '
                 </ul>
             </div>
         </nav>
-        
+
         <div id="main">
             <div id="content">

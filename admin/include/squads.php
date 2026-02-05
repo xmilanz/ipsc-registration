@@ -38,13 +38,13 @@
                                 $i++;
                             }
                             ?>
-                            <form class="needs-validation" method="post" action="./save.php?new_squad" validate>
+                            <form class="needs-validation" method="post" action="./save.php" validate>
                                 <tr>
                                     <td><input class="form-control" type="text" name="Number" id="Number" placeholder="101, 102, ..." onfocus="this.placeholder = ''" onblur="this.placeholder = '101, 102, ...'" onkeypress="return avoidspace(event)" required></td>
                                     <td><input class="form-control" type="text" name="Name" id="Name" placeholder="Squad 101, Squad 102, ..." onfocus="this.placeholder = ''" onblur="this.placeholder = 'Squad 101, Squad 102, ...'" onkeypress="return avoidspace(event)" required></td>
                                     </td>
                                     <td class="text-center">
-                                        <button type="submit" class="btn btn-sm btn-primary px-5 py-2"><i class="bi bi-plus-circle me-1"></i>Přidat</button>
+                                        <button type="submit" name="new_squad" class="btn btn-sm btn-primary px-5 py-2"><i class="bi bi-plus-circle me-1"></i>Přidat</button>
                                     </td>
                                 </tr>
                             </form>

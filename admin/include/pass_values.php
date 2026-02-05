@@ -1,36 +1,32 @@
-<!-- UPRAVA ZAVODNIKA -->
-<div class="modal fade" id="edit_shooter" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+<!-- INFORMACE O ZAVODNIKOVI S EDITACI -->
+<div class="modal fade" id="info_shooter" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header bg-success text-center">
-                <h4 class="modal-title text-white w-100 fw-bold">Úprava závodníka</h4>
+            <div class="modal-header bg-warning text-center">
+                <h4 class="modal-title text-white w-100 fw-bold">Informace o závodníkovi</h4>
                 <br>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="window.location.href = 'index.php';"></button>
             </div>
             <div class="modal-body">
-                <form class="needs-validation mb-0" method="post" action="./save.php?edit_shooter">
-                    <div id="modal-edit-included">Načítám...</div>
+                <form class="needs-validation mb-0" method="post" action="./save.php">
+                    <div id="modal-info-included">Načítáme...</div>
             </div>
             <div class="modal-footer border-top-0 mt-3 col-12">
-                <button type="submit" class="btn btn-success">Uložit závodníka</button>
+                <button type="submit" name="edit_shooter" class="btn btn-success">Uložit závodníka</button>
                 <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" aria-label="Close" onclick="window.location.href = 'index.php';">Zavřít bez uložení</button>
             </div>
-            </form>
         </div>
     </div>
 </div>
-
 <script>
-    $(document).ready(function() {
-        $('.modal_edit_shooter').click(function() {
-            var ID = $(this).data('id'); // Získáme ID z data-id
-            $('#modalID').val(ID); // Uložíme ID do skrytého inputu
+    $('.modal_info_shooter').click(function() {
+        var ID = $(this).data('id'); // Získáme ID z data-id
+        $('#modalID').val(ID); // Uložíme ID do skrytého inputu
 
-            $.post("edit.php", {
-                ID: ID
-            }, function(result) {
-                $("#modal-edit-included").html(result); // Naplníme pouze obsah modalu
-            });
+        $.post("information.php", {
+            ID: ID
+        }, function(result) {
+            $("#modal-info-included").html(result); // Naplníme pouze obsah modalu
         });
     });
 </script>

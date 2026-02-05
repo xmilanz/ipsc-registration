@@ -28,8 +28,10 @@ echo "
 			</div>
 		</div>
 		<div class='col-12 text-center px-3 pb-1'>
-				<i class='far fa-info-circle pe-2' style='font-size:14px'></i>$WarnInfo
+			<div class='bd-callout-info m-1'>
+				<i class='far fa-info-circle pe-2' style='font-size:12px'></i>$WarnInfo
 			</div>
+		</div>
   		<div class='modal-footer border-top-0 col-12'>
    			$WarnFooterButtons
    		</div>

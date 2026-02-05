@@ -24,6 +24,7 @@ WarningModalForm(
     ],
     "Opravdu chcete vyřadit závodníka<br>#" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno']) . " " . htmlspecialchars($line['Prijmeni']) . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ")?",
     "Závodník nebude odstraněn, ale přesunut do squadu VYŘAZENO (-9).",
-    "./save.php?cancel_shooter",
+    "./save.php",
+    "cancel_shooter",
     "Vyřadit závodníka"
 );

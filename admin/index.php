@@ -14,10 +14,9 @@ include "header.php";
         $stmt = $conn->prepare("
             SELECT 
         Cislo,
-        Prijmeni    AS 'Příjmení',
-        Jmeno       AS 'Jméno',
+        CONCAT (Prijmeni, ' ', Jmeno) AS 'Příjmení Jméno',
         Alias,
-        ZP,
+        TRIM(CONCAT(ObcanskyPrukaz,' ',IF(ZbrojniOpravneni = 'on', '(zo)', ''))) AS `OP / EZP`,
         Region,
         DatReg,
         Divize,
@@ -68,6 +67,8 @@ include "header.php";
             $fields[] = $col->name;
         }
 
+        //    $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
+
         // Vykreslení hlavičky
         echo '<table id="zavodnici" class="table table-striped table-bordered bg-white my-2 align-middle">';
         echo '<thead><tr>';
@@ -98,6 +99,7 @@ include "header.php";
             if ($line['Squad'] == "-9") {
                 $stavText = "";
                 $stavClass = "";
+                $lineClass = "zavodnik-vyrazeno";
             }
             if ($line['Squad'] == "-2") {
                 $stavText = "čeká na zařazení";
@@ -133,10 +135,10 @@ include "header.php";
             $staffText = 'platící závodník';
             $staffClass = "bg-secondary";
 
-            if ($line['Squad'] == "-2") {
-                $staffText = "čekatel";
-                $staffClass = "bg-warning";
-            }
+            //            if ($line['Squad'] == "-2") {
+            //                $staffText = "čekatel";
+            //                $staffClass = "bg-warning";
+            //            }
             if ($line['Squad'] == "-9") {
                 $staffText = "vyřazeno";
                 $staffClass = "bg-dark";
@@ -176,23 +178,25 @@ include "header.php";
         ?>
                         <div class="btn-group" role="group">
                             <?php if ($_SESSION['role'] === 'admin' ||  $_SESSION['role'] === 'editor'): ?>
-                                <button data-id="<?= $line['Cislo'] ?>" href="#edit_shooter"
-                                    class="modal_edit_shooter btn text-secondary"
-                                    data-bs-toggle="modal" title="Upravit závodníka">
-                                    <i class="fas fa-edit"></i> Upravit
+                                <button data-id="<?= $line['Cislo'] ?>" href="#info_shooter"
+                                    class="modal_info_shooter btn text-secondary"
+                                    data-bs-toggle="modal" title="Informace o závodníkovi">
+                                    <i class="fas fa-info-circle"></i> Info
                                 </button>
-                                <button data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['Klic'] ?>" href="#send_regmail"
-                                    class="modal_regmail btn text-secondary"
-                                    data-bs-toggle="modal" data-bs-backdrop="static" data-bs-keyboard="false"
-                                    title="Poslat registrační e-mail">
-                                    <i class="fas fa-envelope"></i> E-mail
-                                </button>
+                                <?php if ($line['Squad'] != "-9"): ?>
+                                    <button data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['Klic'] ?>" href="#send_regmail"
+                                        class="modal_regmail btn text-secondary"
+                                        data-bs-toggle="modal" data-bs-backdrop="static" data-bs-keyboard="false"
+                                        title="Poslat registrační e-mail">
+                                        <i class="fas fa-envelope"></i> E-mail
+                                    </button>
+                                    <?php else: ?>
+                                    <button class="modal_regmail btn text-secondary disabled">
+                                        <i class="fas fa-envelope"></i> E-mail
+                                    </button>
+                                <?php endif; ?>
+
                             <?php endif; ?>
-                            <button data-id="<?= $line['Cislo'] ?>" href="#info_shooter"
-                                class="modal_info_shooter btn text-secondary"
-                                data-bs-toggle="modal" title="Informace o závodníkovi">
-                                <i class="fas fa-info-circle"></i> Info
-                            </button>
                             <?php if (($_SESSION['role'] === 'admin') || ($line['Squad'] != "-9" && $_SESSION['role'] === 'editor')): ?>
                                 <div class="btn-group" role="group">
                                     <button type="button" class="btn text-secondary" data-bs-toggle="dropdown" aria-expanded="false" title="Další akce">
@@ -273,50 +277,22 @@ include "header.php";
 <?php
 include_once("./include/match_config.php");
 include_once("./include/new.php");
-include_once("./include/new_user.php");
 include_once("./include/categories.php");
 include_once("./include/divisions.php");
 include_once("./include/squads.php");
 include_once("./include/stages.php");
 include_once("./include/users.php");
+include_once("./include/password_change.php");
 include_once("./include/pass_values.php");
 ?>
 
-<div class="modal fade" id="info_shooter" tabindex="-1" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-warning text-center">
-                <h4 class="modal-title text-white w-100 fw-bold">Informace o závodníkovi</h4>
-                <br>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="window.location.href = 'index.php';"></button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="modalID"> <!-- Skryté pole pro přenos ID -->
-                <div id="modal-info-included">Načítám...</div>
-            </div>
-            <div class="modal-footer border-top-0 mt-3 col-12">
-                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" aria-label="Close" onclick="window.location.href = 'index.php';">Zavřít</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    $(document).ready(function() {
-        $('.modal_info_shooter').click(function() {
-            var ID = $(this).data('id'); // Získáme ID z data-id
-            $('#modalID').val(ID); // Uložíme ID do skrytého inputu
-
-            $.post("information.php", {
-                ID: ID
-            }, function(result) {
-                $("#modal-info-included").html(result); // Naplníme pouze obsah modalu
-            });
-        });
-    });
-</script>
 <script type="text/javascript" src="./js/admin_scripts.js"></script>
 <script type="text/javascript" src="./js/admin_reg_form.js"></script>
+
+
+<script>
+    var paymentBefore = <?= json_encode($match_data['Payment_before'] === 'on') ?>;
+</script>
 
 </BODY>
 

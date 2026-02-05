@@ -42,8 +42,9 @@ else {
             "shooterKEY" => $shooterKEY
         ],
         "Závodník #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ") bude vyřazen.",
-        "<i class='far fa-info-circle pe-2' style='font-size:16px'></i>Pokud jste provedli platbu registračního poplatku,<br>můžete místo vyřazení přenést startovné na jiného závodníka.",
-        "./save.php?cancel_shooter",
+        "Pokud jste provedli platbu registračního poplatku,<br>můžete místo vyřazení přenést startovné na jiného závodníka.",
+        "./save.php",
+        "cancel_shooter",
         "Vyřadit závodníka"
     );
 }

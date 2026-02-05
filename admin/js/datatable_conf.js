@@ -6,7 +6,7 @@ $(document).ready(function() {
   deferRender: true,
   stateSave: false,
   columnDefs: [
-        { targets: [0,1,2,3,6,7,8,9,13,16,17,18,19], visible: true }, // placení předem
+        { targets: [0,1,2,3,5,6,7,8,15,16,17,18], visible: true }, // placení předem
 //        { targets: [0,1,2,3,6,7,8,9,13,16,17], visible: true }, // placení na místě
        { targets: '_all', visible: false } 
   ],

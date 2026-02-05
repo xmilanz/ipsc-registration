@@ -16,7 +16,7 @@ if ($result->num_rows > 0) {
     echo "<pre class='text-warning text-center h4 m-5'>Závod neobsahuje žádná data.<br>Zkontrolujte záznam '$table' v tabulce 'match_config'</pre></h2>";
 }
 
-$stmt = $conn->prepare("SELECT firstname,lastname FROM site_admins WHERE username = ?");
+$stmt = $conn->prepare("SELECT firstname,lastname,email FROM site_admins WHERE username = ?");
 $stmt->bind_param("s", $_SESSION['name']);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -91,6 +91,7 @@ $dnes = (new DateTime())->format("Y-m-d H:i:s");
                 <div class="logo-right"></div>
             </div>
         </div>
+
         <nav class="navbar navbar-expand-lg navbar-fixed-top bg-dark">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -128,33 +129,54 @@ $dnes = (new DateTime())->format("Y-m-d H:i:s");
                         </div>
                     <?php endif; ?>
                 </ul>
-                <button type="button" class="btn btn-dark custom me-2"
-                    id="userInfoBtn"
-                    data-bs-toggle="popover"
-                    data-bs-html="true"
-                    data-bs-placement="bottom"
-                    data-bs-title="Uživatel"
-                    data-bs-content="
-                        <dl class='row text-start'>
-                            <dt class='col-4 text-end text-start pe-0'><strong>login:</strong></dt>
-                                <dd class='col-8 ps-2'><?= $_SESSION['name'] ?></dd>
-                            <dt class='col-4 text-end text-start pe-0'><strong>jméno:</strong></dt>
+                <div class="userArea dropdown me-2">
+                    <button
+                        class="btn btn-dark custom"
+                        type="button"
+                        id="userDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <i class="fa fa-user pe-2" style="font-size:15px"></i>
+                        <span class="text-dashed"><?= $line['firstname'] . " " . $line['lastname']  ?></span>
+                    </button>
+
+                    <div class="userArea dropdown-menu dropdown-menu-end p-3 shadow"
+                        aria-labelledby="userDropdown"
+                        style="min-width: 260px;">
+
+                        <div class="d-flex align-items-center justify-content-between">
+                            <dl class='row text-start'>
+                                <dt class='col-4 text-end text-start pe-0'><strong>login:</strong></dt>
+                                <dd class='col-8 ps-2'><?= $_SESSION['name'] ?>
+                                <dt class='col-4 text-end text-start pe-0'><strong>jméno:</strong></dt>
                                 <dd class='col-8 ps-2'><?= $line['firstname'] . " " . $line['lastname']  ?></dd>
-                            <dt class='col-4 text-end text-start pe-0'><strong>e-mail:</strong></dt>
+                                <dt class='col-4 text-end text-start pe-0'><strong>e-mail:</strong></dt>
                                 <dd class='col-8 ps-2'><?= $line['email'] ?></dd>
-                            <dt class='col-4 text-end text-start pe-0'><strong>role:</strong></dt>
+                                <dt class='col-4 text-end text-start pe-0'><strong>role:</strong></dt>
                                 <dd class='col-8 ps-2'><?= $_SESSION['role'] ?></dd>
-                            <dt class='col-4 text-end text-start pe-0'><strong>oprávnění:</strong></dt>
+                                <dt class='col-4 text-end text-start pe-0'><strong>oprávnění:</strong></dt>
                                 <dd class='col-8 ps-2'><?= $admin_roles[$_SESSION['role']] ?></dd>
-                            <dt class='col-4 text-end text-start pe-0'><strong>IP adresa:</strong></dt>
+                                <dt class='col-4 text-end text-start pe-0'><strong>IP adresa:</strong></dt>
                                 <dd class='col-8 ps-2'><?= $_SERVER['REMOTE_ADDR']; ?></dd>
-                        </dl>
-                ">
-                    <i class="fa fa-user pe-1" style="font-size:15px"></i>
-                    <span class="text-dashed"><?= $line['lastname'] . " " . $line['firstname']  ?></span>
-                </button>
-                <button class="btn btn-danger text-white btn-labeled" onclick="window.location.href = 'logout.php'">
-                    <span class="btn-label "><i class="fa fa-sign-out" style="font-size:15px"></i></span>Odhlásit</span>
-                </button>
+                            </dl>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <a href="#"
+                                    class="btn btn-secondary btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#password_change">
+                                    Změna hesla
+                                </a>
+                            </div>
+                            <div class="col-6 text-end">
+                                <a href="logout.php"
+                                    class="btn btn-danger btn-sm">
+                                    Odhlásit
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </nav>

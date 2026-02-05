@@ -37,13 +37,13 @@
                                 $i++;
                             }
                             ?>
-                            <form class="needs-validation" method="post" action="./save.php?new_category" validate>
+                            <form class="needs-validation" method="post" action="./save.php" validate>
                                 <tr>
                                     <td><input class="form-control" type="text" name="Name" id="Name" placeholder="REGULAR,..." onfocus="this.placeholder = ''" onblur="this.placeholder = 'REGULAR,...'" onkeypress="return avoidspace(event)" required></td>
                                     <td><input class="form-control" type="text" name="Value" id="Value" placeholder="Regular (18 - 49),..." onfocus="this.placeholder = ''" onblur="this.placeholder = 'Regular (18 - 49),...'" required></td>
                                     </td>
                                     <td class="text-center">
-                                        <button type="submit" class="btn btn-sm btn-primary px-5 py-2"><i class="bi bi-plus-circle me-1"></i>Přidat</button>
+                                        <button type="submit" name="new_category" class="btn btn-sm btn-primary px-5 py-2"><i class="bi bi-plus-circle me-1"></i>Přidat</button>
                                     </td>
                                 </tr>
                             </form>
@@ -70,13 +70,21 @@
                                             <dt class="col-3 text-end pe-0">GSENIOR</dt>
                                             <dd class="col-9 ps-2">Grand Senior (starší 70 let)</dd>
                                             <dt class="col-3 text-end pe-0">LADY</dt>
-                                            <dd class="col-9 ps-2">Lady (závodnice ženského pohlaví)</dd>
+                                            <dd class="col-9 ps-2">Lady</dd>
                                             <dt class="col-3 text-end pe-0">LSENIOR</dt>
-                                            <dd class="col-9 ps-2">Super Lady (starší 50 let)</dd>
+                                            <dd class="col-9 ps-2">Lady Senior (starší 50 let)</dd>
                                             <dt class="col-3 text-end pe-0">JUNIOR</dt>
-                                            <dd class="col-9 ps-2">Junior (14 - 17)</dd>
+                                            <dd class="col-9 ps-2">Junior (do 21 let)</dd>
                                             <dt class="col-3 text-end pe-0">SJUNIOR</dt>
-                                            <dd class="col-9 ps-2">Super Junior (mladší 14 let)</dd>
+                                            <dd class="col-9 ps-2">Super Junior (do 18 let)</dd>
+                                            <dt class="col-3 text-end pe-0">GJUNIOR</dt>
+                                            <dd class="col-9 ps-2">Grand Junior (do 14 let)</dd>
+                                            <dt class="col-3 text-end pe-0">LJUNIOR</dt>
+                                            <dd class="col-9 ps-2">Lady Junior (do 21 let)</dd>
+                                            <dt class="col-3 text-end pe-0">LSJUNIOR</dt>
+                                            <dd class="col-9 ps-2">Lady Super Junior (do 18 let)</dd>
+                                            <dt class="col-3 text-end pe-0">LGJUNIOR</dt>
+                                            <dd class="col-9 ps-2">Lady Grand Junior (do 14 let)</dd>
                                         </dl>
                                     </div>
                                 </div>

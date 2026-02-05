@@ -30,14 +30,14 @@ switch ($dbcreateParam) {
     Zaplaceno varchar(3),
     ZaplatiNaMiste varchar(3),
     DatumZaplaceni varchar(255),
-    VarSym varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+    VarSym varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
     klic int(11) NOT NULL DEFAULT '0',
     OdeslanRegMail varchar(3),
     Vyrazeno varchar(255),
     VyrazenoIP varchar(50),
     Castka float(9,2),
     Mena varchar(3),
-    Zavod varchar(25)
+    Zavod varchar(100)
     )";
         runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
         break;
@@ -139,7 +139,7 @@ switch ($dbcreateParam) {
 	('REV', 'Revolver'),
 	('REV6', 'Revolver šestiraňák'),
 	('PDO', 'Production Optics'),
-	('OPT', 'Optics (Standard Optics)'),
+	('OPT', 'Optics'),
 	('PCC', 'Pistol Caliber Carbine'),
 	('PCCI', 'PCC Iron'),
 	('PCCO', 'PCC Optics'),
@@ -162,10 +162,14 @@ switch ($dbcreateParam) {
 	('SENIOR', 'Senior (50 - 59)'),
 	('SSENIOR', 'Super Senior (60 - 69)'),
 	('GSENIOR', 'Grand Senior (starší 70 let)'),
-	('LADY', 'Lady (závodnice ženského pohlaví)'),
+	('LADY', 'Lady'),
 	('LSENIOR', 'Super Lady (starší 50 let)'),
-	('JUNIOR', 'Junior (14 - 17)'),
-	('SJUNIOR', 'Super Junior (mladší 14 let)');
+	('JUNIOR', 'Junior (do 21 let)'),
+	('SJUNIOR', 'Super Junior (do 18 let)'),
+	('GJUNIOR', 'Grand Junior (do 14 let)'),
+	('LJUNIOR', 'Lady Junior (do 21 let)'),
+	('LSJUNIOR', 'Lady Super Junior (do 18 let)'),
+	('LGJUNIOR', 'Lady Grand Junior (do 14 let)');
 	";
         runQuery($query, "Tabulka [$dbcreateTable] byla aktualizována");
         break;

@@ -24,6 +24,7 @@ WarningModalForm(
     ],
     "Poslat závodníkovi #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno']) . " " . htmlspecialchars($line['Prijmeni']) . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ")<br>upozornění na nezaplacení startovného.",
     "Pošleme závodníkovi upozornění na nezaplacení startovného.",
-    "./send.php?payment_warn",
+    "./send.php",
+    "payment_warn",
     "Poslat urgenci platby"
 );

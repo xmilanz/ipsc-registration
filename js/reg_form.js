@@ -79,3 +79,23 @@ function toggleDivize(index) {
         }
     }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    const popovers = [];
+
+    document.querySelectorAll('[data-bs-toggle="popover"]').forEach(function (el) {
+        const popover = new bootstrap.Popover(el, {
+            trigger: 'focus'
+        });
+
+        popovers.push(popover);
+
+        el.addEventListener('show.bs.popover', function () {
+            popovers.forEach(function (p) {
+                if (p !== popover) {
+                    p.hide();
+                }
+            });
+        });
+    });
+});

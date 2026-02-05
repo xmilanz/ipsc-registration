@@ -51,7 +51,8 @@ if ($ID > 0) {
 <div class="row">
     <!-- ID závodníka -->
     <INPUT type="hidden" id="shooterID" name="shooterID" value="<?= htmlspecialchars($ID, ENT_QUOTES, 'UTF-8') ?>" required>
-    <!-- ID závodníka -->
+    <!-- puvodni squad -->
+    <input type="hidden" id="Squad_old" name="Squad_old" value="<?= htmlspecialchars($Squad_old, ENT_QUOTES, 'UTF-8') ?>">
     <!-- stav platby -->
     <INPUT type="hidden" id="Zaplaceno" name="Zaplaceno" value="<?= htmlspecialchars($line['Zaplaceno'], ENT_QUOTES, 'UTF-8') ?>">
     <!-- stav platby -->
@@ -173,7 +174,6 @@ if ($ID > 0) {
     <div class="col-md-6">
         <label for="SquadReg" class="form-label pt-2">Squad před vyřazením</label>
         <input class="form-control" type="text" readonly class="form-control-plaintext" value="<?= htmlspecialchars($line['SquadReg'], ENT_QUOTES, 'UTF-8') ?>">
-        <input type="hidden" id="Squad_old" name="Squad_old" value="<?= htmlspecialchars($Squad_old, ENT_QUOTES, 'UTF-8') ?>">
     </div>
 </div>
 

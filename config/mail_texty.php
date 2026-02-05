@@ -516,12 +516,11 @@ V případě neuhrazení startovného v řádném termínu bude Vaše registrace
 
 $email_admin_novy_uzivatel="Dobrý den,
 
-administrátor vám vytvořil uživatelský účet pro přístup do administrace závodu <strong>". htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . "</strong> (" . htmlspecialchars($match_data['Zavod_misto'], ENT_QUOTES, 'UTF-8') . ").
-
+správce registračního systému vytvořil uživatelský účet pro přístup do administrace IPSC závodů KPS Eggenberg a spřátelených klubů. Pro přihlášení do administrace použijte poslední položku menu závodu (ikonka 'uživatel').
 
 ##UZIVATEL##
 
-Do administrace se přihlašte pomocí uživatelského jména a hesla na adrese <a href='$web_adresa_admin'>$web_adresa_admin/login.php</a>
+<strong><span style=\"color:#ff0000;\">Důrazně doporučujeme změnit heslo hned při prvním přihlášení!!!</strong> <i>Tlačítko pro změnu hesla je v uživatelské oblasti - poslední položka menu v administraci (ikonka 'uživatel' Jméno Příjmení).</i>
 
 S pozdravem
 <strong>".$match_data['Zavod_poradatel']."</strong>

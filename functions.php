@@ -1,6 +1,6 @@
 <?php
-if ((include 'phpmailer/PHPMailerAutoload.php') === false) {
-    if ((include '../phpmailer/PHPMailerAutoload.php') === false) {
+if ((include 'libs/PhpMailer/PHPMailerAutoload.php') === false) {
+    if ((include '../libs/PhpMailer/PHPMailerAutoload.php') === false) {
     }
 }
 
@@ -59,13 +59,24 @@ function email($from_text, $from, $to, $subject = '', $message = '', $headers = 
     }
 }
 
-/**
- * Normalizuje řetězec:
- *  - odstraní diakritiku (české znaky → bez diakritiky)
- *  - převede na malá písmena
- *  - odstraní bílé znaky z začátku i konce
- */
-function normalize(string $str): string
+// Normalizuje cislo ZP cislo prukazu zbrane
+function normalizePrukaz($input)
+{
+    $input = preg_replace('/\s+/', '', $input);
+    $input = strtoupper($input);
+    if (preg_match('/^[A-Z]{2}\d+$/', $input)) {
+        $prefix = substr($input, 0, 2);
+        $number = substr($input, 2);
+        return $prefix . ' ' . $number;
+    }
+    if (preg_match('/^\d+$/', $input)) {
+        return $input;
+    }
+    return $input;
+}
+
+// Normalizuje retezec
+ function normalize(string $str): string
 {
     static $trans = [
         'á' => 'a',
@@ -167,18 +178,59 @@ function getValueFromTable($conn, $table, $whereColumn, $whereValue, $returnColu
     }
 }
 
-function hasRole(string $role): bool {
+function hasRole(string $role): bool
+{
     return isset($_SESSION['role']) && $_SESSION['role'] === $role;
 }
 
-function hasAnyRole(array $roles): bool {
+function hasAnyRole(array $roles): bool
+{
     return isset($_SESSION['role']) && in_array($_SESSION['role'], $roles);
 }
 
-function isValidPassword($password) {
-    $length = strlen($password);
-    $hasNumber = preg_match('/\d/', $password);
-    $hasSpecial = preg_match('/[\W_]/', $password); // \W = non-word char, _ included
+function isValidPassword($password, $username = '', &$errorMessage = '')
+{
+    $length     = strlen($password);
+    $hasNumber  = preg_match('/\d/', $password);
+    $hasSpecial = preg_match('/[\W_]/', $password);
+    $hasUpper   = preg_match('/[A-Z]/', $password);
+    $hasLower   = preg_match('/[a-z]/', $password);
 
-    return ($length >= 8 && $length <= 16 && $hasNumber && $hasSpecial);
+    // načti zakázané řetězce z configu
+    $forbidden = include __DIR__ . '/config/forbidden_passwords.php';
+
+    // automaticky přidej i username
+    if ($username) {
+        $forbidden[] = $username;
+    }
+
+    foreach ($forbidden as $bad) {
+        if ($bad && stripos($password, $bad) !== false) {
+            $errorMessage = "Heslo obsahuje zakázané slovo: \"$bad\".";
+            return false;
+        }
+    }
+
+    if ($length < 8 || $length > 255) {
+        $errorMessage = "Heslo musí mít 8–255 znaků.";
+        return false;
+    }
+    if (!$hasNumber) {
+        $errorMessage = "Heslo musí obsahovat alespoň jedno číslo.";
+        return false;
+    }
+    if (!$hasSpecial) {
+        $errorMessage = "Heslo musí obsahovat alespoň jeden speciální znak.";
+        return false;
+    }
+    if (!$hasUpper) {
+        $errorMessage = "Heslo musí obsahovat alespoň jedno velké písmeno.";
+        return false;
+    }
+    if (!$hasLower) {
+        $errorMessage = "Heslo musí obsahovat alespoň jedno malé písmeno.";
+        return false;
+    }
+
+    return true;
 }

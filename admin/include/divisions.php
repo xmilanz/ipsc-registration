@@ -36,13 +36,13 @@
                                 $i++;
                             }
                             ?>
-                            <form class="needs-validation" method="post" action="./save.php?new_division" validate>
+                            <form class="needs-validation" method="post" action="./save.php" validate>
                                 <tr>
                                     <td><input class="form-control" type="text" name="Name" id="Name" placeholder="OPN, REV,..." onfocus="this.placeholder = ''" onblur="this.placeholder = 'OPN, REV,...'" onkeypress="return avoidspace(event)" required></td>
                                     <td><input class="form-control" type="text" name="Value" id="Value" placeholder="Open, Revolver,..." onfocus="this.placeholder = ''" onblur="this.placeholder = 'Open, Revolver,...'" required></td>
                                     </td>
                                     <td class="text-center">
-                                        <button type="submit" class="btn btn-sm btn-primary px-5 py-2"><i class="bi bi-plus-circle me-1"></i>Přidat</button>
+                                        <button type="submit" name="new_division" class="btn btn-sm btn-primary px-5 py-2"><i class="bi bi-plus-circle me-1"></i>Přidat</button>
                                     </td>
                                 </tr>
                             </form>
