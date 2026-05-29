@@ -223,15 +223,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrovat'])) {
             $stmt->execute();
             $stmt->close();
 
-
             $varsymbol = $varsymbol_new;
             $CastkaZaplatit = (($line['Staff'] == "RO") or ($line['Staff'] == "POM")) ? '0'  : number_format($match_data['Banka_ucet_CASTKA'], 2, ',', ' ');
+
             // nice názvy pro mail
             $faktorLabels = [
                 "MIN" => "Minor",
                 "MAJ"  => "Major"
             ];
+
             $faktorLabel = $faktorLabels[$line['Faktor']] ?? htmlspecialchars($line['Faktor'], ENT_QUOTES, 'UTF-8');
+            $line['Squad'] == "-2" ? $squads = "Čekatelé" : $squads = $squad;
 
             $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
             $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
@@ -241,7 +243,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrovat'])) {
             $STRELEC_SHOOTER = "Střelec: " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8');
             $STRELEC_CATEGORY = "Kategorie: $nazev_kategorie";
             $STRELEC_DIVISION = "Divize: $nazev_divize $faktorLabel";
-            $STRELEC_SQUAD = "Squad: $squad";
+            $STRELEC_SQUAD = "Squad: $squads";
             $STRELEC_RO = "Rozhodčí: $Rozhodci";
             $STRELEC_POM = "Pomocník: $Pomocnik";
             $STRELEC_CASTKA = "Částka: $CastkaZaplatit  " . $match_data['Banka_ucet_MENA'] . "";
@@ -275,7 +277,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrovat'])) {
             $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " [$link_cancel]\r\n";
             $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
             $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
-            $STRELEC .= "Squad: $squad" . "\r\n\r\n";
+            $STRELEC .= "Squad: $squads" . "\r\n\r\n";
             $STRELEC .= "<i>Rozhodčí: $Rozhodci" . "\r\n";
             $STRELEC .= "Pomocník: $Pomocnik</i>" . "\r\n";
 

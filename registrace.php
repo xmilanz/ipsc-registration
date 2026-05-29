@@ -28,7 +28,6 @@ $datumKonecRegistrace = (clone $datumZavod)
     ->modify("-{$match_data['Zavod_konec_registrace']} days")
     ->setTime(...explode(':', $casRegistraceKonec));
 
-
 $reg_started = false;
 $reg_text = "";
 
@@ -36,12 +35,8 @@ if ($match_data['Zavod_registrace_pozastaveno'] === "on") {
     $reg_text = "<span class='text-danger'>Registrace je pozastavená</span>";
 } else if ($dnes > $datumKonecRegistrace) {
     $reg_text = "Registrace skončila " . $datumKonecRegistrace->format('j.n.Y H:i') . " ";
-    $match_data['Squad_main_max'] = 0;
-    $match_data['Squad_prem_max'] = 0;
 } else if ($dnes < $datumZacatekRegistrace) {
     $reg_text = "Registrace bude spuštěna " . $datumZacatekRegistrace->format('j.n.Y H:i') . " ";
-    $match_data['Squad_main_max'] = 0;
-    $match_data['Squad_prem_max'] = 0;
 } else {
     $reg_started = true;
     $reg_text = "Registrace bude ukončena " . $datumKonecRegistrace->format('j.n.Y H:i') . " ";
@@ -125,39 +120,44 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
     echo "<div class='col-12 d-block pb-3 text-start'>";
 
     // Výpis závodníků
-    if ($reg_started) {
-        $stmt = $conn->prepare("SELECT Alias,Prijmeni,Jmeno,Zaplaceno,DatumZaplaceni,ZaplatiNaMiste,DatPay,Divize,Faktor,Staff,Squad,Urgence FROM " . $table . " WHERE Squad = ? ORDER BY Zaplaceno DESC, Prijmeni");
-        $stmt->bind_param("s", $zkratka);
-        $stmt->execute();
-        $result_names = $stmt->get_result();
-        while ($line = $result_names->fetch_assoc()) {
-            $datumZaplatit = new DateTime($line['DatPay']);
-            $datumPaymentWarn = (clone $datumZaplatit)->modify("-5 days");
+    $stmt = $conn->prepare("SELECT Alias,Prijmeni,Jmeno,Zaplaceno,DatumZaplaceni,ZaplatiNaMiste,DatPay,Divize,Faktor,Staff,Squad,Urgence FROM " . $table . " WHERE Squad = ? ORDER BY Zaplaceno DESC, Prijmeni");
+    $stmt->bind_param("s", $zkratka);
+    $stmt->execute();
+    $result_names = $stmt->get_result();
+    while ($line = $result_names->fetch_assoc()) {
+        $datumZaplatit = new DateTime($line['DatPay']);
+        $datumPaymentWarn = (clone $datumZaplatit)->modify("-5 days");
 
-            if (empty($match_config['Payment_before'])) {
-                echo "<span class=text-dark>";
-            } elseif ($line['Zaplaceno'] == "on") {
-                echo "<span class=text-success>";
-            } elseif (($dnes >= $datumPaymentWarn)  and $line['Disciplina'] != "VYRAZENO" and $line['Zaplaceno'] != "on" and $line['ZaplatiNaMiste'] != "on") {
-                echo "<span class= text-danger>";
-            }
-
-            // definice ikon 
-            $serieIcon = "";
-		// definice ikon 
-			$serieIcon="";
-			$staffIcon="";
-				if ($line['Staff']=="RO") {$staffIcon="<i class='far fa-clock' style='font-size:12px'></i>";};
-			$pomIcon="";
-				if ($line['Staff']=="POM") {$staffIcon="<i class='far fa-handshake' style='font-size:12px'></i>";};
-			$vipIcon="";
-				if ($line['Staff']=="VIP") {$staffIcon="<i class='far fa-crown' style='font-size:12px'></i>";};
-
-
-            echo "<span class='fw-bold text-nowrap'>" . $serieIcon . $staffIcon  . "&nbsp;" . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . "</span> <small> '" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . " '</small>, ";
+        // zvyrazneni statutu zavodniku (placeno, neplaceno...) 
+        if (empty($match_config['Payment_before'])) {
+            $paymentStatus = "text-dark";
         }
-        $stmt->close();
+        if ($line['Zaplaceno'] == "on") {
+            $paymentStatus = "text-success";
+        }
+        if (($dnes >= $datumPaymentWarn)  && $line['Squad'] != "-9" && $line['Zaplaceno'] != "on" && $line['ZaplatiNaMiste'] != "on") {
+            $paymentStatus = "text-danger";
+        }
+
+        // definice ikon 
+        $serieIcon = "";
+        $staffIcon = "";
+        if ($line['Staff'] == "RO") {
+            $staffIcon = "<i class='far fa-clock' style='font-size:12px'></i>";
+        };
+        $pomIcon = "";
+        if ($line['Staff'] == "POM") {
+            $staffIcon = "<i class='far fa-handshake' style='font-size:12px'></i>";
+        };
+        $vipIcon = "";
+        if ($line['Staff'] == "VIP") {
+            $staffIcon = "<i class='far fa-crown' style='font-size:12px'></i>";
+        };
+        $faktor = ($line['Faktor'] == "MAJ") ? "+" : '';
+
+        echo "<span class='fw-bold text-nowrap $paymentStatus'>" . $serieIcon . $staffIcon  . "&nbsp;" . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . "</span>&nbsp;<small class='text-nowrap'>(" . htmlspecialchars($line['Divize'], ENT_QUOTES, 'UTF-8') . $faktor . ")</small>, ";
     }
+    $stmt->close();
     echo "</div>";
 
     // Registrační formulář
@@ -273,15 +273,15 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
         <div class="col-md-2 <?= $zavodMoreDivisionsClass ?>">
             <label for="divize_dalsi" class="form-label mt-3 mb-1 text-danger">
                 Další divize <a
-                                    href="#"
-                                    role="button"
-                                    tabindex="0"
-                                    id="userInfoBtn"
-                                    data-bs-toggle="popover"
-                                    data-bs-placement="top"
-                                    data-bs-html="true"
-                                    data-bs-title="Registrace do více divizí"
-                                    data-bs-content="
+                    href="#"
+                    role="button"
+                    tabindex="0"
+                    id="userInfoBtn"
+                    data-bs-toggle="popover"
+                    data-bs-placement="top"
+                    data-bs-html="true"
+                    data-bs-title="Registrace do více divizí"
+                    data-bs-content="
 
                         Střílíte-li v závodě ve více divizích, postupujte tímto způsobem:
                         <ul>
@@ -293,8 +293,8 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
 
 
 ">
-                                    <sup><i class="fas fa-question-circle text-primary ms-1"></i></sup>
-                                </a>
+                    <sup><i class="fas fa-question-circle text-primary ms-1"></i></sup>
+                </a>
             </label>
             <select class="form-select" name="Divize_dalsi" id="Divize_dalsi<?= $zkratka ?>" onchange="toggleDivize(<?= $zkratka ?>)" <?= $zavodMoreDivisionsRequired ?>>
                 <option value="" selected>--- vyberte ---</option>
@@ -343,20 +343,20 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
         Provedením registrace vyjadřuji souhlas s
         <a data-bs-toggle="collapse" href="#collapseRules" role="button" aria-expanded="false" aria-controls="collapseRules">pravidly registrace</a> a&nbsp;zpracováním osobních údajů.
         <div class="collapse" id="collapseRules">
-                <div class="card card-body mt-2 mb-3 me-4">
-                    <ul>
-                        <li>V souladu s pravidlem 6.6.2 je účast v prematchi omezena na organizátory, rozhodčí, pomocníky a sponzory.</li>
-                        <li>Rozhodčí se registrují po dohodě s RM.</li>
-                        <li>Registrace se uzavírá <?= $match_data['Zavod_konec_registrace']; ?> dny před konáním hlavního závodu (<?= $datumKonecRegistrace->format('j.n.Y') ?>).</li>
-                        <li>Pořadatelé si vyhrazují právo dodatečně měnit zařazení závodníků do squadů dle potřeb hladkého průběhu závodu.</li>
-                        <li>Změny v registraci (např. náhrada závodníka při přenosu startovného) lze provést nejpozději v den prematche (<?= $datumPrematch->format('j.n.Y') ?>).</li>
-                        <li>Přesuny závodníků mezi squady na základě jejich žádosti lze provést <b>nejpozději do 30 minut před oficiálním zahájením hlavního závodu.</b></li>
-                        <li class="text-danger fw-bold">Protože jsou podklady pro zaplacení startovaného posílány emailem, zbavuje se závodník při zadání neplatné emailové adresy možnosti zúčastnit se závodu. Rovněž nebude moci být informován o případných změnách.</li>
-                        <li class="<?= $paymentBeforeClass ?>">Startovné se hradí tak, aby platba proběhla do <?= $match_data['Zavod_pocet_dni_na_platbu'] ?> dnů od registrace.<br>- u závodníků zaregistrovaných méně jak <?= $match_data['Zavod_pocet_dni_na_platbu'] ?> dní před závodem je třeba startovné zaplatit <strong>nejpozději jeden den před prematchem</strong> (<?= $datumPrematch->modify("-1 days")->format('j.n.Y') ?>)</li>
-                        <li class="<?= $paymentBeforeClass ?>">V případě neuhrazení startovného v řádném termínu je registrace zrušena.<br>- neplatí pro organizátory, pomocníky a rozhodčí.</li>
-                    </ul>
-                </div>
+            <div class="card card-body mt-2 mb-3 me-4">
+                <ul>
+                    <li>V souladu s pravidlem 6.6.2 je účast v prematchi omezena na organizátory, rozhodčí, pomocníky a sponzory.</li>
+                    <li>Rozhodčí se registrují po dohodě s RM.</li>
+                    <li>Registrace se uzavírá <?= $match_data['Zavod_konec_registrace']; ?> dny před konáním hlavního závodu (<?= $datumKonecRegistrace->format('j.n.Y') ?>).</li>
+                    <li>Pořadatelé si vyhrazují právo dodatečně měnit zařazení závodníků do squadů dle potřeb hladkého průběhu závodu.</li>
+                    <li>Změny v registraci (např. náhrada závodníka při přenosu startovného) lze provést nejpozději v den prematche (<?= $datumPrematch->format('j.n.Y') ?>).</li>
+                    <li>Přesuny závodníků mezi squady na základě jejich žádosti lze provést <b>nejpozději do 30 minut před oficiálním zahájením hlavního závodu.</b></li>
+                    <li class="text-danger fw-bold">Protože jsou podklady pro zaplacení startovaného posílány emailem, zbavuje se závodník při zadání neplatné emailové adresy možnosti zúčastnit se závodu. Rovněž nebude moci být informován o případných změnách.</li>
+                    <li class="<?= $paymentBeforeClass ?>">Startovné se hradí tak, aby platba proběhla do <?= $match_data['Zavod_pocet_dni_na_platbu'] ?> dnů od registrace.<br>- u závodníků zaregistrovaných méně jak <?= $match_data['Zavod_pocet_dni_na_platbu'] ?> dní před závodem je třeba startovné zaplatit <strong>nejpozději jeden den před prematchem</strong> (<?= $datumPrematch->modify("-1 days")->format('j.n.Y') ?>)</li>
+                    <li class="<?= $paymentBeforeClass ?>">V případě neuhrazení startovného v řádném termínu je registrace zrušena.<br>- neplatí pro organizátory, pomocníky a rozhodčí.</li>
+                </ul>
             </div>
+        </div>
     </div>
     <div class="col-12 text-center">
         <button type="submit" name="registrovat" class="btn btn-primary mt-2">Registrovat</button>

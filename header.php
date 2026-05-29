@@ -36,7 +36,7 @@ $dny = [
 $denZavodEn = (clone $datumZavod)->format('l');
 $denZavod = $dny[$denZavodEn] ?? '';
 
-$denPrematchEn = ($datumPrematch)->format('l');
+$denPrematchEn = (clone $datumPrematch)->format('l');
 $denPrematch = $dny[$denPrematchEn] ?? '';
 
 

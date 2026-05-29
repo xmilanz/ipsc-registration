@@ -194,16 +194,16 @@ while ($row = $result->fetch_assoc()) {
             <dl class="row  text-start">
                 <dt class="col-sm-2 text-sm-end text-start ms-2">Divize:</dt>
                 <dd class="col-sm-9 text-wrap px-4"><?= implode(', ', $zavod_divisions); ?>
-                    <span class="text-danger small"><br>K vyhodnocení disciplíny dojde při počtu 3 a více závodníků</span>
+                    <span class="text-danger small"><br>K vyhodnocení disciplíny dojde při počtu 3 a více závodníků.</span>
                 </dd>
                 <dt class="col-sm-2 text-sm-end text-start ms-2">Kategorie:</dt>
                 <dd class="col-sm-9 text-wrap px-4"><?= implode(', ', $zavod_categories); ?>
-                    <span class="text-danger small"><br>V závislosti na počtu závodníků v jednotlivých kategoriích může dojít k jejich sloučení</span>
+                    <span class="text-danger small"><br>V závislosti na počtu závodníků v jednotlivých kategoriích může dojít k jejich sloučení.</span>
                 </dd>
                 <dt class="col-sm-2 text-sm-end text-start ms-2">Povinná výbava:</dt>
-                <dd class="col-sm-9 px-4">ochrana sluchu a zraku (sluchátka, brýle)</dd>
+                <dd class="col-sm-9 px-4">Ochrana sluchu a zraku (sluchátka, brýle).</dd>
                 <dt class="col-sm-2 text-sm-end text-start ms-2">Účast:</dt>
-                <dd class="col-sm-9 px-4">Držitelé zbrojního průkazu</dd>
+                <dd class="col-sm-9 px-4">Držitelé zbrojního průkazu nebo evropského zbrojního pasu.</dd>
                 <dt class="col-sm-2 text-sm-end text-start ms-2">Zbraně a střelivo:</dt>
                 <dd class="col-sm-9 px-4">Vlastní, jsou povoleny všechny druhy pušek, pistolí a revolverů dle jednotlivých disciplín. Není povoleno používat střelivo s průbojnou a zápalnou střelou.</dd>
                 <dt class="col-sm-2 text-sm-end text-start ms-2">Občerstvení:</dt>

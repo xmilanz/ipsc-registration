@@ -132,20 +132,20 @@ switch ($dbcreateParam) {
     )";
         runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
         $query = "insert into $dbcreateTable (Name,Value) values
-	('PRD', 'Production'),
-	('STD', 'Standard'),
-	('OPN', 'Open'),
-	('CLA', 'Classic'),
-	('REV', 'Revolver'),
-	('REV6', 'Revolver šestiraňák'),
-	('PDO', 'Production Optics'),
-	('OPT', 'Optics'),
-	('PCC', 'Pistol Caliber Carbine'),
-	('PCCI', 'PCC Iron'),
-	('PCCO', 'PCC Optics'),
-	('MR', 'Mini Rifle'),
-	('MRS', 'Mini Rifle Standard'),
-	('MRO', 'Mini Rifle Open');
+	('PRD', 'PRODUCTION'),
+	('STD', 'STANDARD'),
+	('OPN', 'OPEN'),
+	('CLA', 'CLASSIC'),
+	('REV', 'REVOLVER'),
+	('REV6', 'REVOLVER šestiraňák'),
+	('PDO', 'PRODUCTION OPTICS'),
+	('OPT', 'OPTICS'),
+	('PCC', 'PISTOL CALIBER CARBINE'),
+	('PCCI', 'PCC IRON'),
+	('PCCO', 'PCC OPTICS'),
+	('MR', 'MINI RIFLE'),
+	('MRS', 'MINI RIFLE STANDARD'),
+	('MRO', 'MINI RIFLE OPEN');
 	";
         runQuery($query, "Tabulka [$dbcreateTable] byla aktualizována");
         break;
@@ -158,18 +158,18 @@ switch ($dbcreateParam) {
     )";
         runQuery($query, "Tabulka [$dbcreateTable] byla vytvořena");
         $query = "insert into $dbcreateTable (Name,Value) values
-	('REGULAR', 'Regular (18 - 49)'),
-	('SENIOR', 'Senior (50 - 59)'),
-	('SSENIOR', 'Super Senior (60 - 69)'),
-	('GSENIOR', 'Grand Senior (starší 70 let)'),
-	('LADY', 'Lady'),
-	('LSENIOR', 'Super Lady (starší 50 let)'),
-	('JUNIOR', 'Junior (do 21 let)'),
-	('SJUNIOR', 'Super Junior (do 18 let)'),
-	('GJUNIOR', 'Grand Junior (do 14 let)'),
-	('LJUNIOR', 'Lady Junior (do 21 let)'),
-	('LSJUNIOR', 'Lady Super Junior (do 18 let)'),
-	('LGJUNIOR', 'Lady Grand Junior (do 14 let)');
+	('REGULAR', 'Regular (18 - 49 v den závodu)'),
+	('SENIOR', 'Senior (50 - 59 v den závodu)'),
+	('SSENIOR', 'Super Senior (60 - 69 v den závodu)'),
+	('GSENIOR', 'Grand Senior (starší 70 v den závodu)'),
+	('LADY', 'Lady (do 49 v den závodu'),
+	('LSENIOR', 'Super Lady (starší 50 v den závodu)'),
+	('JUNIOR', 'Junior (do 21 let celý rok)'),
+	('SJUNIOR', 'Super Junior (15 - 18 celý rok)'),
+	('GJUNIOR', 'Grand Junior (do 14 celý rok)'),
+	('LJUNIOR', 'Lady Junior (do 21 celý rok)'),
+	('LSJUNIOR', 'Lady Super Junior (do 18 celý rok)'),
+	('LGJUNIOR', 'Lady Grand Junior (do 14 celý rok)');
 	";
         runQuery($query, "Tabulka [$dbcreateTable] byla aktualizována");
         break;

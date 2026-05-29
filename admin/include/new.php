@@ -115,7 +115,7 @@ $zavodObcanskyPrukazClass = !empty($match_data['Zavod_obcansky_prukaz']) ? '' : 
                                     <select class="form-select" name=Squad required>
                                         <option value="" selected>--- vyberte ---</option>
                                         <?php
-                                        $stmt = $conn->prepare("SELECT * from $table_squads");
+                                        $stmt = $conn->prepare("SELECT * from $table_squads ORDER BY Name");
                                         $stmt->execute();
                                         $result_names = $stmt->get_result();
                                         while ($line = $result_names->fetch_array()) {
