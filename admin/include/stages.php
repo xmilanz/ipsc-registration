@@ -20,7 +20,7 @@
                                        <span class='text-primary'><i class='far fa-info-circle pe-2' style='font-size:16px'></i>Soubor musí splňovat tyto parametry:
                                        <ul>
                                           <li>název: stage1.png, stage2.png,...</li>
-                                          <li>velikost < 100 KB</li>
+                                          <li>velikost < 300 KB</li>
                                           <li>přípona: png</li>
                                        </ul>
                                     </label>
@@ -52,9 +52,9 @@
 </div>
 <?php
    if (isset($_POST['SubmitButton'])) {
-       $targetDir = "../stages/";
+       $targetDir = "../registrace/".$slug."/stages/";
        $allowedTypes = ['png'];
-       $maxFileSize = 100 * 1024;
+       $maxFileSize = 300 * 1024;
    
        if (!is_dir($targetDir)) {
            mkdir($targetDir, 0755, true);
@@ -77,7 +77,7 @@
                }
    
                if ($fileSize > $maxFileSize) {
-                   $statusMessages[] = "<span class='text-danger'>Soubor \"$fileName\" překračuje maximální velikost (100 KB).</span>";
+                   $statusMessages[] = "<span class='text-danger'>Soubor \"$fileName\" překračuje maximální velikost (300 KB).</span>";
                    continue;
                }
    

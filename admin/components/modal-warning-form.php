@@ -26,8 +26,9 @@ function WarningModalForm(
             <h4 class='modal-title text-white w-100 fw-bold py-2'>$WarnHeader</h4><br>
             <button type='button' class='btn-close btn-close-white' data-bs-dismiss='modal' aria-label='Close' onclick=\"window.location.href = '$WarnCloseHref';\"></button>
         </div>
-        <div class='modal-body text-center'>
-            <form class='row needs-validation mb-0' method='post' action='$WarnActionURL'>
+        <div class='modal-body text-center pb-0'>
+            <form method='post' action='$WarnActionURL'>
+                <input type='hidden' name='action' value='$WarnAction'>
     ";
 
     // Skryté inputy (např. ID a klic)
@@ -38,16 +39,14 @@ function WarningModalForm(
     }
 
     echo "
-        <div class='col-12 mb-2 fw-bolder text-$WarnColor'>
+        <div class='fw-bolder text-$WarnColor'>
             $WarnMessage
         </div>
-        <div class='col-12 text-center'>
-            <div class='bd-callout-info m-1'>
-                <i class='far fa-info-circle pe-2' style='font-size:12px'></i><i>$WarnExtraInfo</i>
+            <div class='alert alert-info fw-normal text-center my-3 mx-2' role='alert'>
+                $WarnExtraInfo
             </div>
-        </div>
-        <div class='modal-footer border-top-0 col-12'>
-            <button type='submit'  name='$WarnAction' class='btn btn-$WarnColor'>$SubmitLabel</button>
+        <div class='modal-footer border-top-0'>
+            <button type='submit' class='btn btn-$WarnColor'>$SubmitLabel</button>
             <button type='button' class='btn btn-outline-dark' onclick=\"window.location.href = '$WarnCloseHref';\">$CancelLabel</button>
         </div>
             </form>

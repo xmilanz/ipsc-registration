@@ -74,6 +74,7 @@ function replaceChars() {
 	}
 }
 
+
 function toggleDivize() {
     var pidivDalsi = document.getElementById("Divize_dalsi");
     var pidiv = document.getElementById("Divize");
@@ -95,4 +96,3 @@ function toggleDivizeMain() {
         pidivDalsi.disabled = false;
     }
 }
-

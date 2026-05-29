@@ -1,82 +1,31 @@
-// DROPDOWN 1
-const dropdownButton1 = document.getElementById("dropdownButton1");
-const dropdownMenu1 = document.getElementById("customDropdown1");
-const dropdownContainer1 = document.getElementById("dropdownContainer1");
-
-// Zobrazit dropdown pri najeti mysi
-dropdownContainer1.addEventListener("mouseenter", function () {
-    dropdownMenu1.classList.add("show");
-});
-
-// Skryt dropdown pri opusteni mysi
-dropdownContainer1.addEventListener("mouseleave", function () {
-    dropdownMenu1.classList.remove("show");
-});
-
-// DROPDOWN 2
-const dropdownButton2 = document.getElementById("dropdownButton2");
-const dropdownMenu2 = document.getElementById("customDropdown2");
-const dropdownContainer2 = document.getElementById("dropdownContainer2");
-
-// Zobrazit dropdown pri najeti mysi
-dropdownContainer2.addEventListener("mouseenter", function () {
-    dropdownMenu2.classList.add("show");
-});
-
-// Skryt dropdown pri opusteni mysi
-dropdownContainer2.addEventListener("mouseleave", function () {
-    dropdownMenu2.classList.remove("show");
-});
-
-
-
-// DATA TABLE
+/* ============================================================
+    DATATABLE
+============================================================ */
 $(document).ready(function () {
-    $('[data-bs-toggle="popover"]').popover();
+  $('[data-bs-toggle="popover"]').popover();
 });
 
 $(document).ready(function () {
-    $('[data-bs-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip();
 });
 
 function ToggleFilter() {
-    var elements = document.getElementsByClassName("dtsb-searchBuilder");
+  var elements = document.getElementsByClassName("dtsb-searchBuilder");
 
-    for (var i = 0; i < elements.length; i++) {
-        var x = elements[i];
-        if (x.style.display === "block") {
-            x.style.display = "none";
-        } else {
-            x.style.display = "block";
-        }
+  for (var i = 0; i < elements.length; i++) {
+    var x = elements[i];
+    if (x.style.display === "block") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "block";
     }
+  }
 }
 
-// Uploader
-$(function () {
-    $(document)
-        .on("click", ".btn-add", function (e) {
-            e.preventDefault();
-            var controlForm = $(".controls:first"),
-                currentEntry = $(this).parents(".entry:first"),
-                newEntry = $(currentEntry.clone()).appendTo(controlForm);
-            newEntry.find("input").val("");
-            controlForm
-                .find(".entry:not(:last) .btn-add")
-                .removeClass("btn-add")
-                .addClass("btn-remove")
-                .removeClass("btn-success")
-                .addClass("btn-danger")
-                .html('<span class="fa fa-trash"> </span>');
-        })
-        .on("click", ".btn-remove", function (e) {
-            $(this).parents(".entry:first").remove();
-            e.preventDefault();
-            return false;
-        });
-});
+/* ============================================================
+    REWOPEN MODALS
+============================================================ */
 
-// reopen modals
 // users
 $(document).ready(function () {
     // Check if URL contains the reopen_modal parameter
@@ -100,6 +49,7 @@ $(document).ready(function () {
         window.history.replaceState(null, null, window.location.pathname);
     }
 });
+
 
 // divison
 $(document).ready(function () {
@@ -183,7 +133,47 @@ $(document).ready(function () {
     });
 });
 
-// inline editovatelné ormulare
+
+// fee
+$(document).ready(function () {
+    // Check if URL contains the reopen_modal parameter
+    if (window.location.search.indexOf('fee') > -1) {
+        $('#manage_fee').modal('show');
+    }
+
+    $('#manage_fee').on('hidden.bs.modal', function (e) {
+        if (shouldReopenModal()) {
+            $('#manage_fee').modal('show');
+        }
+    });
+
+    function shouldReopenModal() {
+        return false; // This condition can remain as false for now
+    }
+});
+$(document).ready(function () {
+    if (window.location.search.indexOf('fee') > -1) {
+        // Remove the parameter from URL
+        window.history.replaceState(null, null, window.location.pathname);
+    }
+});
+
+
+/* ============================================================
+    OPEN MODAL WITH SPINNER
+============================================================ */
+$(document).ready(function () {
+    $('#myModal').modal('show');
+
+    $('form').on('submit', function () {
+        $('#spinner').show();
+        //      $('.modal-footer button').prop('disabled', true); // deaktivace tlačítek
+    });
+});
+
+/* ============================================================
+    INLINE EDITOVATELNÉ FORMULÁŘE
+============================================================ */
 document.querySelectorAll(".editable").forEach((cell) => {
   cell.addEventListener("click", function () {
     const currentValue = this.textContent.trim();
@@ -234,7 +224,7 @@ document.querySelectorAll(".editable").forEach((cell) => {
         fetch("./save.php", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `update=1&table=${table}&id=${id}&field=${field}&value=${encodeURIComponent(normalizedValue)}`
+          body: `action=inline_edit&table=${table}&id=${id}&field=${field}&value=${encodeURIComponent(normalizedValue)}`,
         }).then(() => {
           cell.textContent = normalizedValue;
           row.classList.remove("table-warning");
@@ -253,9 +243,58 @@ document.querySelectorAll(".editable").forEach((cell) => {
   });
 });
 
-// aktivace BS-popover s HTML
+
+/* ============================================================
+    UPLOADER
+============================================================ */
+$(function () {
+    $(document)
+        .on("click", ".btn-add", function (e) {
+            e.preventDefault();
+            var controlForm = $(".controls:first"),
+                currentEntry = $(this).parents(".entry:first"),
+                newEntry = $(currentEntry.clone()).appendTo(controlForm);
+            newEntry.find("input").val("");
+            controlForm
+                .find(".entry:not(:last) .btn-add")
+                .removeClass("btn-add")
+                .addClass("btn-remove")
+                .removeClass("btn-success")
+                .addClass("btn-danger")
+                .html('<span class="fa fa-trash"> </span>');
+        })
+        .on("click", ".btn-remove", function (e) {
+            $(this).parents(".entry:first").remove();
+            e.preventDefault();
+            return false;
+        });
+});
+
+
+/* ============================================================
+    AKTIVACE POPOVER PRO INFORMACE O UŽIVATELI
+============================================================ */
+
 document.addEventListener("DOMContentLoaded", function () {
   const popoverTrigger = document.getElementById("userInfoBtn");
   const popover = new bootstrap.Popover(popoverTrigger);
 });
 
+/* ============================================================
+    VYBER ZAVODU V MENU - ODESILANI POSTU S ID ZAVODU
+============================================================ */
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".select-race").forEach(function (item) {
+    item.addEventListener("click", function (e) {
+      e.preventDefault();
+      const raceId = this.dataset.raceId;
+
+      // vložit ID závodu do hidden inputu
+      document.getElementById("raceInput").value = raceId;
+
+      // odeslat POST
+      document.getElementById("raceForm").submit();
+    });
+  });
+});

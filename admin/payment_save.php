@@ -1,12 +1,8 @@
 <?php
-session_start();
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: ../index.php');
-    exit;
-}
-
-require_once("../db/dbconn.php");
-require_once("../config/data.php");
+require_once __DIR__ . '/session_init.php';
+require_once __DIR__ . '/config/data.php';
+require_once __DIR__ . '/db/dbconn.php';
+require_admin();
 
 $shooterID = intval($_GET['ID']);
 $shooterKEY = intval($_GET['KEY']);
@@ -25,6 +21,6 @@ WarningModalForm(
     "Závodník #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno']) . " " . htmlspecialchars($line['Prijmeni']) . " (" . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . ") zaplatil.",
     "Zaevidujeme platbu a pošleme závodníkovi potvrzení.",
     "./save.php",
-    "mark_paid",
+    "payment_save",
     "Zaevidovat platbu"
 );

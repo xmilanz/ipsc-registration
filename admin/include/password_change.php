@@ -1,4 +1,3 @@
-<!-- Modal -->
 <div class="modal fade" id="password_change" tabindex="-1" role="dialog" data-bs-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog d-flex justify-content-center">
 
@@ -10,6 +9,7 @@
             </div>
             <div class="modal-body">
                 <form class="row" method="post" action="./save.php" novalidate>
+                    <input type='hidden' name='action' value='user_password_change'>
 
                     <div class="form-outline mb-3">
                         <label class="form-label" for="password">Původní heslo</label>
@@ -42,7 +42,7 @@
                                             <li>alespoň jedno velké písmeno</li>
                                             <li>alespoň jeden speciální znak</li>
                                             <li>login nesmí být součástí hesla</li>
-                                        </ui>
+                                            </ui>
                                     </div>
                                 </div>
                             </div>
@@ -50,8 +50,8 @@
                     </div>
             </div>
 
-            <div class="modal-footer match_config border-top-0">
-                <button type="submit" name="password_change" value="1" class="btn btn-secondary">Změnit heslo</button>
+            <div class="modal-footer border-top-0">
+                <button type="submit" class="btn btn-secondary">Změnit heslo</button>
                 <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" aria-label="Close" onclick="window.location.href = 'index.php';">Zrušit</button>
             </div>
             </form>

@@ -1,25 +1,19 @@
-<?php
-$paymentBeforeClass = !empty($match_data['Payment_before']) ? '' : 'd-none';
-$zavodObcanskyPrukazClass = !empty($match_data['Zavod_obcansky_prukaz']) ? '' : 'd-none';
-?>
-
-<div class="modal fade" id="new_shooter" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+<div class="modal fade" id="new_shooter" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"
+    aria-hidden="true">
     <div class="modal-dialog modal-notify modal-warning" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-center">
                 <h4 class="modal-title text-white w-100 fw-bold">Nový závodník</h4>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form class="row needs-validation" method="post" action="./save.php" novalidate>
-                    <?php
-                    list($usec, $sec) = explode(" ", microtime());
-                    echo "<INPUT TYPE=HIDDEN NAME=datreg VALUE=" . $sec . ">";
-                    ?>
+                    <input type='hidden' name='action' value='shooter_new'>
                     <div class="row m-1">
                         <fieldset class="border p-2 rounded">
                             <legend class="float-none w-auto px-2 h6">Osobní informace</legend>
-                            <div class="row mx-1">
+                            <div class="row p-1">
                                 <div class="col-md-4">
                                     <label for="Alias" class="form-label mt-2">IPSC alias
                                         <a
@@ -39,8 +33,7 @@ $zavodObcanskyPrukazClass = !empty($match_data['Zavod_obcansky_prukaz']) ? '' : 
                                     <label class="alias_validation" data-error="Použili jste písmena s diakritikou nebo speciální znaky"></label>
                                     <div class="invalid-feedback">Nevyplnili jste IPSC alias nebo má neplatnou délku</div>
                                 </div>
-
-                                <div class="col-md-4 <?= $zavodObcanskyPrukazClass ?>">
+                                <div class="col-md-4 <?= hidden($match_data['Zavod_obcansky_prukaz'] == 0); ?>">
                                     <label for="ObcanskyPrukaz" class="form-label mt-2">Číslo OP / EZP
                                         <a
                                             href="#"
@@ -57,21 +50,24 @@ $zavodObcanskyPrukazClass = !empty($match_data['Zavod_obcansky_prukaz']) ? '' : 
                                     </label>
                                     <input class="form-control" type="text" name="ObcanskyPrukaz" id="ObcanskyPrukaz" placeholder="0123456789" onfocus="this.placeholder = ''" onblur="this.placeholder = '0123456789'">
                                 </div>
-                                <div class="col-md-4 pt-4 mt-2 <?= $zavodObcanskyPrukazClass ?>">
+                                <div class="col-md-4 pt-4 mt-2 <?= hidden($match_data['Zavod_obcansky_prukaz'] == 0); ?>">
                                     <label class="form-check-label" for="ZbrojniOpravneni">
                                         <input type="checkbox" class="form-check-input" id="ZbrojniOpravneni" name="ZbrojniOpravneni"> Zbrojní oprávnění
                                     </label>
                                 </div>
-                            </div>
-                            <div class="row mx-1">
+
                                 <div class="col-md-3">
                                     <label for="Jmeno" class="form-label mt-2">Jméno</label>
-                                    <input class="form-control" type="text" name="Jmeno" id="Jmeno" placeholder="Jan" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Jan';replaceChars()" required>
+                                    <input class="form-control" type="text" name="Jmeno" id="Jmeno" placeholder="Jan"
+                                        onfocus="this.placeholder = ''" onblur="this.placeholder = 'Jan';replaceChars()"
+                                        required>
                                     <div class="invalid-feedback">Nevyplnili jste jméno</div>
                                 </div>
                                 <div class="col-md-5">
                                     <label for="Prijmeni" class="form-label mt-2">Příjmení</label>
-                                    <input class="form-control" type="text" name="Prijmeni" id="Prijmeni" placeholder="Novák" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Novák';replaceChars()" required>
+                                    <input class="form-control" type="text" name="Prijmeni" id="Prijmeni"
+                                        placeholder="Novák" onfocus="this.placeholder = ''"
+                                        onblur="this.placeholder = 'Novák';replaceChars()" required>
                                     <div class="invalid-feedback">Nevyplnili jste příjmení</div>
                                 </div>
                                 <div class="col-md-4">
@@ -83,10 +79,13 @@ $zavodObcanskyPrukazClass = !empty($match_data['Zavod_obcansky_prukaz']) ? '' : 
                                     </select>
                                 </div>
                             </div>
-                            <div class="row mx-1 mb-3">
+                            <div class="row p-1">
                                 <div class="col-md-8">
-                                    <label for="Mail" class="form-label mt-3">E-mail</label>
-                                    <input class="form-control" type="email" id="Mail" name="Mail" onfocus="this.placeholder = ''" onblur="this.placeholder='novak@mujemail.cz';replaceChars()" placeholder="novak@mujemail.cz" value="" required>
+                                    <label for="Mail" class="form-label mt-3">Email</label>
+                                    <input class="form-control" type="email" id="Mail" name="Mail"
+                                        onfocus="this.placeholder = ''"
+                                        onblur="this.placeholder='novak@mujemail.cz';replaceChars()"
+                                        placeholder="novak@mujemail.cz" value="" required>
                                     <div class="invalid-feedback">Nevyplnili jste e-mail</div>
                                 </div>
                                 <div class="col-md-4">
@@ -140,7 +139,7 @@ $zavodObcanskyPrukazClass = !empty($match_data['Zavod_obcansky_prukaz']) ? '' : 
                                         ?>
                                     </select>
                                 </div>
-                                <div class="col-md-4 <?= $zavodMoreDivisionsClass ?>">
+                                <div class="col-md-4 <?= hidden($match_data['Zavod_more_divisions'] == 0); ?>">
                                     <label for="Divize_dalsi" class="form-label mb-1 text-danger">
                                         Další divize <a
                                             href="#"
@@ -206,33 +205,40 @@ $zavodObcanskyPrukazClass = !empty($match_data['Zavod_obcansky_prukaz']) ? '' : 
                     </div>
 
                     <div class="row m-1">
-                        <fieldset class="border p-2 rounded">
+                        <fieldset class="border p-4 my-3 rounded">
                             <legend class="float-none w-auto px-2 h6">Ostatní</legend>
-                            <div class="row mx-1">
-                                <div class="col-md-12 my-2">Statut závodníka</div>
-                                <div class="col-md-6">
-                                    <select class="form-select" name=Staff>
-                                        <option value="PAY">Platící závodník</option>
-                                        <option value="VIP">VIP</option>
-                                        <option value="RO">rozhodčí</option>
-                                        <option value="POM">pomocník</option>
-                                    </select>
+                            <div class="row">
+                                <div class="row ">
+                                    <div class="col-md-12 my-2">Statut závodníka</div>
+                                    <div class="col-md-6">
+                                        <select class="form-select" name=Staff>
+                                            <option value="PAY">Platící závodník</option>
+                                            <option value="VIP">VIP</option>
+                                            <option value="RO">rozhodčí</option>
+                                            <option value="POM">pomocník</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mt-6 <?= hidden($match_data['Payment_before'] == 0); ?>">
+                                        <label class="form-check-label" for="ZaplatiNaMiste">
+                                            <input class="form-check-input" type="checkbox" id="ZaplatiNaMiste" name="ZaplatiNaMiste">
+                                            Zaplatí na místě
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="<?= $paymentBeforeClass ?> col-md-6 form-check">
-                                    <input class="form-check-input" type="checkbox" id="ZaplatiNaMiste" name="ZaplatiNaMiste">
-                                    <label class="form-check-label " for="ZaplatiNaMiste">Zaplatí na místě</label>
+                                <div class="col-md-12">
+                                    <label for="Poznamka" class="form-label mt-3">Poznámka</label>
+                                    <textarea class="form-control" type="text" name="Poznamka" id="Poznamka"
+                                        placeholder="Poznámka" onfocus="this.placeholder = ''"
+                                        onblur="this.placeholder = 'Poznámka'" value=""></textarea>
                                 </div>
-                            </div>
-                            <div class="col-md-12 px-3 pb-3 ">
-                                <label for="Poznamka" class="form-label mt-3">Poznámka</label>
-                                <textarea class="form-control" type="text" name="Poznamka" id="Poznamka" placeholder="Poznámka" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Poznámka'" value=""></textarea>
                             </div>
                         </fieldset>
                     </div>
             </div>
             <div class="modal-footer border-top-0">
-                <button type="submit" name="new_shooter" class="btn btn-primary">Přidat závodníka</button>
-                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" aria-label="Close" onclick="window.location.href = 'index.php';">Zavřít bez uložení</button>
+                <button type="submit" class="btn btn-primary">Přidat závodníka</button>
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" aria-label="Close"
+                    onclick="window.location.href = 'index.php';">Zavřít bez uložení</button>
             </div>
             </form>
         </div>

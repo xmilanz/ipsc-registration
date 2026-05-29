@@ -21,15 +21,15 @@ function WarningModal(
                     <h4 class='modal-title text-white w-100 fw-bold py-2'>$WarnHeader</h4><br>
                     <button type='button' class='btn-close btn-close-white' data-bs-dismiss='modal' aria-label='Close' onclick=\"window.location.href = '$WarnCloseHref';\"></button>
                 </div>
-                <div class='modal-body text-center'>
-                    <div class='col-12 mb-2 fw-bolder text-$WarnColor'>
+                <div class='modal-body text-center pb-0'>
+                    <div class='fw-bolder text-$WarnColor'>
                         $WarnMessage
                     </div>
-                    <div class='col-12 small'>
-                        <i class='far fa-info-circle pe-2 mt-3' ></i><i>$WarnInfo</i>
+                    <div class='alert alert-info fw-normal text-center my-3 mx-2' role='alert'>
+                        $WarnInfo
                     </div>
                 </div>
-  		    <div class='modal-footer border-top-0 col-12'>
+  		    <div class='modal-footer border-top-0'>
    			    <button type='button' class='btn btn-outline-dark' onclick=\"window.location.href = '$WarnCloseHref';\">$CancelLabel</button>
    		    </div>
    		</div>
