@@ -188,13 +188,13 @@ $dnes = (new DateTime())->format("Y-m-d H:i:s");
                                 Export
                             </button>
                             <ul class="dropdown-menu">
-                                <li class="<?= (strpos(normalize($match_data['Zavod']), 'tenolix')) ? "d-none" : ""; ?>">
+                                <li>
                                     <a class="dropdown-item" href="export_prezence.php">
-                                        Seznam pro prezenci</a>
+                                        Prezence závodníků</a>
                                 </li>
-                                <li class="<?= (strpos(normalize($match_data['Zavod']), 'tenolix')) ? "" : "d-none"; ?>">
-                                    <a class="dropdown-item" href="export_prezence_tenolix.php">
-                                        Seznam pro prezenci
+                                <li>
+                                    <a class="dropdown-item" href="export_practiscore.php">
+                                        PractiScore
 
                                     </a>
                                 </li>
