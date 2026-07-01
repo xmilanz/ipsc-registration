@@ -6,6 +6,7 @@ $staff = $_POST['Staff'];
 $squad = $_POST['Squad'];
 $op = normalizePrukaz($_POST['ObcanskyPrukaz'] ?? '');
 $zo = isset($_POST['ZbrojniOpravneni']) ? 1 : 0;
+$cz = normalizePrukaz(trim($_POST['CisloZbrane']) ?? '');
 $naMiste = isset($_POST['ZaplatiNaMiste']) ? 1 : 0;
 $email = trim($_POST['Mail']);
 $mena = $match_data['Banka_ucet_MENA'];
@@ -53,6 +54,7 @@ if (
         Prijmeni = ?,
         ObcanskyPrukaz = ?,
         ZbrojniOpravneni = ?,
+        CisloZbrane = ?,
         Mail = ?,
         Divize = ?,
         Kategorie = ?,
@@ -65,12 +67,13 @@ if (
     WHERE Cislo = ?
     ");
     $stmt->bind_param(
-        "ssssssssssssisi",
+        "ssssissssssssisi",
         $alias,
         $jmeno,
         $prijmeni,
         $op,
         $zo,
+        $cz,
         $email,
         $_POST['Divize'],
         $_POST['Kategorie'],
@@ -96,6 +99,7 @@ if (
         Prijmeni = ?,
         ObcanskyPrukaz = ?,
         ZbrojniOpravneni = ?,
+        CisloZbrane = ?,
         Mail = ?,
         Divize = ?,
         Kategorie = ?,
@@ -109,12 +113,13 @@ if (
     WHERE Cislo = ?
     ");
     $stmt->bind_param(
-        "ssssssssssssiisi",
+        "ssssissssssssisi",
         $alias,
         $jmeno,
         $prijmeni,
         $op,
         $zo,
+        $cz,
         $email,
         $_POST['Divize'],
         $_POST['Kategorie'],
@@ -140,6 +145,7 @@ if (
         Prijmeni = ?,
         ObcanskyPrukaz = ?,
         ZbrojniOpravneni = ?,
+        CisloZbrane = ?,
         Mail = ?,
         Divize = ?,
         Kategorie = ?,
@@ -153,12 +159,13 @@ if (
     WHERE Cislo = ?
     ");
     $stmt->bind_param(
-        "sssssssssssssi",
+        "ssssisssssssssi",
         $alias,
         $jmeno,
         $prijmeni,
         $op,
         $zo,
+        $cz,
         $email,
         $_POST['Divize'],
         $_POST['Kategorie'],
@@ -183,6 +190,7 @@ if (
         Prijmeni = ?,
         ObcanskyPrukaz = ?,
         ZbrojniOpravneni = ?,
+        CisloZbrane = ?,
         Mail = ?,
         Divize = ?,
         Kategorie = ?,
@@ -197,12 +205,13 @@ if (
     WHERE Cislo = ?
     ");
     $stmt->bind_param(
-        "ssssssssssssiisi",
+        "ssssisssssssssisi",
         $alias,
         $jmeno,
         $prijmeni,
         $op,
         $zo,
+        $cz,
         $email,
         $_POST['Divize'],
         $_POST['Kategorie'],
@@ -229,6 +238,7 @@ if (
         Prijmeni = ?,
         ObcanskyPrukaz = ?,
         ZbrojniOpravneni = ?,
+        CisloZbrane = ?,
         Mail = ?,
         Divize = ?,
         Kategorie = ?,
@@ -243,12 +253,13 @@ if (
     WHERE Cislo = ?
     ");
     $stmt->bind_param(
-        "ssssssssssssisi",
+        "ssssissssssssisi",
         $alias,
         $jmeno,
         $prijmeni,
         $op,
         $zo,
+        $cz,
         $email,
         $_POST['Divize'],
         $_POST['Kategorie'],
@@ -270,6 +281,7 @@ if (
         Prijmeni = ?,
         ObcanskyPrukaz = ?,
         ZbrojniOpravneni = ?,
+        CisloZbrane = ?,
         Mail = ?,
         Divize = ?,
         Kategorie = ?,
@@ -283,12 +295,13 @@ if (
     WHERE Cislo = ?
     ");
     $stmt->bind_param(
-        "ssssssssssssiisi",
+        "ssssissssssssiisi",
         $alias,
         $jmeno,
         $prijmeni,
         $op,
         $zo,
+        $cz,
         $email,
         $_POST['Divize'],
         $_POST['Kategorie'],
@@ -419,6 +432,7 @@ if (
             "Zpět do administrace"
         );
     } else {
+        logAction("shooter edit");
         $_SESSION['toast'] = [
             'type' => 'success',
             'message' => 'Čekatel byl přesunut do běžného squadu.',

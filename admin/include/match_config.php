@@ -2,8 +2,6 @@
 $result = $conn->query("SELECT * from $table_matches where Zavod_id='$table'");
 $match_data = mysqli_fetch_array($result);
 
-$paymentOnPlaceClass = ($match_data['Payment_before'] == 0) ? '' : 'd-none';
-
 $admin_feature = ($_SESSION['role'] === 'admin') ? '' : 'd-none';
 ?>
 
@@ -109,45 +107,78 @@ $admin_feature = ($_SESSION['role'] === 'admin') ? '' : 'd-none';
                         </div>
 
                         <!-- accordion 2 Nastavení webových stránek -->
-                        <div class="accordion-item <?= $admin_feature ?>">
+                        <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                     data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    Nastavení webových stránek
+                                    Webové stránky
                                 </button>
                             </h2>
                             <div id="collapseTwo" class="accordion-collapse collapse"
                                 data-bs-parent="#accordionMatchConfig">
                                 <div class="accordion-body">
                                     <fieldset class="border p-3 my-3 rounded">
-                                        <legend class="float-none w-auto px-2 h6">Zobrazovat na webu</legend>
+                                        <legend class="float-none w-auto px-2 h6">
+                                            Zobrazovat v menu webu a na úvodní stránce
+                                        </legend>
                                         <div class="row">
-                                            <div class="col-md-4">
-                                                <?php
-                                                echo renderSwitch(
-                                                    'Web_zobrazovat_aliasy',
-                                                    "Aliasy v menu",
-                                                    (bool)$match_data['Web_zobrazovat_aliasy']
-                                                );
-                                                ?>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <?php
+                                                    echo renderSwitch(
+                                                        'Web_zobrazovat_zavodniky',
+                                                        "Závodníky",
+                                                        (bool)$match_data['Web_zobrazovat_zavodniky']
+                                                    );
+                                                    ?>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <?php
+                                                    echo renderSwitch(
+                                                        'Web_zobrazovat_prehledy',
+                                                        "Přehledy",
+                                                        (bool)$match_data['Web_zobrazovat_prehledy']
+                                                    );
+                                                    ?>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <?php
+                                                    echo renderSwitch(
+                                                        'Web_zobrazovat_situace',
+                                                        "Situace",
+                                                        (bool)$match_data['Web_zobrazovat_situace']
+                                                    );
+                                                    ?>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <?php
+                                                    echo renderSwitch(
+                                                        'Web_zobrazovat_aliasy',
+                                                        "Aliasy",
+                                                        (bool)$match_data['Web_zobrazovat_aliasy']
+                                                    );
+                                                    ?>
+                                                </div>
                                             </div>
-                                            <div class="col-md-5">
-                                                <?php
-                                                echo renderSwitch(
-                                                    'Web_zobrazovat_vysledky',
-                                                    "Výsledky v menu",
-                                                    (bool)$match_data['Web_zobrazovat_vysledky']
-                                                );
-                                                ?>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <?php
-                                                echo renderSwitch(
-                                                    'Zavod_zobrazovat_sponzory',
-                                                    "Sponzory",
-                                                    (bool)$match_data['Zavod_zobrazovat_sponzory']
-                                                );
-                                                ?>
+                                            <div class="row mt-3">
+                                                <div class="col-md-3">
+                                                    <?php
+                                                    echo renderSwitch(
+                                                        'Web_zobrazovat_vysledky',
+                                                        "Výsledky",
+                                                        (bool)$match_data['Web_zobrazovat_vysledky']
+                                                    );
+                                                    ?>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <?php
+                                                    echo renderSwitch(
+                                                        'Zavod_zobrazovat_sponzory',
+                                                        "Sponzory",
+                                                        (bool)$match_data['Zavod_zobrazovat_sponzory']
+                                                    );
+                                                    ?>
+                                                </div>
                                             </div>
                                         </div>
                                     </fieldset>
@@ -180,12 +211,12 @@ $admin_feature = ($_SESSION['role'] === 'admin') ? '' : 'd-none';
                                             <label for="Zavod_email_from" class="form-label pt-1">
                                                 Odesílatel registračních emailů<hh class="text-danger">&nbsp;*</hh>
                                             </label>
-                                            <input class="form-control form-control-sm" type="email"
+                                            <input <?= disabled($_SESSION['role'] !== 'admin'); ?> class="form-control form-control-sm" type="email"
                                                 id="Zavod_email_from" name="Zavod_email_from"
                                                 onkeypress="return avoidspace(event)"
-                                                placeholder="registrace@domena.cz"
+                                                placeholder="registrace@kps-eggenberg.cz"
                                                 onfocus="this.placeholder = ''"
-                                                onblur="this.placeholder = 'registrace@domena.cz'"
+                                                onblur="this.placeholder = 'registrace@kps-eggenberg.cz'"
                                                 value="<?= htmlspecialchars($match_data['Zavod_email_from'], ENT_QUOTES, 'UTF-8') ?>" required>
                                             <div class="invalid-feedback">Nevyplnili jste email</div>
                                         </div>
@@ -209,38 +240,24 @@ $admin_feature = ($_SESSION['role'] === 'admin') ? '' : 'd-none';
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                     data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    Nastavení závodu
+                                    Registrace a časový rozpis
                                 </button>
                             </h2>
                             <div id="collapseThree" class="accordion-collapse collapse"
                                 data-bs-parent="#accordionMatchConfig">
                                 <div class="accordion-body">
-                                    <div class="row mt-3">
-                                        <div class="col-md-6">
-                                            <?php
-                                            echo renderSwitch(
-                                                'Zavod_obcansky_prukaz',
-                                                "Číslo OP / EZP",
-                                                (bool)$match_data['Zavod_obcansky_prukaz']
-                                            );
-                                            ?>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <?php
-                                            echo renderSwitch(
-                                                'Zavod_cislo_zbrane',
-                                                "Číslo zbraně",
-                                                (bool)$match_data['Zavod_cislo_zbrane']
-                                            );
-                                            ?>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-4">
-                                        <div class="col-md-6 ">
-                                            <?php
-                                            echo renderSwitch(
-                                                'Zavod_more_divisions',
-                                                'Registrace do více divizí
+                                    <div class="row  mx-1">
+                                        <fieldset class="border p-3 my-3 rounded">
+                                            <legend class="float-none w-auto px-2 h6">
+                                                Způsob registrace závodníků
+                                            </legend>
+
+                                            <div class="row">
+                                                <div class="col-md-6 ">
+                                                    <?php
+                                                    echo renderSwitch(
+                                                        'Zavod_more_divisions',
+                                                        'Registrace do více divizí
                                                 <a
                                                     href="#"
                                                     role="button"
@@ -253,15 +270,16 @@ $admin_feature = ($_SESSION['role'] === 'admin') ? '' : 'd-none';
                                                     data-bs-content="Závodník se může zaregistrovat vícekrát bez nutnosti zadat jiné registrační údaje (IPSC alias, jméno a příjmení).<br><br>Do IPSC aliasu a příjmení se doplní zkratka divize (např. ALIAS-MR, PŘÍJMENÍ-MR)">
                                                     <sup><i class="fas fa-question-circle text-primary ms-1" style="font-size: 12px;"></i></sup>
                                                 </a>',
-                                                (bool)$match_data['Zavod_more_divisions']
-                                            );                                            ?>
-                                        </div>
-                                        <div class="col-md-6 <?= $paymentOnPlaceClass ?>">
-                                            <?php
-                                            echo renderSwitch(
-                                                'Zavod_platba_volitelna',
-                                                'Volitelná platba
-                                                      <a href="#" role="button" tabindex="0"
+                                                        (bool)$match_data['Zavod_more_divisions']
+                                                    );                                            ?>
+                                                </div>
+                                                <div class="col-md-6 <?= hidden($match_data['Payment_before'] == 1); ?>">
+                                                    <?php
+                                                    echo renderSwitch(
+                                                        'Zavod_platba_volitelna',
+                                                        'Volitelná platba
+                                                      <a 
+                                                          href="#" role="button" tabindex="0"
                                                           data-bs-toggle="popover"
                                                           data-bs-placement="top"
                                                           data-bs-html="true"
@@ -278,13 +296,18 @@ $admin_feature = ($_SESSION['role'] === 'admin') ? '' : 'd-none';
                                                           </ul>">
                                                           <sup><i class="fas fa-question-circle text-primary ms-1" style="font-size: 12px;"></i></sup>
                                                       </a>',
-                                                (bool)$match_data['Zavod_platba_volitelna']
-                                            );                                            ?>
-                                        </div>
+                                                        (bool)$match_data['Zavod_platba_volitelna']
+                                                    );                                            ?>
+                                                </div>
+                                            </div>
+                                        </fieldset>
                                     </div>
-                                    <div class="row mt-3">
+
+                                    <div class="row mx-1">
                                         <fieldset class="border p-3 my-3 rounded">
-                                            <legend class="float-none w-auto px-2 h6">Registrace</legend>
+                                            <legend class="float-none w-auto px-2 h6">
+                                                Spuštění a ukončení registrace
+                                            </legend>
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <label for="Zavod_zacatek_registrace" class="form-label pt-1">
@@ -313,6 +336,7 @@ $admin_feature = ($_SESSION['role'] === 'admin') ? '' : 'd-none';
                                                         value="<?= htmlspecialchars($match_data['Zavod_cas_registrace_zacatek'], ENT_QUOTES, 'UTF-8') ?>">
                                                 </div>
                                             </div>
+
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <label for="Zavod_konec_registrace" class="form-label pt-1">
@@ -340,16 +364,19 @@ $admin_feature = ($_SESSION['role'] === 'admin') ? '' : 'd-none';
                                                         onblur="this.placeholder = '18:00'"
                                                         value="<?= htmlspecialchars($match_data['Zavod_cas_registrace_konec'], ENT_QUOTES, 'UTF-8') ?>">
                                                 </div>
-
                                             </div>
                                         </fieldset>
+                                    </div>
+                                    <div class="row mx-1">
                                         <fieldset class="border p-3 my-3 rounded">
-                                            <legend class="float-none w-auto px-2 h6">Časový rozvrh</legend>
+                                            <legend class="float-none w-auto px-2 h6">
+                                                Časový rozpis závodu
+                                            </legend>
                                             <div class="row">
                                                 <div
-                                                    class="col-md-4 <?= hidden($match_data['Squad_prem_max'] == 0); ?>>
-                                                    <label for=" Zavod_cas_prematch"
-                                                    class="form-label pt-1">Prematch</label>
+                                                    class="col-md-4 <?= (($match_data['Squad_prem_max'] == 0) ? 'd-none' : '') ?>">
+                                                    <label for="Zavod_cas_prematch"
+                                                        class="form-label pt-1">Prematch</label>
                                                     <input class="form-control form-control-sm" type="text"
                                                         name="Zavod_cas_prematch"
                                                         id="Zavod_cas_prematch"
@@ -410,27 +437,76 @@ $admin_feature = ($_SESSION['role'] === 'admin') ? '' : 'd-none';
                                                 </div>
                                             </div>
                                         </fieldset>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label for="Zavod_min_pocet_ran" class="form-label pt-1">
-                                                    Počet ran<hh class="text-danger">&nbsp;*</hh>
-                                                </label>
-                                                <input class="form-control form-control-sm" type="text"
-                                                    name="Zavod_min_pocet_ran" id="Zavod_min_pocet_ran"
-                                                    value="<?= $match_data['Zavod_min_pocet_ran'] ?>" required>
-                                                <div class="invalid-feedback">Nevyplnili jste počet ran</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- accordion 4 Nastavení závodu II -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    Vyžadované registrační údaje a počty závodníků
+                                </button>
+                            </h2>
+                            <div id="collapseFour" class="accordion-collapse collapse"
+                                data-bs-parent="#accordionMatchConfig">
+                                <div class="accordion-body">
+                                    <div class="row mx-1">
+                                        <fieldset class="border p-3 my-3 rounded">
+                                            <legend class="float-none w-auto px-2 h6">
+                                                Závodník musí při registraci zadat
+                                            </legend>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <?php
+                                                    echo renderSwitch(
+                                                        'Zavod_obcansky_prukaz',
+                                                        "Číslo OP/EZP",
+                                                        (bool)$match_data['Zavod_obcansky_prukaz']
+                                                    );
+                                                    ?>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <?php
+                                                    echo renderSwitch(
+                                                        'Zavod_cislo_zbrane',
+                                                        "Číslo zbraně",
+                                                        (bool)$match_data['Zavod_cislo_zbrane']
+                                                    );
+                                                    ?>
+                                                </div>
                                             </div>
-                                            <div class="col-md-4">
-                                                <label for="Zavod_stages" class="form-label pt-1">
-                                                    Počet situací<hh class="text-danger">&nbsp;*</hh>
-                                                </label>
-                                                <input class="form-control form-control-sm" type="text"
-                                                    name="Zavod_stages" id="Zavod_stages"
-                                                    onkeypress="return avoidspace(event)"
-                                                    value="<?= $match_data['Zavod_stages'] ?>" required>
-                                                <div class="invalid-feedback">Nevyplnili jste počet situací</div>
+                                        </fieldset>
+                                    </div>
+                                    <div class="row mx-1">
+                                        <fieldset class="border p-3 my-3 rounded mt-3">
+                                            <legend class="float-none w-auto px-2 h6">
+                                                Počty závodníků
+                                            </legend>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label for="Zavod_min_pocet_ran" class="form-label pt-1">
+                                                        Počet ran<hh class="text-danger">&nbsp;*</hh>
+                                                    </label>
+                                                    <input class="form-control form-control-sm" type="text"
+                                                        name="Zavod_min_pocet_ran" id="Zavod_min_pocet_ran"
+                                                        value="<?= $match_data['Zavod_min_pocet_ran'] ?>" required>
+                                                    <div class="invalid-feedback">Nevyplnili jste počet ran</div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="Zavod_stages" class="form-label pt-1">
+                                                        Počet situací<hh class="text-danger">&nbsp;*</hh>
+                                                    </label>
+                                                    <input class="form-control form-control-sm" type="text"
+                                                        name="Zavod_stages" id="Zavod_stages"
+                                                        onkeypress="return avoidspace(event)"
+                                                        value="<?= $match_data['Zavod_stages'] ?>" required>
+                                                    <div class="invalid-feedback">Nevyplnili jste počet situací</div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </fieldset>
                                         <fieldset class="border p-3 my-3 rounded">
                                             <legend class="float-none w-auto px-2 h6">
                                                 Počty závodníků
@@ -464,15 +540,16 @@ $admin_feature = ($_SESSION['role'] === 'admin') ? '' : 'd-none';
                             </div>
                         </div>
 
-                        <!-- accordion 4 Vedení závodu -->
+
+                        <!-- accordion 5 Vedení závodu -->
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
                                     Vedení závodu
                                 </button>
                             </h2>
-                            <div id="collapseFour" class="accordion-collapse collapse"
+                            <div id="collapseFive" class="accordion-collapse collapse"
                                 data-bs-parent="#accordionMatchConfig">
                                 <div class="accordion-body">
 
@@ -617,11 +694,11 @@ $admin_feature = ($_SESSION['role'] === 'admin') ? '' : 'd-none';
                             </div>
                         </div>
 
-                        <!-- accordion 5 Placení závodu -->
+                        <!-- accordion 6 Placení závodu -->
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                    data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
                                     Placení závodu&nbsp;<span class="text-secondary small"><?php if ($match_data['Payment_before'] == 1) {
                                                                                                 echo "(startovné se platí do " . $match_data['Zavod_pocet_dni_na_platbu'] . " dnů od registrace)";
                                                                                             } else {
@@ -629,7 +706,7 @@ $admin_feature = ($_SESSION['role'] === 'admin') ? '' : 'd-none';
                                                                                             } ?> </span>
                                 </button>
                             </h2>
-                            <div id="collapseFive" class="accordion-collapse collapse"
+                            <div id="collapseSix" class="accordion-collapse collapse"
                                 data-bs-parent="#accordionMatchConfig">
                                 <div class="accordion-body">
                                     <div class="row">

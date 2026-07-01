@@ -49,7 +49,7 @@
                                             <option value="3">3</option>
                                         </select>
                                     </td>
-                                    <td><input class="form-control" type="text" name="Value" id="Value" placeholder="startovné" onfocus="this.placeholder = ''" onblur="this.placeholder = 'startovné'" required></td>
+                                    <td><input class="form-control" type="text" name="Value" id="Value" placeholder="startovné" onfocus="this.placeholder = ''" onblur="startovné" required></td>
                                     <td class="text-center">
                                         <button type="submit" class="btn btn-sm btn-primary px-4 py-2"><i class="bi bi-plus-circle me-1"></i>Přidat</button>
                                     </td>

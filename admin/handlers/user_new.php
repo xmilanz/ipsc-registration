@@ -60,6 +60,7 @@ if ($affected === 0) {
             "Zpět do administrace"
         );
     } else {
+        logAction("user new");
         $_SESSION['toast'] = [
             'type' => 'success',
             'message' => 'Uživatel byl přidán a e-mail s informací odeslán.',

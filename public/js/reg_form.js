@@ -1,12 +1,14 @@
-// Disable form submissions if there are invalid fields
-(function() {
+/* =======================================================
+    DISABLE FORM SUBMISSIONS IF THERE ARE INVALID FIELDS
+======================================================== */
+(function () {
   'use strict';
-  window.addEventListener('load', function() {
+    window.addEventListener('load', function () {
     // Get the forms we want to add validation styles to
     var forms = document.getElementsByClassName('needs-validation');
     // Loop over them and prevent submission
-    var validation = Array.prototype.filter.call(forms, function(form) {
-      form.addEventListener('submit', function(event) {
+        var validation = Array.prototype.filter.call(forms, function (form) {
+            form.addEventListener('submit', function (event) {
         if (form.checkValidity() === false) {
           event.preventDefault();
           event.stopPropagation();
@@ -23,7 +25,9 @@ function avoidspace(event) {
     if (k == 32) return false;
 }
 
-
+/* =======================
+    NÁHRADA ZNAKŮ 
+======================== */
 function replaceChars(index) {
 	var jmenoInput = document.getElementById(`Jmeno${index}`);
 	if (jmenoInput) {
@@ -74,26 +78,9 @@ function toggleDivize(index) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    const popovers = [];
-
-    document.querySelectorAll('[data-bs-toggle="popover"]').forEach(function (el) {
-        const popover = new bootstrap.Popover(el, {
-            trigger: 'focus'
-        });
-
-        popovers.push(popover);
-
-        el.addEventListener('show.bs.popover', function () {
-            popovers.forEach(function (p) {
-                if (p !== popover) {
-                    p.hide();
-                }
-            });
-        });
-    });
-});
-
+/* =======================
+    POPOVER 
+======================== */
 document.addEventListener("DOMContentLoaded", function () {
     const popovers = [];
 

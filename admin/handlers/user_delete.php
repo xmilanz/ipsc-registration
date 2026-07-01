@@ -84,6 +84,7 @@ if ($affected == 0) {
             "Zpět do administrace"
         );
     } else {
+        logAction("user delete");
         $_SESSION['toast'] = [
             'type' => 'danger',
             'message' => 'Uživatel byl smazán a e-mail pořadateli odeslán.',

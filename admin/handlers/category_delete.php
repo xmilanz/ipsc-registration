@@ -22,6 +22,7 @@ if ($affected == 0) {
         "Zpět do administrace"
     );
 } else {
+    logAction("category delete");
     $_SESSION['toast'] = [
         'type' => 'danger',
         'message' => 'Kategorie byla smazána.',

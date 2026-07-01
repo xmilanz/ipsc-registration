@@ -63,35 +63,22 @@ $zavodniciNezaplaceno = $result->fetch_object()->unpaid;
 
 $paidOnly = $match_data['Payment_before'] == 1;
 
-$sql = "
+$sqlDiv = "
     SELECT Divize, COUNT(Alias) AS Count
     FROM $table
     WHERE Squad >= 100
 ";
 
 if ($paidOnly) {
-    $sql .= " AND Zaplaceno = 1";
+    $sqlDiv .= " AND Zaplaceno = 1";
 }
 
-$sql .= " GROUP BY Divize ORDER BY Divize";
+$sqlDiv .= " GROUP BY Divize ORDER BY Divize";
 
-$stmt = $conn->prepare($sql);
+$stmt = $conn->prepare($sqlDiv);
 $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
-
-
-$divizeMap = [
-    'OPN' => 'Open',
-    'PRD' => 'Production',
-    'STD' => 'Standard',
-    'CLA' => 'Classic',
-    'REV' => 'Revolver',
-    'OPT' => 'Optics (Standard Optics)',
-    'MR'  => 'Mini Rifle',
-    'PDO' => 'Production Optics',
-    'PCC' => 'Pistol Caliber Carbine',
-];
 
 ?>
 
@@ -100,14 +87,12 @@ $divizeMap = [
         <table id="zavodnici" class="table table-bordered bg-white">
             <?php
             echo "<thead><tr><th colspan='2'>Počet závodníků: <small>$zavodniciCelkem ($zavodniciNeplati rozhodčích a pomocníků)</small></th></tr></thead>";
-            echo "<tbody><tr><td><dl>";
+            echo "<tbody>";
 
             while ($line = $result->fetch_assoc()) {
-
-                $divCode = $line['Divize'];
-                $divName = $divizeMap[$divCode] ?? $divCode;
-
-                echo "<dt>$divName</dt>";
+                $divize = $line['Divize'];
+                $nazevDivize = getValueFromTable($conn, $table_divisions, "Name", $divize, "Value");
+                echo "<tr><td><dt>$nazevDivize</dt>";
 
                 // ---------- kategorie ----------
                 $sqlCat = "
@@ -122,29 +107,23 @@ $divizeMap = [
 
                 $sqlCat .= " GROUP BY Kategorie ORDER BY Kategorie";
 
-                $stmtCat = $conn->prepare($sqlCat);
-                $stmtCat->bind_param("s", $divCode);
-                $stmtCat->execute();
-                $cats = $stmtCat->get_result();
+                $stmt = $conn->prepare($sqlCat);
+                $stmt->bind_param("s", $divize);
+                $stmt->execute();
+                $cats = $stmt->get_result();
+                $stmt->close();
 
                 while ($cat = $cats->fetch_assoc()) {
                     echo "<dd>&nbsp;&nbsp;<small>- {$cat['Kategorie']}: {$cat['Count']}</small></dd>";
                 }
 
-                $stmtCat->close();
+                echo "</td></tr>";
             }
 
-            echo "</dl></td></tr></tbody>";
+            echo "</td></tr></tbody>";
 
             ?>
         </table>
-        <div class="my-3 <?= hidden($match_data['Payment_before'] == 0); ?>">
-            <h3>Přehled placení</h3>
-            <ul>
-                <li>zaplaceno: <?= $zavodniciZaplaceno ?></li>
-                <li>nezaplaceno: <?= $zavodniciNezaplaceno ?></li>
-            </ul>
-        </div>
     </div>
     <?php
 
@@ -177,8 +156,8 @@ $divizeMap = [
             </thead>
             <?php
             while ($line = $result->fetch_assoc()) {
-                $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
-                echo "<tbody><tr><td>" . $nazev_divize . "</td><td>" . htmlspecialchars($line['Count'], ENT_QUOTES, 'UTF-8') . "</td></tr><tbody>";
+                $nazevDivize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize'], "Value");
+                echo "<tbody><tr><td>" . $nazevDivize . "</td><td>" . htmlspecialchars($line['Count'], ENT_QUOTES, 'UTF-8') . "</td></tr><tbody>";
             }
             ?>
 
@@ -216,6 +195,15 @@ $divizeMap = [
             }
             ?>
         </table>
+    </div>
+</div>
+<div class="row <?= hidden($match_data['Payment_before'] == 0); ?>">
+    <div class="my-3">
+        <h3>Přehled placení</h3>
+        <ul>
+            <li>zaplaceno: <?= $zavodniciZaplaceno ?></li>
+            <li>nezaplaceno: <?= $zavodniciNezaplaceno ?></li>
+        </ul>
     </div>
 </div>
 <?php

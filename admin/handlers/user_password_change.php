@@ -75,6 +75,7 @@ if ($username) {
         $updateStmt->execute();
         $updateStmt->close();
 
+        logAction("user password change");
         $_SESSION['toast'] = [
             'type' => 'success',
             'message' => 'Heslo bylo úspěšně změněno.',

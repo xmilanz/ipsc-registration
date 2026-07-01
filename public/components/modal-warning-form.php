@@ -11,7 +11,6 @@ function WarningModalForm(
     string $Poradatel = '',
     string $CancelLabel = 'Zrušit'
 ): void {
-
     $WarnHeader = htmlspecialchars($Header, ENT_QUOTES, 'UTF-8');
     $WarnCloseHref = htmlspecialchars($CloseHref, ENT_QUOTES, 'UTF-8');
     $WarnActionURL = htmlspecialchars($ActionURL, ENT_QUOTES, 'UTF-8');
@@ -19,8 +18,6 @@ function WarningModalForm(
     $WarnMessage = $Message;
     $WarnExtraInfo = $ExtraInfo;
     $WarnPoradatel = $Poradatel;
-    
-
 
     echo "
     <div class='text-center'>
@@ -54,17 +51,19 @@ function WarningModalForm(
 								$WarnExtraInfo
 						</div>
 						<div class='modal-footer border-top-0'>
-							<button type='submit' name='$WarnAction' class='btn btn-danger'>$SubmitLabel</button>
+							<button type='submit' class='btn btn-danger'>$SubmitLabel</button>
 							<button type='button' class='btn btn-outline-dark' onclick=\"window.location.href = '$WarnCloseHref';\">$CancelLabel</button>
 						</div>
 					</form>
 				</div>
 			</div>
 		</div>
-    <script type='text/javascript'>
-    $(document).ready(function(){
-        $('#myModal').modal('show');
-    });
-    </script>
     ";
 }
+?>
+
+<script type='text/javascript'>
+    $(document).ready(function() {
+        $('#myModal').modal('show');
+    });
+</script>

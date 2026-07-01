@@ -72,7 +72,8 @@ if ($pocet >= $squad_max) {
             "<div class='col-12 fw-bolder text-danger'>Závodník $jmeno $prijmeni [$alias] je evidovaný jako dvakrát vyřazený.",
             "Opakované zrušení registrace a provedení nové se často dělá za účelem obcházení termínu pro zaplacení registrace. ",
             "Pokud si nejste vědomi, že byste <strong>již dvakrát zrušili svoji účast závodě</strong>, kontaktujte <a href='mailto:$match_data[Zavod_email_poradatel]?subject=Neúspěšná registrace - opakované vyřazení'>pořadatele</a> nebo <a href='mailto:$match_data[Zavod_email_stats]?subject=Neúspěšná registrace - opakované vyřazení'>statistika</a>.",
-            "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'registrace.php';\">Zpět na registraci</button>"
+            "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'registrace.php';\">Zpět na registraci</button>",
+            "$poradatel"
         );
         exit;
     }
@@ -99,10 +100,11 @@ if ($pocet >= $squad_max) {
             "Neúspěšná registrace",
             "registrace.php",
             "<div class='col-12 fw-bolder text-danger'>Závodník $jmeno $prijmeni ($alias) už je zaregistrovaný",
-            "Buď vás už někdo zaregistroval nebo jste použili stejné jméno, příjmení a IPSC&nbsp;alias jako jiný závodník.<br>V případě, že jste zadali skutečně váš zaregistrovaný IPSC alias, <br>kontaktujte <a href='mailto:$match_data[Zavod_email_poradatel]?subject=Neúspěšná registrace - duplicitní IPSC alias, prijmeni a jmeno'>pořadatele</a> nebo <a href='mailto:$match_data[Zavod_email_stats]?subject=Neúspěšná registrace - duplicitní IPSAC alias, prijmeni a jmeno'>statistika</a>.<br>Pokud jste zadali alias <strong>nezaregistrovaný na IPSC-TECH.ORG</strong>, <br>použijte tento <a href='https://ipscresults.org/Mobile/AliasRegistration.html' target='_new'>odkaz</a> a&nbsp;zaregistrujte se.<br>Pro odlišení napište za příjmení $prijmeni nějaký další znak<br><small> nebo z nabídky zvolte <b>ml./st.</b></small>
+            "Buď vás už někdo zaregistroval nebo jste použili stejné jméno, příjmení a IPSC&nbsp;alias jako jiný závodník.<br>V případě, že jste zadali skutečně váš zaregistrovaný IPSC alias, kontaktujte <a href='mailto:$match_data[Zavod_email_poradatel]?subject=Neúspěšná registrace - duplicitní IPSC alias, prijmeni a jmeno'>pořadatele</a> nebo <a href='mailto:$match_data[Zavod_email_stats]?subject=Neúspěšná registrace - duplicitní IPSAC alias, prijmeni a jmeno'>statistika</a>.<br>Pokud jste zadali alias <strong>nezaregistrovaný na IPSC-TECH.ORG</strong>, použijte tento <a href='https://ipscresults.org/Mobile/AliasRegistration.html' target='_new'>odkaz</a> a&nbsp;zaregistrujte se. Pro odlišení napište za příjmení $prijmeni nějaký další znak<br><small> nebo z nabídky zvolte <b>ml./st.</b></small>
                             <p class='text-danger text-center mb-3 fst-italic'>Kombinaci <mark>Jméno Příjmení (ALIAS)</mark> byste měli používat v průběhu celé série závodu.</p>",
             "Kliknutím na tlačítko <kbd>Zpět na registraci</kbd> se vraťte na registraci.",
-            "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'registrace.php';\">Zpět na registraci</button>"
+            "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'registrace.php';\">Zpět na registraci</button>",
+            "$poradatel"
         );
         exit;
     }
@@ -117,7 +119,8 @@ if ($pocet >= $squad_max) {
             "V případě, že jste zadali skutečně váš zaregistrovaný IPSC alias, <br>kontaktujte <a href='mailto:$match_data[Zavod_email_poradatel]?subject=Neúspěšná registrace - duplicitní IPSC alias'>pořadatele</a> nebo <a href='mailto:$match_data[Zavod_email_stats]?subject=Neúspěšná registrace - duplicitní alias'>statistika</a>.<br>Pokud jste zadali alias <strong>nezaregistrovaný na IPSC-TECH.ORG</strong>, <br>použijte tento <a href='https://ipscresults.org/Mobile/AliasRegistration.html' target='_new'>odkaz</a> a&nbsp;zaregistrujte se.<br>
                             <p class='text-danger text-center mb-3 fst-italic'>V průběhu celé série závodu byste měli používat stále stejný <mark>IPSC alias</mark>.</p>",
             "Kliknutím na tlačítko <kbd>Zpět na registraci</kbd> se vraťte na registraci.",
-            "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'registrace.php';\">Zpět na registraci</button>"
+            "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'registrace.php';\">Zpět na registraci</button>",
+            "$poradatel"
         );
         exit;
     } else {
@@ -191,7 +194,8 @@ if ($pocet >= $squad_max) {
 
         $line['Staff'] == "RO" ? $Rozhodci = "ANO" : $Rozhodci = "NE";
         $line['Staff'] == "POM" ? $Pomocnik = "ANO" : $Pomocnik = "NE";
-        $link_cancel = "<a href='" . htmlspecialchars($reg_url, ENT_QUOTES, 'UTF-8') . "/zrus_ucast.php?id=" . rawurlencode($cislo) . "&klic=" . rawurlencode($line['klic']) . "'><strong>zrušit účast</strong></a>";
+        $link_cancel = buildCancelLinks($reg_url, $cislo, $klic);
+        $link_ical = buildCalendarLinks($reg_url, $match_data);
 
         // Uprava terminu zaplaceni závodníka, co se zaregistruje mene nez Zavod_pocet_dni_na_platbu dni pred prematchem
         $datumZavod = new DateTime($match_data['Zavod_datum']);
@@ -269,13 +273,13 @@ if ($pocet >= $squad_max) {
                 ",
             "Potvrzení registrace bylo odesláno na adresu $email",
             "<button type='button' class='btn btn-primary' onclick=\"window.location.href = 'registrace.php';\">Nová registrace</button>
-                 <button type='button' class='btn btn-outline-dark' onclick=\"window.location.href = 'index.php';\">Zavřít</button>
-                "
+             <button type='button' class='btn btn-outline-dark' onclick=\"window.location.href = 'index.php';\">Zavřít</button>",
+            "$poradatel"
         );
 
         // posilame mail zavodnikovi
         $STRELEC = "<strong>IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "</strong>" . "\r\n";
-        $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " [$link_cancel]\r\n";
+        $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . "  [$link_cancel] [$link_ical] " . "\r\n";
         $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
         $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
         $STRELEC .= "Squad: $squads" . "\r\n\r\n";

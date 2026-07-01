@@ -172,7 +172,7 @@ if ($result && $result->num_rows > 0) {
                     <div class='row pb-3'>
                         <div class='col-md-5 <?= hidden($match_data['Zavod_cislo_zbrane'] == 0); ?>'>
                             <label class='form-label'>Číslo zbraně</label>
-                            <input <?= disabled($_SESSION['role'] === 'viewer'); ?> class='form-control'
+                            <input <?= disabled($_SESSION['role'] === 'viewer'); ?> class='form-control' name='CisloZbrane' id='CisloZbrane'
                                 value='<?= htmlspecialchars($line['CisloZbrane'], ENT_QUOTES, 'UTF-8') ?>'>
                         </div>
                     </div>

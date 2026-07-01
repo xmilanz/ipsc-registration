@@ -76,6 +76,7 @@ if ($affected == 0) {
             "Zpět do administrace"
         );
     } else {
+        logAction("shooter cancel");
         $_SESSION['toast'] = [
             'type' => 'danger',
             'message' => 'Závodník byl vyřazen a e-mail s informací odeslán.',

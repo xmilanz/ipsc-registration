@@ -29,8 +29,14 @@
                             while ($line = $result_names->fetch_assoc()) {
                             ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($line['username']) ?></td>
-                                    <td style="width:140px;" class="editable" data-table="<?= $table_admins ?>" data-field="password" data-id="<?= $line['id'] ?>"></td>
+                                    <td>
+                                        <?= htmlspecialchars($line['username']) ?>
+                                    </td>
+                                    <td style="width:140px;"
+                                        class="editable"
+                                        data-table="<?= $table_admins ?>"
+                                        data-field="password" data-id="<?= $line['id'] ?>">
+                                    </td>
                                     <td
                                         class="editable-toggle"
                                         data-table="<?= $table_admins ?>"
@@ -52,7 +58,7 @@
                                     <td class="save-cell" data-id="<?= $line['id'] ?>">
                                         <button class="btn btn-sm btn-success me-1" disabled><i class="bi bi-check-lg"></i></button>
                                         <button class="btn btn-sm btn-secondary" disabled><i class="bi bi-x-lg"></i></button>
-                                        <form action="./save.php" method="POST" class="d-inline"> <input type="hidden" name="delete_user" value="1">
+                                        <form action="./save.php" method="POST" class="d-inline">
                                             <input type='hidden' name='action' value='user_delete'>
                                             <input type="hidden" name="username" value="<?= $line['username'] ?>">
                                             <button type="submit" class="btn btn-sm btn-danger ms-2"> <i class="bi bi-trash3 mx-2"></i>
@@ -86,7 +92,7 @@
                                         </select>
                                     </td>
                                     <td colspan="3" class="text-center">
-                                        <button type="submit" class="btn btn-sm btn-primary px-4 py-2"><i class="bi bi-plus-circle me-1"></i>Přidat</button>
+                                        <button type="submit" name="new_user" class="btn btn-sm btn-primary px-4 py-2"><i class="bi bi-plus-circle me-1"></i>Přidat</button>
                                     </td>
                                 </tr>
                             </form>

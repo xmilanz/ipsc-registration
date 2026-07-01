@@ -1,18 +1,18 @@
 <?php
-$table = $_POST['table'];
-$field = $_POST['field'];
-$id = intval($_POST['id']);
-$value = $_POST['value'];
+    $table = $_POST['table'];
+    $field = $_POST['field'];
+    $id = intval($_POST['id']);
+    $value = $_POST['value'];
 
-$allowedTables = [
+	$allowedTables = [
     $table_admins => ['username', 'email', 'role', 'firstname', 'lastname', 'organizer', 'password', 'force_password_change'],
     $table_squads => ['Number', 'Name'],
     $table_divisions => ['Name', 'Value'],
     $table_categories => ['Name', 'Value'],
     $table_fee => ['Value']
-];
+    ];
 
-if (array_key_exists($table, $allowedTables) && in_array($field, $allowedTables[$table], true)) {
+    if (array_key_exists($table, $allowedTables) && in_array($field, $allowedTables[$table], true)) {
 
     if ($table === $table_admins && $field === 'password') {
         if (trim($value) === '') {
@@ -43,5 +43,5 @@ if (array_key_exists($table, $allowedTables) && in_array($field, $allowedTables[
 
     $stmt->execute();
     $stmt->close();
-}
-exit;
+    }
+    exit;

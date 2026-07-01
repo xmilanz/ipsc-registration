@@ -23,6 +23,8 @@ if ($match_data['Payment_before']) {
    	 Web_zobrazovat_situace = ?,
    	 Web_zobrazovat_aliasy = ?,
    	 Web_zobrazovat_vysledky = ?,
+   	 Web_zobrazovat_zavodniky = ?,
+   	 Web_zobrazovat_prehledy = ?,
    	 Zavod_cas_prematch = ?,
    	 Zavod_cas_prezence = ?,
    	 Zavod_cas_main = ?,
@@ -56,7 +58,7 @@ if ($match_data['Payment_before']) {
     WHERE Zavod_id = ?
     ");
     $stmt->bind_param(
-        "sssssssssssisssssssssssssssssssssssssssssssiiissiiss",
+        "sssssssssssiiiiiiiiiiiissssssssssssssssssssssiiissiiss",
         $_POST['Banka_ucet_cislo'],
         $_POST['Banka_ucet_kod'],
         $_POST['Banka_nazev'],
@@ -78,6 +80,8 @@ if ($match_data['Payment_before']) {
         $_POST['Web_zobrazovat_situace'],
         $_POST['Web_zobrazovat_aliasy'],
         $_POST['Web_zobrazovat_vysledky'],
+        $_POST['Web_zobrazovat_zavodniky'],
+        $_POST['Web_zobrazovat_prehledy'],
         $_POST['Zavod_cas_prematch'],
         $_POST['Zavod_cas_prezence'],
         $_POST['Zavod_cas_main'],
@@ -130,6 +134,8 @@ if ($match_data['Payment_before']) {
      Web_zobrazovat_situace = ?,
      Web_zobrazovat_aliasy = ?,
      Web_zobrazovat_vysledky = ?,
+   	 Web_zobrazovat_zavodniky = ?,
+   	 Web_zobrazovat_prehledy = ?,
      Zavod_cas_prematch = ?,
      Zavod_cas_prezence = ?,
      Zavod_cas_main = ?,
@@ -163,7 +169,7 @@ if ($match_data['Payment_before']) {
     WHERE Zavod_id = ?
     ");
     $stmt->bind_param(
-        "sssssssissssssssssssssssssssssssssssssssiissiiss",
+        "sssssssiiiiiiiiiiiisssssssssssssssssssssssiissiiss",
         $_POST['Klub_web'],
         $_POST['Zavod'],
         $_POST['Zavod_datum'],
@@ -181,6 +187,8 @@ if ($match_data['Payment_before']) {
         $_POST['Web_zobrazovat_situace'],
         $_POST['Web_zobrazovat_aliasy'],
         $_POST['Web_zobrazovat_vysledky'],
+        $_POST['Web_zobrazovat_zavodniky'],
+        $_POST['Web_zobrazovat_prehledy'],
         $_POST['Zavod_cas_prematch'],
         $_POST['Zavod_cas_prezence'],
         $_POST['Zavod_cas_main'],
@@ -233,6 +241,7 @@ if ($stmt->errno !== 0) {
         'duration' => 2000
     ];
 } else {
+    logAction("match data update");
     $_SESSION['toast'] = [
         'type' => 'success',
         'message' => 'Změny nastavení závodu byly úspěšně uloženy.',

@@ -41,7 +41,6 @@ $availableRaces = getRacesForOrganizer($conn, $organizer, $zavody_prefix);
 
 $registracePozastavena = ($match_data['Zavod_registrace_pozastaveno'] == 1) ? '' : 'd-none';
 
-
 $dnes = (new DateTime())->format("Y-m-d H:i:s");
 ?>
 

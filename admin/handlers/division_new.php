@@ -24,6 +24,7 @@ if ($affected === 0) {
         "Zpět do administrace"
     );
 } else {
+    logAction("division new");
     $_SESSION['toast'] = [
         'type' => 'success',
         'message' => 'Divize byla úspěšně přidána',

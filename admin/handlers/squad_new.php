@@ -24,6 +24,7 @@ if ($affected === 0) {
         "Zpět do administrace"
     );
 } else {
+    logAction("squad new");
     $_SESSION['toast'] = [
         'type' => 'success',
         'message' => 'Squad byl úspěšně přidán.',

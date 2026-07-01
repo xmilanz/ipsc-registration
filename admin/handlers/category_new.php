@@ -24,6 +24,7 @@ if ($affected === 0) {
         "Zpět do administrace"
     );
 } else {
+    logAction("category new");
     $_SESSION['toast'] = [
         'type' => 'success',
         'message' => 'Kategorie byla úspěšně přidána.',

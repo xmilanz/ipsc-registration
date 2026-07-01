@@ -20,7 +20,7 @@ $datumKonecRegistrace = (clone $datumZavod)
 $reg_started = false;
 $reg_text = "";
 
-if ($match_data['Zavod_registrace_pozastaveno']) {
+if ($match_data['Zavod_registrace_pozastaveno'] == 1) {
     $reg_text = "<span class='text-danger'>Registrace je pozastavená</span>";
 } else if ($dnes > $datumKonecRegistrace) {
     $reg_text = "Registrace skončila " . $datumKonecRegistrace->format('j.n.Y H:i') . " ";
@@ -36,6 +36,7 @@ $regAktivni = $reg_started
     && $dnes < $datumKonecRegistrace
     && $match_data['Zavod_registrace_pozastaveno'] == 0;
 ?>
+
 <h2 class='pb-3'>
     <?= $reg_text ?>
 </h2>
@@ -52,26 +53,23 @@ while ($line = $result->fetch_assoc()) {
     $cislo_squadu[$zkratkad] = $line['Number'];
 }
 
+// Načteme počty všech squadů
+$counts = [];
+$sqlCounts = "SELECT Squad, COUNT(*) AS count FROM " . $table . " GROUP BY Squad";
+$resCounts = $conn->query($sqlCounts);
+while ($r = $resCounts->fetch_assoc()) {
+    $counts[(int)$r['Squad']] = (int)$r['count'];
+}
+$resCounts->free();
+
+// Získáme kapacity squadů z nastavení závodu
+$squadMainMax = (int)($match_data['Squad_main_max'] ?? 0);
+$squadPremMax = (int)($match_data['Squad_prem_max'] ?? 0);
+
 // Výpis squadů
 foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
     $zkratka = (int)($cislo_squadu[$zkratkad] ?? 0);
-
-    // Načíst počty všech squadů jedním dotazem
-    $counts = [];
-    $sqlCounts = "SELECT Squad, COUNT(*) AS count FROM " . $table . " GROUP BY Squad";
-    $resCounts = $conn->query($sqlCounts);
-    while ($r = $resCounts->fetch_assoc()) {
-        $counts[(int)$r['Squad']] = (int)$r['count'];
-    }
-    $resCounts->free();
-
-    // pak v cyklu místo dotazu použiješ:
     $pocet = $counts[$zkratka] ?? 0;
-
-
-    // Kapacity
-    $squadMainMax = (int)($match_data['Squad_main_max'] ?? 0);
-    $squadPremMax = (int)($match_data['Squad_prem_max'] ?? 0);
 
     if ($zkratka === -2) {
         $maxCapacity = null; // neomezeno
@@ -131,14 +129,16 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
     $enabledBtn = "<button class='btn btn-primary float-end mb-2' data-bs-toggle='collapse' href='#reg_form_$zkratkad'>Vybrat</button>";
     $disabledBtn = "<button class='btn btn-danger float-end mb-2' disabled>Obsazeno</button>";
 
-    if ($match_data['Zavod_registrace_pozastaveno'] == 1) {
-        echo $disabledMatchBtn;
-    } else if ($reg_started && $dnes < $datumKonecRegistrace) {
+    if ($regAktivni) {
         if ($maxCapacity === null) {
             echo $enabledBtn;
         } else {
             echo ($pocet < $maxCapacity) ? $enabledBtn : $disabledBtn;
         }
+    } elseif (!$regAktivni) {
+        echo "";
+    } else {
+        echo $disabledMatchBtn;
     }
 
     echo "</div>";
@@ -165,7 +165,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
         }
 
         // definice ikon 
-        $serieIcon = "";
+        $serieIcon = ""; //doprogramovat podle potřeby, zatím ponecháno prázdné, protože se nevyužívá
         $staffIcon = "";
         if ($line['Staff'] == "RO") {
             $staffIcon = "<i class='far fa-clock' style='font-size:12px'></i>";
@@ -218,7 +218,6 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
         <div class="col-md-3 <?= hidden($match_data['Zavod_obcansky_prukaz'] == 0); ?>">
             <label for="ObcanskyPrukaz" class="form-label mt-3">Číslo OP / EZP
                 <a
-                    href="#"
                     role="button"
                     tabindex="0"
                     id="userInfoBtn"
@@ -268,9 +267,9 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
 
     </div>
 
-    <div class="row">
+    <div class="row mt-2">
         <div class="col-md-3">
-            <label for="Jmeno" class="form-label mt-3">Jméno</label>
+            <label for="Jmeno" class="form-label">Jméno</label>
             <input
                 class="form-control"
                 type="text"
@@ -283,7 +282,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
             <div class="invalid-feedback">Nevyplnili jste jméno</div>
         </div>
         <div class="col-md-3">
-            <label class="form-label mt-3">Příjmení</label>
+            <label class="form-label">Příjmení</label>
             <input
                 class="form-control"
                 type="text"
@@ -296,7 +295,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
             <div class="invalid-feedback">Nevyplnili jste příjmení</div>
         </div>
         <div class="col-md-2">
-            <label class="form-label mt-3">Doplnění jména</label>
+            <label class="form-label">Doplnění jména</label>
             <select class="form-select" name="Prijmeni_stav" id="Prijmeni_stav<?= $zkratka ?>">
                 <option value="" selected>-</option>
                 <option value=" ml.">ml.</option>
@@ -304,29 +303,24 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
             </select>
         </div>
         <div class="col-md-4">
-            <label for="Email" class="form-label mt-3">Email</label>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">@</div>
-                </div>
-                <input
-                    class="form-control"
-                    type="email"
-                    id="Email<?= $zkratka ?>"
-                    name="Email"
-                    onfocus="this.placeholder = ''"
-                    onkeypress="return avoidspace(event)"
-                    placeholder="novak@mujemail.cz"
-                    onblur="this.placeholder = 'novak@mujemail.cz';replaceChars('<?= $zkratka ?>')"
-                    required>
-            </div>
+            <label for="Email" class="form-label">Email</label>
+            <input
+                class="form-control"
+                type="email"
+                id="Email<?= $zkratka ?>"
+                name="Email"
+                onfocus="this.placeholder = ''"
+                onkeypress="return avoidspace(event)"
+                placeholder="novak@mujemail.cz"
+                onblur="this.placeholder = 'novak@mujemail.cz';replaceChars('<?= $zkratka ?>')"
+                required>
             <div class="invalid-feedback">Nevyplnili jste email</div>
         </div>
     </div>
 
-    <div class="row">
+    <div class="row mt-4">
         <div class="col-md-2">
-            <label for="Kategorie" class="form-label mt-3">Kategorie</label>
+            <label for="Kategorie" class="form-label">Kategorie</label>
             <select class="form-select" name="Kategorie" id="Kategorie<?= $zkratka ?>" required>
                 <option value="" selected>--- vyberte ---</option>
                 <?php
@@ -342,7 +336,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
             <div class="invalid-feedback">Nevybrali jste kategorii</div>
         </div>
         <div class="col-md-2">
-            <label for="divize" class="form-label mt-3">Divize</label>
+            <label for="divize" class="form-label">Divize</label>
             <select class="form-select" name="Divize" id="Divize<?= $zkratka ?>" onchange="toggleDivizeMain(<?= $zkratka ?>)" <?= required($match_data['Zavod_more_divisions'] == 1); ?>>
                 <option value="" selected>--- vyberte ---</option>
                 <?php
@@ -358,9 +352,8 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
             <div class="invalid-feedback">Nevybrali jste divizi</div>
         </div>
         <div class="col-md-2 <?= hidden($match_data['Zavod_more_divisions'] == 0); ?>">
-            <label for="divize_dalsi" class="form-label mt-3 mb-1 text-danger">
+            <label for="divize_dalsi" class="form-label mb-1 text-danger">
                 Další divize <a
-                    href="#"
                     role="button"
                     tabindex="0"
                     id="userInfoBtn"
@@ -369,7 +362,6 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
                     data-bs-html="true"
                     data-bs-title="Registrace do více divizí"
                     data-bs-content="
-
                         Střílíte-li v závodě ve více divizích, postupujte tímto způsobem:
                         <ul>
                             <li>Při první registaci použijte první seznam divizí.</li>
@@ -377,7 +369,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
                             <li>Další DIVIZI vyberte ze seznamu 'Další divize'</li>
                         </ul>
                         <i>(jakmile se vybere jedna divize, není možné použít druhý seznam divizí)</i>
-">
+                    ">
                     <sup><i class="fas fa-question-circle text-primary ms-1"></i></sup>
                 </a>
             </label>
@@ -395,7 +387,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
             </select>
         </div>
         <div class="col-md-2">
-            <label for="Faktor" class="form-label mt-3">Faktor</label>
+            <label for="Faktor" class="form-label">Faktor</label>
             <select class="form-select" name="Faktor" id="Faktor<?= $zkratka ?>" required>
                 <option value="" selected>--- vyberte ---</option>
                 <option value="MIN">Minor</option>
@@ -404,7 +396,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
             <div class="invalid-feedback">Nevybrali jste faktor</div>
         </div>
         <div class="col-md-2">
-            <label for="Region" class="form-label mt-3">Region</label>
+            <label for="Region" class="form-label">Region</label>
             <select class="form-select" name="Region" id="Region<?= $zkratka ?>" required>
                 <option value="AUS">Austria</option>
                 <option value="CZE" selected>Czech Republic</option>
@@ -416,7 +408,7 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
             <div class="invalid-feedback">Nevybrali jste region</div>
         </div>
         <div class="col-md-2">
-            <label for="Staff" class="form-label mt-3">Staff</label>
+            <label for="Staff" class="form-label">Staff</label>
             <select class="form-select" name=Staff>
                 <option value="PAY" selected>Platící závodník</option>
                 <option value="RO">Rozhodčí</option>
@@ -425,55 +417,62 @@ foreach ($nazev_squadu as $zkratkad => $nazvy_squadu) {
         </div>
     </div>
 
-    <div class="row">
+    <div class="row  mt-4">
         <div class="col-md-12">
-            <label for="Poznamka" class="form-label mt-3">Poznámka</label>
+            <label for="Poznamka" class="form-label">Poznámka</label>
             <textarea
                 class="form-control"
                 type="text"
                 name="Poznamka"
                 id="Poznamka"
-                placeholder="Jméno parťáka, se kterým budete střílet"
+                placeholder="Poznámka"
                 onfocus="this.placeholder = ''"
-                onblur="this.placeholder = 'Jméno parťáka, se kterým budete střílet'"
+                onblur="this.placeholder = 'Poznámka'"
                 rows="3"></textarea>
         </div>
     </div>
 
-    <div class=" row mt-3">
-        <div class="d-none alert alert-info m-lg-2" role="alert">
-            Zde vložit informační text
+    <div class="row px-4 mt-3">
+        <div class="alert alert-danger m-lg-2 <?= hidden($match_data['Zavod_cislo_zbrane'] == 0); ?>" role="alert">
+            Při prezenci se eviduje také VÝROBNÍ ČÍSLO ZBRANĚ. Můžete ho vyplnit zde ve formuláři nebo si jej přineste s sebou<small>(napsané na papíru, vytisknutý výpis ze zbrojního listu nebo online v Portálu občana).</small>
         </div>
-        <div class="alert alert-danger m-lg-2" role="alert">
-            Do knihy se kromě OP/EZP zapisuje také VÝROBNÍ ČÍSLO ZBRANĚ. Můžete vyplnit přímo v registračním při registraci nebo si jej přineste napsané na papíru a doplní se na místě při registraci.
+        <div class="alert alert-info m-lg-2" role="alert">
+            Pokud sdílíte zbraň s jiným závodníkem, napište do poznámky jeho jméno a příjmení.
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12 mt-4 text-start">
+    <div class="row px-4 mt-3">
+        <div class="col-12 text-center">
             Provedením registrace vyjadřuji souhlas s
-            <a data-bs-toggle="collapse" href="#collapseRules" role="button" aria-expanded="false" aria-controls="collapseRules">pravidly registrace</a> a&nbsp;zpracováním osobních údajů.
-            <div class="collapse" id="collapseRules">
+            <a data-bs-toggle="collapse" href="#collapseRules" role="button" aria-expanded="false"
+                aria-controls="collapseRules">pravidly registrace</a> a&nbsp;zpracováním osobních údajů.
+            <div class="collapse text-start" id="collapseRules">
                 <div class="card card-body mt-2 mb-3 me-4">
                     <ul>
-                        <li>V souladu s pravidlem 6.6.2 je účast v prematchi omezena na organizátory, rozhodčí, pomocníky a sponzory.</li>
-                        <li>Rozhodčí se registrují po dohodě s RM.</li>
-                        <li>Registrace se uzavírá <?= ($match_data['Zavod_konec_registrace'] == 0) ? 'o půlnoci před registrací' : "$match_data[Zavod_konec_registrace] dny před konáním závodu" ?>..</li>
-                        <li>Pořadatelé si vyhrazují právo dodatečně měnit zařazení závodníků do squadů dle potřeb hladkého průběhu závodu.</li>
-                        <li>Změny v registraci (např. náhrada závodníka při přenosu startovného) lze provést nejpozději v den prematche (<?= $datumPrematch->format('j.n.Y') ?>).</li>
-                        <li>Přesuny závodníků mezi squady na základě jejich žádosti lze provést <b>nejpozději do 30 minut před oficiálním zahájením hlavního závodu.</b></li>
-                        <li class="text-danger fw-bold">Protože jsou podklady pro zaplacení startovaného posílány emailem, zbavuje se závodník při zadání neplatné emailové adresy možnosti zúčastnit se závodu. Rovněž nebude moci být informován o případných změnách.</li>
-                        <li class="<?= hidden($match_data['Payment_before'] == 0); ?>">Startovné se hradí tak, aby platba proběhla do <?= $match_data['Zavod_pocet_dni_na_platbu'] ?> dnů od registrace.<br>- u závodníků zaregistrovaných méně jak <?= $match_data['Zavod_pocet_dni_na_platbu'] ?> dní před závodem je třeba startovné zaplatit <strong>nejpozději jeden den před prematchem</strong> (<?= $datumPrematch->modify("-1 days")->format('j.n.Y') ?>)</li>
-                        <li class="<?= hidden($match_data['Payment_before'] == 0); ?>">V případě neuhrazení startovného v řádném termínu je registrace zrušena.<br>- neplatí pro organizátory, pomocníky a rozhodčí.</li>
+                        <li>Registrace se uzavírá
+                            <?= ($match_data['Zavod_konec_registrace'] == 0) ? 'o půlnoci před registrací' : "$match_data[Zavod_konec_registrace] den/dny před konáním závodu" ?>.
+                        </li>
+                        <li>Pořadatelé si vyhrazují právo zařadit závodníků do jednotlivých směn za účelem zajištění hladkého
+                            průběhu závodu.</li>
+                        <li>Nezadá-li závodník při registraci platný email, vystavuje se riziku, že nebude informován o
+                            případných změnách závodu.</li>
+                        <li class="<?= hidden($match_data['Payment_before'] == 0); ?> ">Startovné se hradí tak, aby platba proběhla do
+                            <?php echo $match_data['Zavod_pocet_dni_na_platbu']; ?> dnů od registrace.<br>- u závodníků
+                            zaregistrovaných méně jak <?php echo $match_data['Zavod_pocet_dni_na_platbu']; ?> dní před závodem
+                            je třeba startovné zaplatit nejpozději dva dny před závodem
+                        </li>
+                        <li class="<?= hidden($match_data['Payment_before'] == 0); ?>">Startovné je nevratné, lze jej přenést na jiného závodníka.</li>
+                        <li class="<?= hidden($match_data['Payment_before'] == 0); ?>">V případě neuhrazení startovného v řádném termínu je registrace
+                            zrušena.</li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="col-12 text-center">
-        <button type="submit" class="btn btn-primary mt-2">Registrovat</button>
+    <div class="col-12 text-center mt-3">
+        <button type="submit" class="btn btn-primary mb-2">Registrovat</button>
     </div>
+
 <?php
     echo "</form></div></div></div>";
 }

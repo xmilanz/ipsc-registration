@@ -17,7 +17,7 @@ if (!$line) {
         "index.php",
         "<div class='col-12 fw-bolder text-danger'>Nelze dohledat závodníka v databázi",
         "Kontaktujte <a href='mailto:" . htmlspecialchars($vyvojar, ENT_QUOTES, 'UTF-8') . "?subject=" . htmlspecialchars($match_data['Zavod'], ENT_QUOTES, 'UTF-8') . " - chyba dohledání zavodnika'>pořadatele závodu</a>.",
-        "<button type='button' class='btn btn-outline-danger' onclick=\"window.location.href = 'index.php';\">Zavřít</button>",
+        "<button type='button' class='btn btn-outline-dark' onclick=\"window.location.href = 'index.php';\">Zavřít</button>",
         "$poradatel"
     );
     exit;

@@ -177,7 +177,7 @@ function require_admin(): void
             $_SERVER['REMOTE_ADDR'] ?? 'unknown',
             $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
         );
-        error_log($logLine, 3, __DIR__ . '/session_fail.log');
+        error_log($logLine, 3, __DIR__ . '/log/session_fail.log');
     };
 
     if (empty($_SESSION['admin_id']) || empty($_SESSION['loggedin'])) {
@@ -418,10 +418,6 @@ function required($condition) {
     return $condition ? 'required' : '';
 }
 
-function readonly($condition) {
-    return $condition ? 'readonly' : '';
-}
-
 function disabled($condition) {
     return $condition ? 'disabled' : '';
 }
@@ -479,3 +475,20 @@ function renderSwitchInline(
         </div>
     ";
 }
+
+// logování akcí
+function logAction(string $action)
+{
+    global $table;
+    $logLine = sprintf(
+        "[%s] %s - %s - %s - %s \n",
+        date('Y-m-d H:i:s'),
+        $table,
+        $action,
+        $_SESSION['name'],
+        $_SERVER['REMOTE_ADDR']
+    );
+    //$timestamp = date('Y-m-d H:i:s'); 
+    //$logLine = "[$timestamp] $reason - $usernameInput - $_SERVER['REMOTE_ADDR']\n";
+    error_log($logLine, 3, __DIR__ . '/log/admin_actions.log');
+};

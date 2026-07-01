@@ -26,22 +26,17 @@ function WarningModal(
 				<button type='button' class='btn-close btn-close-white' data-bs-dismiss='modal' aria-label='Close' onclick=\"window.location.href = '$WarnCloseHref';\"></button>
 			</div>
 			<div class='modal-body text-center'>
-				<div class='fw-bolder text-danger'>
-					$WarnMessage
-				</div>
-				<div class='alert alert-info fw-normal text-center m-3' role='alert'>
-					$WarnInfo
-				</div>
+				<div class='fw-bolder text-danger'>$WarnMessage</div>
+				<div class='alert alert-info fw-normal text-center m-3' role='alert'>$WarnInfo</div>
 			</div>
-			<div class='modal-footer border-top-0'>
-				$WarnFooterButtons
-			</div>
+			<div class='modal-footer border-top-0'>$WarnFooterButtons</div>
 		</div>
     </div>
 </div>
  ";
 }
 ?>
+
 <script type='text/javascript'>
 	$(document).ready(function() {
 		$('#myModal').modal('show');

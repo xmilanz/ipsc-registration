@@ -45,7 +45,8 @@ if ($prijmeni == $line['Prijmeni'] and $jmeno == $line['Jmeno'] and $alias == $l
         "Závodník $jmeno $prijmeni ($alias) už je zaregistrovaný",
         "Pokud závodníka registrujete do další divize, použijte volbu 'Další&nbsp;divize'. Pro odlišení závodníka lze použít za příjmení nějaký další znak (číslo) nebo zvolit <b>ml./st.</b></small>",
         "Kombinaci <strong>Jméno Příjmení (ALIAS)</strong> je třeba používat v průběhu celé série závodu.",
-        "Zpět do administrace"
+        "Zpět do administrace",
+        "$poradatel"
     );
 }
 
@@ -59,7 +60,8 @@ elseif ($alias == $line['Alias']) {
         "Závodník s aliasem $alias už je zaregistrovaný",
         "Pokud je alias skutečně zaregistrovaný na na IPSC-TECH.ORG, kontaktujte závodníka.",
         "Kombinaci <strong>Jméno Příjmení (ALIAS)</strong> je třeba používat v průběhu celé série závodu.",
-        "Zpět do administrace"
+        "Zpět do administrace",
+        "$poradatel"
     );
 } else {
 
@@ -276,6 +278,7 @@ elseif ($alias == $line['Alias']) {
                 "Zpět do administrace"
             );
         } else {
+            logAction("shooter new");
             $_SESSION['toast'] = [
                 'type' => 'success',
                 'message' => 'Závodník byl úspěšně přidán a registrační email odeslán.',

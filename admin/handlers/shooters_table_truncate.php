@@ -13,7 +13,7 @@ if (
 }
 
 $conn->query("TRUNCATE TABLE `$table`");
-
+logAction("table truncate");
 $_SESSION['toast'] = [
     'type' => 'danger',
     'message' => 'Tabulka závodníků byla úspěšně vyprázdněna. Závodníci se budou přidávat s číslem od 1 ',

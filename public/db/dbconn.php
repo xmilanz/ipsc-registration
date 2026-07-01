@@ -56,6 +56,7 @@ $migrations = [
     '2.4' => 'dbupdate24.php',
     '2.5' => 'dbupdate25.php',
     '2.6' => 'dbupdate26.php',
+    '2.7' => 'dbupdate27.php',
 ];
 
 $res = $conn->query("SELECT parValue FROM $table_setting WHERE parName='dbver' LIMIT 1");
@@ -64,7 +65,7 @@ $currentVersion = $row['parValue'] ?? '0';
 
 foreach ($migrations as $version => $script) {
     if (version_compare($currentVersion, $version, '<')) {
-        echo "Migrating from $currentVersion to $version<br>";
+//        echo "Migrating from $currentVersion to $version<br>";
         require $script;
     }
 }

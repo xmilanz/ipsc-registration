@@ -1,5 +1,5 @@
 /* ============================================================
-    DATATABLE
+    POPOVER
 ============================================================ */
 $(document).ready(function () {
   $('[data-bs-toggle="popover"]').popover();
@@ -8,6 +8,11 @@ $(document).ready(function () {
 $(document).ready(function () {
   $('[data-bs-toggle="tooltip"]').tooltip();
 });
+
+/* ============================================================
+    DATATABLE
+============================================================ */
+
 
 function ToggleFilter() {
   var elements = document.getElementsByClassName("dtsb-searchBuilder");

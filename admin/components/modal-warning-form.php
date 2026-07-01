@@ -11,7 +11,6 @@ function WarningModalForm(
     string $SubmitLabel = 'Potvrdit',
     string $CancelLabel = 'Zrušit'
 ): void {
-
     // Ošetření vstupů pro bezpečnost
     $WarnColor = htmlspecialchars($Color, ENT_QUOTES, 'UTF-8');
     $WarnHeader = htmlspecialchars($Header, ENT_QUOTES, 'UTF-8');
@@ -39,12 +38,8 @@ function WarningModalForm(
     }
 
     echo "
-        <div class='fw-bolder text-$WarnColor'>
-            $WarnMessage
-        </div>
-            <div class='alert alert-info fw-normal text-center my-3 mx-2' role='alert'>
-                $WarnExtraInfo
-            </div>
+        <div class='fw-bolder text-$WarnColor'>$WarnMessage</div>
+            <div class='alert alert-info fw-normal text-center my-3 mx-2' role='alert'>$WarnExtraInfo</div>
         <div class='modal-footer border-top-0'>
             <button type='submit' class='btn btn-$WarnColor'>$SubmitLabel</button>
             <button type='button' class='btn btn-outline-dark' onclick=\"window.location.href = '$WarnCloseHref';\">$CancelLabel</button>
@@ -52,3 +47,10 @@ function WarningModalForm(
             </form>
     ";
 }
+?>
+
+<script type='text/javascript'>
+    $(document).ready(function() {
+        $('#myModal').modal('show');
+    });
+</script>

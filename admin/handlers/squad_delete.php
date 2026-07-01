@@ -22,6 +22,7 @@ if ($affected == 0) {
         "Zpět do administrace"
     );
 } else {
+    logAction("squad delete");
     $_SESSION['toast'] = [
         'type' => 'danger',
         'message' => 'Squad byl smazán.',

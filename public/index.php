@@ -8,8 +8,9 @@ $download = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill
 // Pozastaveni registrace
 if ($match_data['Zavod_registrace_pozastaveno']) {
     $match_data = array_merge($match_data, [
-        'Squad_main_max' => '0',
-        'Squad_prem_max' => '0'
+        'Squad_main_max' => '',
+        'Squad_prem_max' => '',
+        'Zavod_datum' => '-',
     ]);
 }
 

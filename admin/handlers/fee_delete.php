@@ -22,6 +22,7 @@ if ($affected == 0) {
         "Zpět do administrace"
     );
 } else {
+    logAction("fee delete");
     $_SESSION['toast'] = [
         'type' => 'danger',
         'message' => 'Položka startovného byla smazána.',

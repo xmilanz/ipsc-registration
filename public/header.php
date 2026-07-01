@@ -108,7 +108,8 @@ if (!empty($match_data['Zavod_poradatel'])) {
                 <ul class="navbar-nav fw-bold">
                     <li class="nav-item"><a class="nav-link" href="./">Propozice</a></li>
                     <li class="nav-item"><a class="nav-link" href="./registrace.php">Registrace</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./prehledy.php">Přehledy</a></li>
+                    <li class="nav-item <?= hidden($match_data['Web_zobrazovat_zavodniky'] == 0); ?>"><a class="nav-link" href="./zavodnici.php">Závodníci</a></li>
+                    <li class="nav-item <?= hidden($match_data['Web_zobrazovat_prehledy'] == 0); ?>"><a class="nav-link" href="./prehledy.php">Přehledy</a></li>
                     <li class="nav-item <?= hidden($match_data['Web_zobrazovat_situace'] == 0); ?>"><a class="nav-link" href="./situace.php">Situace</a></li>
                     <li class="nav-item <?= hidden($match_data['Web_zobrazovat_aliasy'] == 0); ?>"><a class="nav-link" href="./kontrola_aliasu.php">IPSC aliasy</a></li>
                     <li class="nav-item <?= hidden($match_data['Web_zobrazovat_vysledky'] == 0) ?>"><a class="nav-link" href="<?= htmlspecialchars($match_data['Zavod_vysledky'] ?? '#', ENT_QUOTES, 'UTF-8'); ?>">Výsledky</a></li>

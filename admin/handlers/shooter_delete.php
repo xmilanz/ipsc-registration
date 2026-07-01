@@ -25,6 +25,7 @@ if ($affected == 0) {
         "Zpět do administrace"
     );
 } else {
+    logAction("shooter delete");
     $_SESSION['toast'] = [
         'type' => 'danger',
         'message' => 'Závodník byl smazán a e-mail s informací o smazání odeslán na adresu statistika.',

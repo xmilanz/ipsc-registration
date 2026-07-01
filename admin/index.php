@@ -340,7 +340,7 @@ include __DIR__ . '/header.php';
             <?= renderCompetitorsSection($conn, (string)$table, (array)$match_data, (string)$dnes, (string)$paymentBeforeClass) ?>
         </div>
     </div>
-    <div class="footer">KPS Eggenberg &copy; Milan Žídek <?= date("Y") ?><span style="float:right">IPSC match registration system 3.6</span></div>
+    <div class="footer">KPS Eggenberg &copy; Milan Žídek <?= date("Y") ?><span style="float:right">IPSC match registration system 3.8</span></div>
 </div>
 <?php
 include_once("./include/match_config.php");

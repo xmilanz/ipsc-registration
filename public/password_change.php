@@ -21,7 +21,7 @@ require_admin();
                 <form class="row" method="post" action="./save.php" novalidate>
                     <input type="hidden" name="action" value="change_password">
                     <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
-                    <input type="hidden" name="name" value="<?php echo $_SESSION['name'] ?? ''; ?>">
+                    <input type="hidden" name="name" value="<?= $_SESSION['name'] ?? ''; ?>">
 
                     <div class="form-outline">
                         <label class="form-label" for="password_new">Nové heslo</label>

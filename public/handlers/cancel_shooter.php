@@ -110,7 +110,9 @@ if (!$line) {
     $stmt->close();
 
     $cekatel = mysqli_fetch_assoc($result);
-    if ($cekatel) {
+    if (!$cekatel) {
+        exit;
+    } else {
         $stmt = $conn->prepare("
         UPDATE $table 
         SET Squad = ?
@@ -151,7 +153,9 @@ if (!$line) {
     $mena = $match_data['Banka_ucet_MENA'];
     $varsymbol = $cekatel['VarSym'];
 
-    $link_cancel = "<a href='$web_adresa_admin/zrus_ucast.php?id=$cekatel[Cislo]&klic=$cekatel[klic]'><strong>zrušit účast</strong></a>";
+    $link_cancel = buildCancelLinks($reg_url, $cislo, $klic);
+    $link_ical = buildCalendarLinks($reg_url, $match_data);
+
 
     // priprava podkladu pro email zavodnikovi
     // nice názvy pro mail
@@ -165,7 +169,7 @@ if (!$line) {
     $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $cekatel['Kategorie'], "Value");
 
     $STRELEC = "<strong>IPSC alias: " . htmlspecialchars($cekatel['Alias'], ENT_QUOTES, 'UTF-8') . "</strong>" . "\r\n";
-    $STRELEC .= "Střelec: #" . $cekatel['Cislo'] . " " . htmlspecialchars($cekatel['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($cekatel['Prijmeni'], ENT_QUOTES, 'UTF-8') . " [$link_cancel]\r\n";
+    $STRELEC .= "Střelec: #" . $cekatel['Cislo'] . " " . htmlspecialchars($cekatel['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($cekatel['Prijmeni'], ENT_QUOTES, 'UTF-8') . "  [$link_cancel] [$link_ical] " . "\r\n";
     $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
     $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
     $STRELEC .= "Squad: $oldSquad" . "\r\n\r\n";

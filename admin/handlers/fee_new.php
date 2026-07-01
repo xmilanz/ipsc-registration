@@ -24,6 +24,7 @@ if ($affected === 0) {
         "Zpět do administrace"
     );
 } else {
+    logAction("fee new");
     $_SESSION['toast'] = [
         'type' => 'success',
         'message' => 'Startovné bylo úspěšně přidáno.',
