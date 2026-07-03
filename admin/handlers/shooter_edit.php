@@ -368,15 +368,16 @@ if (
     $mena = $match_data['Banka_ucet_MENA'];
     $varsymbol = $line['VarSym'];
 
-    $link_cancel = "<a href='$web_adresa_admin/zrus_ucast.php?id=$line[Cislo]&klic=$line[klic]'><strong>zrušit účast</strong></a>";
+    $link_cancel = buildCancelLinks($web_adresa_admin, $line['Cislo'], $line['klic']);
+    $link_ical = buildCalendarLinks($web_adresa_admin, $match_data);
 
     // podmínky pro volbu textu v závislosti na statutu závodníka
     if ($match_data['Payment_before'] == 1) {
-        $message = $email_registrace_cekatel_presun_bez_platby_predem;
+        $message = $email_registrace_cekatel_presun_platba;
     } elseif ($naMiste == 1) {
         $message = $email_registrace_cekatel_presun_platba_na_miste;
     } else {
-        $message = $email_registrace_cekatel_presun_platba;
+        $message = $email_registrace_cekatel_presun_bez_platby_predem;
     }
 
     // priprava podkladu pro email zavodnikovi
@@ -391,7 +392,7 @@ if (
     $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
 
     $STRELEC = "<strong>IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "</strong>" . "\r\n";
-    $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " [$link_cancel]\r\n";
+    $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " [$link_cancel] [$link_ical]\r\n";
     $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
     $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
     $STRELEC .= "Squad: $squad" . "\r\n\r\n";
@@ -442,4 +443,3 @@ if (
     // konec přesun čekatele do běžného squadu
     exit();
 }
-?>

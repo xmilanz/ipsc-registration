@@ -169,7 +169,8 @@ elseif ($alias == $line['Alias']) {
     $mena = $match_data['Banka_ucet_MENA'];
     $CastkaZaplatit = ($isVIP) ? '0'  : number_format($feeValues[0]['Value'], 2, ',', ' ');
 
-    $link_cancel = "<a href='$web_adresa_admin/zrus_ucast.php?id=$line[Cislo]&klic=$line[klic]'><strong>zrušit účast</strong></a>";
+    $link_cancel = buildCancelLinks($web_adresa_admin, $line['Cislo'], $line['klic']);
+    $link_ical = buildCalendarLinks($web_adresa_admin, $match_data);
 
     // nice názvy pro mail
     $faktorLabels = [
@@ -208,13 +209,13 @@ elseif ($alias == $line['Alias']) {
     } elseif ($squad == "-2") {
         $message = $email_registrace_cekatel_text_novy_zavodnik;
     } elseif ($match_data['Payment_before'] == 1) {
-        $message = $email_registrace_platba_text;
+        $message = $email_registrace_platba_text_novy_zavodnik;
     } else {
-        $message = $email_registrace_zavod_bez_platby_predem;
+        $message = $email_registrace_zavod_bez_platby_predem_novy_zavodnik;
     }
 
     $STRELEC = "<strong>IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "</strong>" . "\r\n";
-    $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " [$link_cancel]\r\n";
+    $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " [$link_cancel] [$link_ical]\r\n";
     $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
     $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
     $STRELEC .= "Squad: $squad" . "\r\n\r\n";

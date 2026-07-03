@@ -3,6 +3,9 @@ $dnes = date_format(new DateTime(), "d.m.Y H:i");
 
 $line = getShooterData($conn, $table, $_POST['shooterID'], $_POST['shooterKEY']);
 
+$link_cancel = buildCancelLinks($web_adresa_admin, $_POST['shooterID'], $_POST['shooterKEY']);
+$link_ical = buildCalendarLinks($web_adresa_admin, $match_data);
+
 $dnes = date_format(new DateTime(), "d.m.Y H:i");
 
 // ziskame castku startovneho 
@@ -43,8 +46,6 @@ if ($affected == 0) {
 } else {
     header("refresh:0;url=index.php");
 
-    // příprava mailu zavodnikovi
-    // příprava mailu zavodnikovi
     // nice názvy pro mail
     $faktorLabels = [
         "MIN" => "Minor",
@@ -56,7 +57,7 @@ if ($affected == 0) {
     $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
 
     $STRELEC = "<strong>IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "</strong>" . "\r\n";
-    $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . "\r\n";
+    $STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " [$link_cancel] [$link_ical]\r\n";
     $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
     $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
     $STRELEC .= "Squad: " . $line['Squad'] . "\r\n";

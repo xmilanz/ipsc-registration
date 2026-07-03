@@ -36,7 +36,7 @@ function renderCompetitorsSection(
         Squad,
         SquadReg,
         Staff,
-        Klic,
+        klic,
         FROM_UNIXTIME(DatReg,'%d.%m.%Y %H:%i') AS Registrace,
         RegistraceIP    AS 'IP registrace',
         Mail,
@@ -196,7 +196,7 @@ function renderCompetitorsSection(
                             <i class="fas fa-info-circle"></i> Info
                         </button>
                         <?php if (($_SESSION['role'] === 'admin' ||  $_SESSION['role'] === 'editor') && ($line['Squad'] != "-9")): ?>
-                            <button data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['Klic'] ?>" href="#send_regmail"
+                            <button data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['klic'] ?>" href="#send_regmail"
                                 class="modal_regmail btn text-secondary"
                                 data-bs-toggle="modal" data-bs-backdrop="static" data-bs-keyboard="false"
                                 title="Poslat registrační e-mail">
@@ -217,7 +217,7 @@ function renderCompetitorsSection(
                                     <?php if ($line['Zaplaceno'] != 1 && $line['NaMiste'] != 1 && $line['Squad'] != "-9" && $line['Squad'] != "-2"): ?> <!-- není zaplaceno nebo je zatím čekatel nebo  platí na místě nebo už je vyřazen -->
                                         <li>
                                             <button class="dropdown-item modal_payment_warn <?= hidden($match_data['Payment_before'] == 0); ?>"
-                                                data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['Klic'] ?>"
+                                                data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['klic'] ?>"
                                                 href="#payment_warning" data-bs-toggle="modal"
                                                 data-bs-backdrop="static" data-bs-keyboard="false">
                                                 <i class="fas fa-exclamation-triangle text-warning me-2"></i>
@@ -226,7 +226,7 @@ function renderCompetitorsSection(
                                         </li>
                                         <li>
                                             <button class="dropdown-item modal_payment_save <?= hidden($match_data['Payment_before'] == 0); ?>"
-                                                data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['Klic'] ?>"
+                                                data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['klic'] ?>"
                                                 href="#payment_save" data-bs-toggle="modal"
                                                 data-bs-backdrop="static" data-bs-keyboard="false">
                                                 <i class="fas fa-check-circle text-success me-2"></i>
@@ -237,7 +237,7 @@ function renderCompetitorsSection(
                                     <?php if ($line['Squad'] != "-9"): ?> <!-- není už vyřazen -->
                                         <li>
                                             <button class="dropdown-item modal_cancel_shooter"
-                                                data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['Klic'] ?>"
+                                                data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['klic'] ?>"
                                                 href="#cancel_shooter" data-bs-toggle="modal"
                                                 data-bs-backdrop="static" data-bs-keyboard="false">
                                                 <i class="fas fa-minus-circle text-danger me-2"></i>
@@ -248,7 +248,7 @@ function renderCompetitorsSection(
                                     <?php if ($_SESSION['role'] === 'admin'): ?>
                                         <li>
                                             <button class="dropdown-item modal_delete_shooter"
-                                                data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['Klic'] ?>"
+                                                data-id="<?= $line['Cislo'] ?>" data-key="<?= $line['klic'] ?>"
                                                 href="#delete_shooter" data-bs-toggle="modal"
                                                 data-bs-backdrop="static" data-bs-keyboard="false">
                                                 <i class="fas fa-trash-alt text-danger me-2"></i>

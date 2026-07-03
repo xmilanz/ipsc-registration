@@ -4,7 +4,8 @@ $line = getShooterData($conn, $table, $_POST['shooterID'], $_POST['shooterKEY'])
 $squad = $line['Squad'];
 $varsymbol = $line['VarSym'];
 
-$link_cancel = "<a href='$web_adresa_admin/zrus_ucast.php?id=$line[Cislo]&klic=$line[klic]'><strong>zrušit účast</strong></a>";
+$link_cancel = buildCancelLinks($web_adresa_admin, $_POST['shooterID'], $_POST['shooterKEY']);
+$link_ical = buildCalendarLinks($web_adresa_admin, $match_data);
 
 $line['Staff'] == "RO" ? $Rozhodci = "ANO" : $Rozhodci = "NE";
 $line['Staff'] == "POM" ? $Pomocnik = "ANO" : $Pomocnik = "NE";
@@ -41,7 +42,7 @@ $nazev_divize = getValueFromTable($conn, $table_divisions, "Name", $line['Divize
 $nazev_kategorie = getValueFromTable($conn, $table_categories, "Name", $line['Kategorie'], "Value");
 
 $STRELEC = "<strong>IPSC alias: " . htmlspecialchars($line['Alias'], ENT_QUOTES, 'UTF-8') . "</strong>" . "\r\n";
-$STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " [$link_cancel]\r\n";
+$STRELEC .= "Střelec: #" . $line['Cislo'] . " " . htmlspecialchars($line['Jmeno'], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($line['Prijmeni'], ENT_QUOTES, 'UTF-8') . " [$link_cancel] [$link_ical]\r\n";
 $STRELEC .= "Divize: $nazev_divize $faktorLabel" . "\r\n";
 $STRELEC .= "Kategorie: $nazev_kategorie" . "\r\n";
 $STRELEC .= "Squad: $squad" . "\r\n\r\n";
